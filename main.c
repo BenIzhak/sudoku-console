@@ -1,11 +1,22 @@
 /*
  * main.c
  *
- *  Created on: 29 αιεμι 2018
+ *  Created on: 29 οΏ½οΏ½οΏ½οΏ½οΏ½ 2018
  *      Author: beniz
  */
+#include <stdio.h>
+#include <time.h>
+#include "Cell.h"
+#include <stdlib.h>
 
+int main(int argc, char *argv[]){
+	int seed = time(NULL);
 
-int main(){
-	return 1;
+	SP_BUFF_SET();
+
+	srand(seed);
+
+	gameLoop();
+
+	return 0;
 }
