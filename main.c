@@ -7,9 +7,11 @@
 #include <stdio.h>
 #include <time.h>
 #include "Cell.h"
+#include "SPBufferset.h"
 #include <stdlib.h>
+#include "MainAux.h"
 
-int main(int argc, char *argv[]){
+int main(){
 	int seed = time(NULL);
 
 	SP_BUFF_SET();

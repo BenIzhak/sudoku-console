@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "Cell.h"
+#include "Parser.h"
 
 Cell** setAllocatedMem(){
 	int boardRowSize = 3; /*BLOCK_COL_SIZE * BLOCK_ROW_SIZE; will use variables from command router and will make them global */
@@ -30,46 +31,36 @@ Cell** setAllocatedMem(){
 }
 
 int getInput(char input[], int command[], char* filePath) {
-	if (fgets(input, 1024, stdin) == NULL) {
+	if (fgets(input, 256, stdin) == NULL) {
 		/* EOF CASE */
 		return -1;
 	}
-	parseCommand(input, command);
+	parseCommand(input, command, filePath);
 	while (validInput(command) == -1) {
-		if (fgets(input, 1024, stdin) == NULL) {
+		if (fgets(input, 256, stdin) == NULL) {
 			/* EOF CASE */
 			return -1;
 		}
-		parseCommand(input, command);
+		parseCommand(input, command, filePath);
 	}
 	return 0;
 }
 
-void commmandRouter(Cell** gameBoard, Cell** solvedBoard, Cell** tempBoard, int command[]) {
+void commmandRouter(Cell** userBoard, Cell** solvedBoard, Cell** tempBoard, int command[], char* filePath) {
 	switch (command[0]) {
-	case 0:/* Set X Y Z */
-		setCell(gameBoard, command[1], command[2], command[3]);
-		break;
-	case 1: /* Hint X Y */
-		hintCell(solvedBoard, command[1], command[2]);
-		break;
-	case 2: /* validate */
-		validateBoard(gameBoard, solvedBoard, tempBoard);
-		break;
-	case 3:/* restart */
-		if(initGame(gameBoard, solvedBoard, tempBoard) == -1){
-			/* EOF CASE */
-			exitGame(gameBoard, solvedBoard, tempBoard);
-		}
-		break;
-	case 4:
-		exitGame(gameBoard, solvedBoard, tempBoard);
-		break;
+		case 0:/* solve X */
+
+			break;
+		case 1: /* edit X  */
+			if(command[1] == -1){
+				/* */
+			}
+			break;
 	}
 }
 
 void gameLoop() {
-	char input[1024];
+	char input[256];
 	int command[4];
 	int exitFlag = 0;
 	char* filePath = NULL;
@@ -79,7 +70,7 @@ void gameLoop() {
 
 	while (exitFlag == 0) {
 		exitFlag = getInput(input, command, filePath);
-		commmandRouter(userBoard, solvedBoard, tempBoard, command);
+		commmandRouter(userBoard, solvedBoard, tempBoard, command, filePath);
 	}/* will take command of edit X and Solve X and initilize the boards */
 
 	/*if (initGame(gameBoard, solvedBoard, tempBoard) == -1) {
