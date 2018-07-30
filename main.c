@@ -10,15 +10,27 @@
 #include "SPBufferset.h"
 #include <stdlib.h>
 #include "MainAux.h"
+#include "FilesHandler.h"
+#include <string.h>
+
+Cell** userBoard;
+Cell** solvedBoard;
+Cell** tempBoard;
+
 
 int main(){
 	int seed = time(NULL);
-
 	SP_BUFF_SET();
+
 
 	srand(seed);
 
-	gameLoop();
+	loadBoard("in.txt");
+	saveBoard("out.txt");
+
+	printBoard(userBoard, 0);
+
+
 
 	return 0;
 }

@@ -15,8 +15,8 @@ struct _Cell
 	int limit;/* current last index of validnums ++++MIGHT NOT BE NEEDED++++ */
 	int isInput;/* flag if the value in this cell is an input by the user */
 	int isError; /* flag if the value in this cell is erroneous */
-	int validNums[9]; /* array holding current valid numbers ++++MIGHT NOT BE NEEDED++++ */
-	int prevNums[9]; /* array holding numbers which were tried previously ++++MIGHT NOT BE NEEDED++++ */
+	int* validNums; /* array holding current valid numbers ++++MIGHT NOT BE NEEDED++++ */
+	int* prevNums; /* array holding numbers which were tried previously ++++MIGHT NOT BE NEEDED++++ */
 };
 
 typedef struct _Cell Cell;
