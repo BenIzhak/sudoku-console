@@ -46,31 +46,31 @@ int getInput(char input[], int command[], char* filePath) {
 	return 0;
 }
 
-void commmandRouter(Cell** userBoard, Cell** solvedBoard, Cell** tempBoard, int command[], char* filePath) {
+/*void commmandRouter(Cell** userBoard, Cell** solvedBoard, Cell** tempBoard, int command[], char* filePath) {
 	switch (command[0]) {
-		case 0:/* solve X */
+		case 0: solve X
 
 			break;
-		case 1: /* edit X  */
+		case 1:  edit X
 			if(command[1] == -1){
-				/* */
+
 			}
 			break;
 	}
-}
+}*/
 
 void gameLoop() {
 	char input[256];
 	int command[4];
 	int exitFlag = 0;
 	char* filePath = NULL;
-	Cell** userBoard = NULL;
+	/*Cell** userBoard = NULL;
 	Cell** solvedBoard = NULL;
-	Cell** tempBoard = NULL;
+	Cell** tempBoard = NULL;*/
 
 	while (exitFlag == 0) {
 		exitFlag = getInput(input, command, filePath);
-		commmandRouter(userBoard, solvedBoard, tempBoard, command, filePath);
+		/*commmandRouter(userBoard, solvedBoard, tempBoard, command, filePath);*/
 	}/* will take command of edit X and Solve X and initilize the boards */
 
 	/*if (initGame(gameBoard, solvedBoard, tempBoard) == -1) {

@@ -29,7 +29,7 @@ FILE* openFile(char* filePath, const char* mode){
  *  filePath: string of the file's path
  *
  */
-int loadBoard(Cell** userBoard, Cell** tempBoard, char* filePath){
+/*int loadBoard(Cell** userBoard, Cell** tempBoard, char* filePath){
 	FILE* fp = openFile(filePath,"r");
 
 	if(fp == NULL){
@@ -37,5 +37,5 @@ int loadBoard(Cell** userBoard, Cell** tempBoard, char* filePath){
 	}
 
 
-}
+}*/
 
