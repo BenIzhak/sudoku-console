@@ -6,6 +6,9 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
+#include "MainAux.h"
+
+
 FILE* openFile(char* filePath, const char* mode){
 	FILE* fp = NULL;
 
@@ -31,11 +34,14 @@ FILE* openFile(char* filePath, const char* mode){
  */
 int loadBoard(Cell** userBoard, Cell** tempBoard, char* filePath){
 	FILE* fp = openFile(filePath,"r");
+	int m, n;
 
 	if(fp == NULL){
 		return -1;
 	}
 
+	fscanf(fp, "%d", &m);
+	fscanf(fp, "%d", &n);
 
 }
 

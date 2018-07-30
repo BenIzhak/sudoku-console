@@ -46,7 +46,7 @@ int getInput(char input[], int command[], char* filePath) {
 	return 0;
 }
 
-void commmandRouter(Cell** userBoard, Cell** solvedBoard, Cell** tempBoard, int command[], char* filePath) {
+void commmandRouter(Cell** gameBoard, Cell** solvedBoard, Cell** tempBoard, int command[], char* filePath) {
 	switch (command[0]) {
 		case 0:/* solve X */
 
@@ -57,6 +57,23 @@ void commmandRouter(Cell** userBoard, Cell** solvedBoard, Cell** tempBoard, int 
 			}
 			break;
 	}
+}
+
+void freeBoardMem(Cell** gameBoard, Cell** solvedBoard, Cell** tempBoard, int BlockRowSize, int BlockColSize){
+	int boardRowSize = BlockRowSize * BlockColSize;
+	int i;
+	for (i = 0; i < boardRowSize; i++) {
+		free(tempBoard[i]);
+	}
+	for (i = 0; i < boardRowSize; i++) {
+		free(solvedBoard[i]);
+	}
+	for (i = 0; i < boardRowSize; i++) {
+		free(gameBoard[i]);
+	}
+	free(tempBoard);
+	free(solvedBoard);
+	free(gameBoard);
 }
 
 void gameLoop() {
@@ -79,3 +96,5 @@ void gameLoop() {
 	} ** this one initializes the boards, need to move after allocating memory***/
 
 }
+
+
