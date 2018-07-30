@@ -11,8 +11,8 @@
 #include "Parser.h"
 
 Cell** setAllocatedMem(){
-	int boardRowSize = 3; /*BLOCK_COL_SIZE * BLOCK_ROW_SIZE; will use variables from command router and will make them global */
-	int boardColSize = boardRowSize;
+	int boardRowSize = 9; /*BLOCK_COL_SIZE * BLOCK_ROW_SIZE; will use variables from command router and will make them global */
+	int boardColSize = 9; /* change back to original values */
 	int i;
 
 	Cell** temp = (Cell **) malloc(boardRowSize * sizeof(Cell*));

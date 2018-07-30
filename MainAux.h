@@ -10,4 +10,6 @@
 
 void gameLoop();
 
+Cell** setAllocatedMem();
+
 #endif /* MAINAUX_H_ */
