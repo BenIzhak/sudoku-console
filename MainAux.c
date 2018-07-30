@@ -62,6 +62,7 @@ int getInput(char input[], int command[], char* filePath) {
 	}
 	return 0;
 }
+
 /*
 void commmandRouter(Cell** gameBoard, Cell** solvedBoard, Cell** tempBoard, int command[], char* filePath) {
 	switch (command[0]) {
