@@ -79,6 +79,24 @@ void commmandRouter(Cell** gameBoard, Cell** solvedBoard, Cell** tempBoard, int 
 
 */
 
+void boardInit(Cell** table){
+	int i, j, k;
+	int boardRowAndColSize = blockRowSize * blockColSize;
+	for(i = 0; i < boardRowAndColSize; i++){
+		for(j = 0; j < boardRowAndColSize; j++){
+			for (k = 0; k < boardRowAndColSize; k++) {/* initializes prevNums as not used nums*/
+				table[i][j].prevNums[k] = 0;
+			}
+			table[i][j].currentNum = 0;
+			table[i][j].fixed = 0;
+			table[i][j].isInput = 0;
+			table[i][j].limit = boardRowAndColSize;
+			table[i][j].isError = 0;
+
+		}
+	}
+}
+
 void freeBoardMem(Cell** gameBoard, Cell** solvedBoard, Cell** tempBoard, int BlockRowSize, int BlockColSize){
 	int boardRowAndColSize = BlockRowSize * BlockColSize;
 	int i, j;

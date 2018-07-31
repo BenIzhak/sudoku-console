@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include "MainAux.h"
 #include "FilesHandler.h"
-#include <string.h>
+
 
 Cell** userBoard;
 Cell** solvedBoard;

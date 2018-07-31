@@ -14,5 +14,6 @@ void gameLoop();
 void freeBoardMem(Cell** gameBoard, Cell** solvedBoard, Cell** tempBoard, int BlockRowSize, int BlockColSize);
 Cell** setAllocatedMem(int boardRowAndColSize);
 void printBoard(Cell** table, int markErrors);
+void boardInit(Cell** table);
 
 #endif /* MAINAUX_H_ */
