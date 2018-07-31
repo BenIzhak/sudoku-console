@@ -67,16 +67,13 @@ int getInput(char input[], int command[], char* filePath) {
 void commmandRouter(Cell** gameBoard, Cell** solvedBoard, Cell** tempBoard, int command[], char* filePath) {
 	switch (command[0]) {
 		case 0: solve X
-
 			break;
 		case 1:  edit X
 			if(command[1] == -1){
-
 			}
 			break;
 	}
 }
-
 */
 
 void boardInit(Cell** table){
@@ -182,8 +179,6 @@ void gameLoop() {
 	Cell** userBoard = NULL;
 	Cell** solvedBoard = NULL;
 	Cell** tempBoard = NULL;
-
-
 	while (exitFlag == 0) {
 		exitFlag = getInput(input, command, filePath);
 		commmandRouter(userBoard, solvedBoard, tempBoard, command, filePath);
@@ -193,7 +188,6 @@ void gameLoop() {
 		 EOF CASE
 		exitGame(gameBoard, solvedBoard, tempBoard);
 	} ** this one initializes the boards, need to move after allocating memory***/
-
 
 
 
