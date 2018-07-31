@@ -21,16 +21,41 @@
  *	cellRow: row of cell to reset
  *	cellCol: column of cell to reset
  */
-void resetCell(Cell** table, int cellRow, int cellCol){
+void resetCell(Cell** board, int cellRow, int cellCol){
 	int i;
-	table[cellRow][cellCol].currentNum = 0;
+	board[cellRow][cellCol].currentNum = 0;
 
-	for (i = 0; i < 9; i++) {/* initializes prevNums as not used nums*/
-		table[cellRow][cellCol].prevNums[i] = 0;
+	/* initializes prevNums as not used nums*/
+	for (i = 0; i < 9; i++) {/*TODO: change to dynamic size of prevNums*/
+		board[cellRow][cellCol].prevNums[i] = 0;
 	}
 
 }
+/*
+ * Function:  resetCells
+ * --------------------
+ *  resets cells between [cellRow][CellCol] to tempIndex, num to 0 and put 0 in array of the previous numbers it tried during backtracking
+ *
+ *	table: 2d array containing sudoku cells
+ *  tempIndex: first index which doesn't need to be reset
+ *	cellRow: row of first cell to reset
+ *	cellCol: column of first cell to reset
+ */
+void resetCells(Cell** board, cellIndex tempIndex, int cellCol, int cellRow){
+	int dstRow = tempIndex.row;
+	int dstCol = tempIndex.col;
+	int boardSize = 9;/* TODO: need to change to dynamic value */
 
+	while(dstRow != cellRow || dstCol != cellCol){
+		resetCell(board, cellRow, cellCol);
+		if(cellCol == 0){
+			cellCol = boardSize - 1;
+			cellRow--;
+		}else{
+			cellCol--;
+		}
+	}
+}
 /*
  * Function:  updateCell
  * --------------------
@@ -230,124 +255,80 @@ void availableNumbers(Cell** table, int cellRow, int cellCol){
 }
 
 /*
- * Function:  dtrBacktrack
+ * Function:  exBacktrack
  * --------------------
- * 	deterministic back tracking algorithm
+ * 	Exhaustive back tracking algorithm
  *
- *	table: 2d array containing sudoku cells
- *	cellRow: cell's row
- *	cellCol: cells's column
- *	boardSize: size of sudoku board
+ *	board: 2d array containing sudoku cells
  *
- *	returns: -1 if solved board successfully,
- *			  0 if couldn't solve board successfully
+ *	returns: amount of different solutions
  *
  */
+/*TODO: Add different error messages */
 int exBacktrack(Cell** board){
-	int limit;
-	int flag = 1;
+	int limit, flag = 1, cellCol = 0, cellRow = 0, boardSize = 9, countSols = 0;
 	int frstColIndex = -1; /* column of the first empty cell */
 	int frstRowIndex = -1; /* row of the first empty cell */
-	int cellCol, cellRow, boardSize = 9;
-	int countSols = 0;
-	node* currentCall = NULL; /* pointer to current call, last call in stack */
-
-	push(&currentCall, 0, 0);
+	cellIndex tempIndex;
+	node* lastEmpty = NULL; /* pointer to last empty cell */
 
 	while(flag){
-		cellCol = peek(currentCall).col;
-		cellRow = peek(currentCall).row;
-
-		if(board[cellRow][cellCol].fixed == 1 || board[cellRow][cellCol].isInput == 1){ /* checks if cell is not empty */
+		if(board[cellRow][cellCol].fixed == 1 || board[cellRow][cellCol].isInput == 1){ /* checks if cell is fixed or an input */
 			if(cellCol < boardSize - 1){
-				push(&currentCall, cellRow, cellCol + 1);
+				cellCol++;
 			}
 			else if(cellRow < boardSize - 1){
-				push(&currentCall, cellRow + 1, cellCol);
+				cellRow++;
 			}else{
+				/* increase counter, got to last cell and it's fixed or input
+				 * need to get back to last empty cell */
 				countSols++;
-				pop(&currentCall);
-				/* increase counter, got to last cell and it's not empty */
+				tempIndex = peek(lastEmpty);
+
+				resetCells(board, tempIndex, cellCol, cellRow);
+
+				cellCol = tempIndex.col;
+				cellRow = tempIndex.row;
 			}
 		}else{
 			if(frstColIndex == -1 && frstRowIndex == -1){ /* save first empty cell index */
 				frstColIndex = cellCol;
 				frstRowIndex = cellRow;
 			}
+			tempIndex = peek(lastEmpty);
+			if(tempIndex.col != cellCol || tempIndex.row != cellRow){
+				push(&lastEmpty, cellRow, cellCol);
+			}
+
 			availableNumbers(board, cellRow, cellCol);
 			limit = board[cellRow][cellCol].limit;
 
 			if(limit == 0){
 				if(cellRow == frstRowIndex && cellCol == frstColIndex){
 					flag = 0;
+					pop(&lastEmpty);
 					/*got back to the first empty and there are no more options */
 				}else{
-					resetCell(board, cellRow, cellCol);
-					pop(&currentCall);
-					 /*got stuck need to trackback*/
-				}
+					/*got stuck need to trackback*/
+					pop(&lastEmpty);
+					tempIndex = peek(lastEmpty);
+
+					resetCells(board, tempIndex, cellCol, cellRow);
+
+					cellCol = tempIndex.col;
+					cellRow = tempIndex.row;
+				}/*TODO: decide where to add new empty cell */
 			}else{
 				updateCell(board, 0, cellRow, cellCol);
 				if(cellCol < boardSize - 1){
-					push(&currentCall, cellRow, cellCol + 1);
+					cellCol++;
 				}else if(cellRow < boardSize - 1){
-					push(&currentCall, cellRow + 1, cellCol);
+					cellRow++;
 				}else{
 					countSols++;
-					pop(&currentCall);
 				}
 			}
 		}
 	}
 	return countSols;
 }
-/*
-	if(board[cellRow][cellCol].fixed == 1 || table[cellRow][cellCol].isInput == 1){
-		if(cellCol < boardSize - 1){
-			x = dtrBacktrack(board, cellRow, cellCol + 1, boardSize);
-			return x;
-		}
-		else if(cellRow < boardSize - 1){
-			x = dtrBacktrack(board, cellRow + 1, 0, boardSize);
-			return x;
-		}else{
-			return -1; got to last cell and it's fixed\input
-		}
-	}else{
-		availableNumbers(board, cellRow, cellCol);
-		limit = board[cellRow][cellCol].limit;
-
-		if(limit == 0){
-			resetCell(board, cellRow, cellCol);
-			return 0;  got stuck need to trackback
-		}
-
-		while(limit != 0) {  keep looping through valid numbers
-			availableNumbers(board, cellRow, cellCol);
-			limit = board[cellRow][cellCol].limit;
-			if(limit == 0){
-				resetCell(board, cellRow, cellCol);
-				return 0;
-			}
-			numIndex = 0;
-			updateCell(board, numIndex, cellRow, cellCol);
-			if(cellCol < boardSize - 1){
-				x = dtrBacktrack(board, cellRow, cellCol + 1, boardSize);
-				if(x == -1){
-					return -1;
-				}
-			}else if(cellRow < boardSize - 1){
-				x = dtrBacktrack(board, cellRow + 1, 0, boardSize);
-				if(x == -1){
-					return -1;
-				}
-			}else{
-				got to the last cell
-				return -1;
-			}
-		}
-		return -1;
-	}
- return -1;
-}
-*/

@@ -11,5 +11,6 @@
 void gameLoop();
 
 Cell** setAllocatedMem();
+void boardInit(Cell** table);
 
 #endif /* MAINAUX_H_ */

@@ -18,6 +18,7 @@ int callSolver(char* boardStr){
 	int j = 0;
 
 	userBoard = setAllocatedMem();
+	boardInit(userBoard);
 	for(i = 0; i < 9 ; i++){
 		for(j = 0; j < 9; j++){
 			userBoard[i][j].currentNum = boardStr[(i * 9) + j] -'0';
@@ -40,12 +41,12 @@ int main(){
 	char* boardStr;
 	SP_BUFF_SET();
 
-	boardStr = "000123000040050060000000000700000003460080052500000001000000000070060040000394000";
+	boardStr = "090020500004005010060000003001800060000900002080072000500001070000300901003000000";
 
 	sols = callSolver(boardStr);
-	printf("%s", "number of solutions is: ");
+	printf("%s", "number of solutions is: - ");
 	printf("%d", sols);
-	printf("%s", " *");
+	printf("%s", " -");
 
 	srand(seed);
 

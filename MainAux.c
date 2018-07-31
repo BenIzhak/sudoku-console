@@ -59,6 +59,27 @@ int getInput(char input[], int command[], char* filePath) {
 	}
 }*/
 
+
+void boardInit(Cell** table){/*TODO: NEED TO BE REMOVED, here just for exBacktrack testing */
+	int i, j, k;
+	int boardRow = 9;
+	int boardCol = boardRow;
+	for(i = 0; i < boardRow; i++){
+		for(j = 0; j < boardCol; j++){
+
+			for (k = 0; k < 9; k++) {/* initializes prevNums as not used nums*/
+				table[i][j].prevNums[k] = 0;
+			}
+
+			table[i][j].currentNum = 0;
+			table[i][j].fixed = 0;
+			table[i][j].isInput = 0;
+			table[i][j].limit = 9;
+
+		}
+	}
+}
+
 void gameLoop() {
 	char input[256];
 	int command[4];
