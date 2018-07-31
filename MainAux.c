@@ -68,7 +68,7 @@ int getInput(char input[], int command[], char* filePath) {
 void commmandRouter(int command[], char* filePath) {
 	switch (command[0]) {
 		case 0: /*solve X*/
-			printf("%s is:", filePath);
+			printf("%s", filePath);
 			break;
 		case 1:  /*edit X*/
 			break;
