@@ -272,6 +272,8 @@ int exBacktrack(Cell** board){
 	cellIndex tempIndex;
 	node* lastEmpty = NULL; /* pointer to last empty cell */
 
+	push(&lastEmpty, -1, -1);
+
 	while(flag){
 		if(board[cellRow][cellCol].fixed == 1 || board[cellRow][cellCol].isInput == 1){ /* checks if cell is fixed or an input */
 			if(cellCol < boardSize - 1){
@@ -279,10 +281,13 @@ int exBacktrack(Cell** board){
 			}
 			else if(cellRow < boardSize - 1){
 				cellRow++;
+				cellCol = 0;
 			}else{
 				/* increase counter, got to last cell and it's fixed or input
 				 * need to get back to last empty cell */
 				countSols++;
+				printf("%d", countSols);
+
 				tempIndex = peek(lastEmpty);
 
 				resetCells(board, tempIndex, cellCol, cellRow);
@@ -299,6 +304,9 @@ int exBacktrack(Cell** board){
 			if(tempIndex.col != cellCol || tempIndex.row != cellRow){
 				push(&lastEmpty, cellRow, cellCol);
 			}
+			/*TODO: maybe row and col need to be switched
+			 *when trackbacking it gets back to cells instead of one
+			 * index increment is not good*/
 
 			availableNumbers(board, cellRow, cellCol);
 			limit = board[cellRow][cellCol].limit;
@@ -317,15 +325,17 @@ int exBacktrack(Cell** board){
 
 					cellCol = tempIndex.col;
 					cellRow = tempIndex.row;
-				}/*TODO: decide where to add new empty cell */
+				}
 			}else{
 				updateCell(board, 0, cellRow, cellCol);
 				if(cellCol < boardSize - 1){
 					cellCol++;
 				}else if(cellRow < boardSize - 1){
 					cellRow++;
+					cellCol = 0;
 				}else{
 					countSols++;
+					printf("%d", countSols);
 				}
 			}
 		}

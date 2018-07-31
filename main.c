@@ -24,8 +24,9 @@ int callSolver(char* boardStr){
 			userBoard[i][j].currentNum = boardStr[(i * 9) + j] -'0';
 			if(userBoard[i][j].currentNum != 0){
 				userBoard[i][j].fixed = 1;
+			}else{
+				userBoard[i][j].fixed = 0;
 			}
-			userBoard[i][j].fixed = 0;
 			userBoard[i][j].isError = 0;
 			userBoard[i][j].isInput = 0;
 			userBoard[i][j].limit = 0;
@@ -41,7 +42,7 @@ int main(){
 	char* boardStr;
 	SP_BUFF_SET();
 
-	boardStr = "090020500004005010060000003001800060000900002080072000500001070000300901003000000";
+	boardStr = "010052000004009602890060500106098240045000810970024000500201700023006090060000420";
 
 	sols = callSolver(boardStr);
 	printf("%s", "number of solutions is: - ");
