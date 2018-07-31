@@ -13,24 +13,13 @@
 #include "FilesHandler.h"
 
 
-Cell** userBoard;
-Cell** solvedBoard;
-Cell** tempBoard;
-
-
 int main(){
 	int seed = time(NULL);
 	SP_BUFF_SET();
 
-
 	srand(seed);
 
-	loadBoard("in.txt");
-	saveBoard("out.txt");
-
-	printBoard(userBoard, 0);
-
-
+	gameLoop();
 
 	return 0;
 }

@@ -38,7 +38,6 @@ int parseCommand(char* input, int* command, char* filePath){
 	int i;
 	filePath = NULL;
 
-	printf("%s", "Enter your command:\n");
 	if(strlen(input) > 256){
 		command[0] = error;
 		printf("%s", "ERROR: invalid command\n");

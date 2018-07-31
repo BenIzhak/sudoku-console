@@ -9,12 +9,12 @@
 #include <stdlib.h>
 #include "Cell.h"
 #include "Parser.h"
+#include "MainAux.h"
+
 
 extern int blockRowSize;
 extern int blockColSize;
 
-/* 0 - Init mode, 1 - Edit mode, 2 - Solve mode */
-int gameMode;
 
 Cell** setAllocatedMem(int boardRowAndColSize){
 	int i,j;
@@ -48,6 +48,8 @@ Cell** setAllocatedMem(int boardRowAndColSize){
 }
 
 int getInput(char input[], int command[], char* filePath) {
+
+	printf("%s", "Enter your command:\n");
 	if (fgets(input, 256, stdin) == NULL) {
 		/* EOF CASE */
 		return -1;
@@ -63,18 +65,42 @@ int getInput(char input[], int command[], char* filePath) {
 	return 0;
 }
 
-/*
-void commmandRouter(Cell** gameBoard, Cell** solvedBoard, Cell** tempBoard, int command[], char* filePath) {
+void commmandRouter(int command[], char* filePath) {
 	switch (command[0]) {
-		case 0: solve X
+		case 0: /*solve X*/
+			printf("%s", filePath);
 			break;
-		case 1:  edit X
-			if(command[1] == -1){
-			}
+		case 1:  /*edit X*/
+			break;
+		case 2:	/*mark_errors X*/
+			break;
+		case 3: /* print_board*/
+			break;
+		case 4: /* set X Y Z */
+			break;
+		case 5: /* validate */
+			break;
+		case 6: /* generate X Y */
+			break;
+		case 7: /* undo */
+			break;
+		case 8: /* redo */
+			break;
+		case 9: /* save X */
+			break;
+		case 10: /* hint X Y */
+			break;
+		case 11: /* num_solutions */
+			break;
+		case 12: /* autofill */
+			break;
+		case 13: /* reset */
+			break;
+		case 14: /* exit */
 			break;
 	}
 }
-*/
+
 
 void boardInit(Cell** table){
 	int i, j, k;
@@ -170,24 +196,22 @@ void printBoard(Cell** table, int markErrors){
 }
 
 
-/*
+
 void gameLoop() {
 	char input[256];
 	int command[4];
 	int exitFlag = 0;
 	char* filePath = NULL;
-	Cell** userBoard = NULL;
-	Cell** solvedBoard = NULL;
-	Cell** tempBoard = NULL;
+
+	gameMode = 0;
+	printf("%s", "Sudoku\n------\n");
+
+
 	while (exitFlag == 0) {
 		exitFlag = getInput(input, command, filePath);
-		commmandRouter(userBoard, solvedBoard, tempBoard, command, filePath);
-	}*//* will take command of edit X and Solve X and initilize the boards */
-
-	/*if (initGame(gameBoard, solvedBoard, tempBoard) == -1) {
-		 EOF CASE
-		exitGame(gameBoard, solvedBoard, tempBoard);
-	} ** this one initializes the boards, need to move after allocating memory***/
+		commmandRouter(command, filePath);
+	}
+}
 
 
 

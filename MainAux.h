@@ -10,12 +10,18 @@
 
 #include "Cell.h"
 
+Cell** userBoard;
+Cell** solvedBoard;
+Cell** tempBoard;
+
+/* 0 - Init mode, 1 - Edit mode, 2 - Solve mode */
+int gameMode;
+
 void gameLoop();
 void freeBoardMem(Cell** gameBoard, Cell** solvedBoard, Cell** tempBoard, int BlockRowSize, int BlockColSize);
 Cell** setAllocatedMem(int boardRowAndColSize);
 void printBoard(Cell** table, int markErrors);
 void boardInit(Cell** table);
-
 Cell** setAllocatedMem();
 void boardInit(Cell** table);
 
