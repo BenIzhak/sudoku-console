@@ -17,7 +17,7 @@
  * --------------------
  *  resets cell num to 0 and put 0 in array of the previous numbers it tried during backtracking
  *
- *  table: 2d array containing sudoku cells
+ *  board: 2d array containing sudoku cells
  *	cellRow: row of cell to reset
  *	cellCol: column of cell to reset
  */
@@ -36,7 +36,7 @@ void resetCell(Cell** board, int cellRow, int cellCol){
  * --------------------
  *  resets cells between [cellRow][CellCol] to tempIndex, num to 0 and put 0 in array of the previous numbers it tried during backtracking
  *
- *	table: 2d array containing sudoku cells
+ *	board: 2d array containing sudoku cells
  *  tempIndex: first index which doesn't need to be reset
  *	cellRow: row of first cell to reset
  *	cellCol: column of first cell to reset
@@ -47,7 +47,11 @@ void resetCells(Cell** board, cellIndex tempIndex, int cellCol, int cellRow){
 	int boardSize = 9;/* TODO: need to change to dynamic value */
 
 	while(dstRow != cellRow || dstCol != cellCol){
-		resetCell(board, cellRow, cellCol);
+
+		if(board[cellRow][cellCol].fixed == 0 && board[cellRow][cellCol].isInput == 0){
+			resetCell(board, cellRow, cellCol);
+		}
+
 		if(cellCol == 0){
 			cellCol = boardSize - 1;
 			cellRow--;
@@ -61,17 +65,17 @@ void resetCells(Cell** board, cellIndex tempIndex, int cellCol, int cellRow){
  * --------------------
  *  updates cell with a new number with one of it's valid numbers
  *
- *  table: 2d array containing sudoku cells
+ *  board: 2d array containing sudoku cells
  *  numIndex: index of valid number from the cell valid numbers array
  *	cellRow: row of cell to reset
  *	cellCol: column of cell to reset
  */
-void updateCell(Cell** table, int numIndex, int cellRow, int cellCol){
+void updateCell(Cell** board, int numIndex, int cellRow, int cellCol){
 
 	int num;
-	num = table[cellRow][cellCol].validNums[numIndex];
-	table[cellRow][cellCol].currentNum = num;
-	table[cellRow][cellCol].prevNums[num - 1] = 1;
+	num = board[cellRow][cellCol].validNums[numIndex];
+	board[cellRow][cellCol].currentNum = num;
+	board[cellRow][cellCol].prevNums[num - 1] = 1;
 }
 
 /*
@@ -79,17 +83,17 @@ void updateCell(Cell** table, int numIndex, int cellRow, int cellCol){
  * --------------------
  *  checks if a given number is in a specific row
  *
- *  table: 2d array containing sudoku cells
+ *  board: 2d array containing sudoku cells
  *  num: number to check
  *	cellRow: row to check
  *
  *	returns: -1 if number already appears in row, else it returns 0
  */
-int rowCheck(Cell** table, int num, int cellRow){
+int rowCheck(Cell** board, int num, int cellRow){
 	int i, numCompare;
 	int rowSize = 9;/*TODO:change back to dynamic value or to old value:BLOCK_ROW_SIZE * BLOCK_COL_SIZE;*/
 	for(i = 0; i < rowSize; i++){
-		numCompare = table[cellRow][i].currentNum;
+		numCompare = board[cellRow][i].currentNum;
 		if(numCompare != 0){
 			if(numCompare == num){
 				return -1;
@@ -104,17 +108,17 @@ int rowCheck(Cell** table, int num, int cellRow){
  * --------------------
  *  checks if a given number is in a specific col
  *
- *  table: 2d array containing sudoku cells
+ *  board: 2d array containing sudoku cells
  *  num: number to check
  *	cellCol: column to check
  *
  *	returns: -1 if number already appears in row, else it returns 0
  */
-int colCheck(Cell** table, int num,  int cellCol){
+int colCheck(Cell** board, int num,  int cellCol){
 	int i, numCompare;
 	int colSize = 9;/*TODO:change back to dynamic value or to old value:BLOCK_ROW_SIZE * BLOCK_COL_SIZE;*/
 	for(i = 0; i < colSize; i++){
-		numCompare = table[i][cellCol].currentNum;
+		numCompare = board[i][cellCol].currentNum;
 		if(numCompare != 0){
 			if(numCompare == num){
 				return -1;
@@ -176,9 +180,9 @@ int getcurrentblockRow(int cellRow){
  * Function:  blockCheck
  * --------------------
  *  checks if numToCheck is in the block of the cell
- *  at column of cellCol and row of cellRow in table
+ *  at column of cellCol and row of cellRow in board
  *
- *	table: 2d array containing sudoku cells
+ *	board: 2d array containing sudoku cells
  *	numToCheck: number we want to check
  *	cellRow: cell's row
  *	cellCol: cells's column
@@ -186,7 +190,7 @@ int getcurrentblockRow(int cellRow){
  *	returns: 0 numToCheck is not in the block,
  *			-1 numToCheck is in the block
  */
-int blockCheck(Cell** table,int numToCheck , int cellRow, int cellCol){
+int blockCheck(Cell** board,int numToCheck , int cellRow, int cellCol){
 	int currentNum;
 	int i,j;
 	int currentblockRow, currentblockCol;
@@ -197,7 +201,7 @@ int blockCheck(Cell** table,int numToCheck , int cellRow, int cellCol){
 	minBlockLimitCol = currentblockCol - 3;/*TODO:change back to dynamic value or to old currentblockRow - BLOCK_COL_SIZE;*/
 	for(i = minBlockLimitRow; i < currentblockRow; i++){
 		for(j = minBlockLimitCol; j < currentblockCol; j++){
-			currentNum = table[i][j].currentNum;
+			currentNum = board[i][j].currentNum;
 			if(numToCheck == currentNum){
 				return -1;
 			}
@@ -206,18 +210,18 @@ int blockCheck(Cell** table,int numToCheck , int cellRow, int cellCol){
 	return 0;
 }
 
-int validAssignment(Cell** table, int numToCheck, int cellRow, int cellCol){
+int validAssignment(Cell** board, int numToCheck, int cellRow, int cellCol){
 	int temp = 0;
 
-	temp = rowCheck(table, numToCheck, cellRow);
+	temp = rowCheck(board, numToCheck, cellRow);
 	if(temp < 0){
 		return -1;
 	}
-	temp = colCheck(table, numToCheck, cellCol);
+	temp = colCheck(board, numToCheck, cellCol);
 	if(temp < 0){
 		return -1;
 	}
-	temp = blockCheck(table, numToCheck, cellRow, cellCol);
+	temp = blockCheck(board, numToCheck, cellRow, cellCol);
 	if(temp < 0){
 		return -1;
 	}
@@ -231,27 +235,25 @@ int validAssignment(Cell** table, int numToCheck, int cellRow, int cellCol){
  * 	at column of cellCol and row of cellRow and updates
  * 	the validNums array with them and the limit field accordingly
  *
- *	table: 2d array containing sudoku cells
+ *	board: 2d array containing sudoku cells
  *	cellRow: cell's row
  *	cellCol: cells's column
  *
  */
-void availableNumbers(Cell** table, int cellRow, int cellCol){
+void availableNumbers(Cell** board, int cellRow, int cellCol){
 	int prevNumFlag;
 	int counter = 0;/* counts the amount of valid numbers*/
 	int num;
 	for(num = 1; num < 10; num++){
-		/* TODO: problem here! prevnumflag is getting an int from somewhere else, it makes the
-		 * valid nums empty */
-		prevNumFlag = table[cellRow][cellCol].prevNums[num - 1];
+		prevNumFlag = board[cellRow][cellCol].prevNums[num - 1];
 		if(prevNumFlag == 0){/* checks if num was previously used */
-			if(validAssignment(table, num, cellRow, cellCol) == 0){/* value is 0 if num is a valid assignment*/
-				table[cellRow][cellCol].validNums[counter] = num;
+			if(validAssignment(board, num, cellRow, cellCol) == 0){/* value is 0 if num is a valid assignment*/
+				board[cellRow][cellCol].validNums[counter] = num;
 				counter++;
 			}
 		}
 	}
-	table[cellRow][cellCol].limit = counter;
+	board[cellRow][cellCol].limit = counter;
 }
 
 /*
@@ -286,7 +288,6 @@ int exBacktrack(Cell** board){
 				/* increase counter, got to last cell and it's fixed or input
 				 * need to get back to last empty cell */
 				countSols++;
-				printf("%d", countSols);
 
 				tempIndex = peek(lastEmpty);
 
@@ -304,9 +305,6 @@ int exBacktrack(Cell** board){
 			if(tempIndex.col != cellCol || tempIndex.row != cellRow){
 				push(&lastEmpty, cellRow, cellCol);
 			}
-			/*TODO: maybe row and col need to be switched
-			 *when trackbacking it gets back to cells instead of one
-			 * index increment is not good*/
 
 			availableNumbers(board, cellRow, cellCol);
 			limit = board[cellRow][cellCol].limit;
@@ -327,6 +325,7 @@ int exBacktrack(Cell** board){
 					cellRow = tempIndex.row;
 				}
 			}else{
+				/* there is a number I can put in cell */
 				updateCell(board, 0, cellRow, cellCol);
 				if(cellCol < boardSize - 1){
 					cellCol++;
@@ -334,8 +333,8 @@ int exBacktrack(Cell** board){
 					cellRow++;
 					cellCol = 0;
 				}else{
+					/* got to last cell incremenent amount of solutions, no other cell to move to */
 					countSols++;
-					printf("%d", countSols);
 				}
 			}
 		}
