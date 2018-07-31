@@ -50,9 +50,9 @@ int main(){
 	/* 134602070567000020020000500600203050002500090010006080701000200250040030400020105 -- 10 solutions */
 	/* 134602000567090000028000000000203050070510090010006080701000200050040030400000000 -- 44 solutions */
 	sols = callSolver(boardStr);
-	printf("%s", "number of solutions is: - ");
+	printf("%s", "number of solutions is: -- ");
 	printf("%d", sols);
-	printf("%s", " -");
+	printf("%s", " --");
 
 	srand(seed);
 
