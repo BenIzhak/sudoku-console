@@ -266,7 +266,6 @@ void availableNumbers(Cell** board, int cellRow, int cellCol){
  *	returns: amount of different solutions
  *
  */
-/*TODO: Add different error messages */
 int exBacktrack(Cell** board){
 	int limit, flag = 1, cellCol = 0, cellRow = 0, boardSize = 9, countSols = 0;
 	int frstColIndex = -1; /* column of the first empty cell */
