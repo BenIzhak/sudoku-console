@@ -9,16 +9,23 @@
 #include <stdlib.h>
 #include "Cell.h"
 #include "Parser.h"
+#include "game.h" /* TODO: DO NOT REMOVE */
 
 extern int blockRowSize;
 extern int blockColSize;
 
+Cell** userBoard;
+Cell** solvedBoard;
+Cell** tempBoard;
+
 /* 0 - Init mode, 1 - Edit mode, 2 - Solve mode */
 int gameMode;
 
-Cell** setAllocatedMem(int boardRowAndColSize){
+Cell** setAllocatedMem(){
 	int i,j;
+	int boardRowAndColSize = blockRowSize * blockColSize;
 	Cell** temp = (Cell **) malloc(boardRowAndColSize * sizeof(Cell*));
+
 	if(temp == NULL){
 		printf("%s","Error: setAllocatedMem has failed\n");
 		return NULL;
@@ -129,12 +136,13 @@ void freeBoardMem(Cell** gameBoard, Cell** solvedBoard, Cell** tempBoard, int Bl
 	free(gameBoard);
 }
 
-void printBoard(Cell** table, int markErrors){
+void printBoard(Cell** table){
 	int i, j;
 	int boardRowAndColSize = blockColSize * blockRowSize;
 	int separatorRowNum = (4 * boardRowAndColSize) + blockRowSize + 1;
 	int currentNum;
 	char * separatorRow;
+	int markErrors = getMarkErrors();
 
 	separatorRow = (char*) calloc(separatorRowNum, sizeof(char));
 	for(i = 0; i < separatorRowNum; i++){
@@ -167,6 +175,7 @@ void printBoard(Cell** table, int markErrors){
 		printf("%s", "|\n");
 	}
 	printf("%s", separatorRow);
+	free(separatorRow);
 }
 
 
