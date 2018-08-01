@@ -53,8 +53,11 @@ int parseCommand(char* input, int* command, char* filePath){
 	}
 	/* Get the command type */
 	if(strcmp(token,"solve") == 0){
+
 		command[0] = solve;
+
 	}else if(strcmp(token,"edit") == 0){
+
 		command[0] = edit;
 	}else if(strcmp(token,"mark_errors") == 0){
 		command[0] = mark_errors;

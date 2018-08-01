@@ -48,7 +48,7 @@ Cell** setAllocatedMem(int boardRowAndColSize){
 }
 
 int getInput(char input[], int command[], char* filePath) {
-
+	/* TODO: check on nova that fgets waits for input */
 	printf("%s", "Enter your command:\n");
 	if (fgets(input, 256, stdin) == NULL) {
 		/* EOF CASE */
@@ -56,6 +56,7 @@ int getInput(char input[], int command[], char* filePath) {
 	}
 	parseCommand(input, command, filePath);
 	while (validInput(command) == -1) {
+		printf("%s", "Enter your command:\n");
 		if (fgets(input, 256, stdin) == NULL) {
 			/* EOF CASE */
 			return -1;
@@ -69,34 +70,49 @@ void commmandRouter(int command[], char* filePath) {
 	switch (command[0]) {
 		case 0: /*solve X*/
 			printf("%s", filePath);
+			printf("%s", "solve X");
 			break;
 		case 1:  /*edit X*/
+			printf("%s", "edit X");
 			break;
 		case 2:	/*mark_errors X*/
+			printf("%s", "errors X");
 			break;
 		case 3: /* print_board */
+			printf("%s", "print_board");
 			break;
 		case 4: /* set X Y Z */
+			printf("%s", "set X Y Z");
 			break;
 		case 5: /* validate */
+			printf("%s", "validate");
 			break;
 		case 6: /* generate X Y */
+			printf("%s", "generate X Y");
 			break;
 		case 7: /* undo */
+			printf("%s", "undo");
 			break;
 		case 8: /* redo */
+			printf("%s", "redo");
 			break;
 		case 9: /* save X */
+			printf("%s", "save X");
 			break;
 		case 10: /* hint X Y */
+			printf("%s", "hint X Y");
 			break;
 		case 11: /* num_solutions */
+			printf("%s", "num_solutions");
 			break;
 		case 12: /* autofill */
+			printf("%s", "autofill");
 			break;
 		case 13: /* reset */
+			printf("%s", "reset");
 			break;
 		case 14: /* exit */
+			printf("%s", "exit");
 			break;
 	}
 }

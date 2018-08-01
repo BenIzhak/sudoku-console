@@ -10,6 +10,15 @@
 
 int parseCommand(char* input, int* command, char* filePath);
 
+/*
+ * Function:  validInput
+ * --------------------
+ * 	TODO:add description
+ *
+ *	returns: 0 if input is OK, otherwise returns -1
+ *
+ *	command: TODO:add description
+ */
 int validInput(int* command);
 
 
