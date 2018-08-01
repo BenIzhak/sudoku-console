@@ -6,11 +6,14 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 /* TODO:
  * 1. check if the line "Enter your command:" is printed even after blank line */
 
+extern int blockRowSize;
+extern int blockColSize;
 
 enum COMMAND{
 	solve,
@@ -94,25 +97,59 @@ int parseCommand(char* input, int* command, char* filePath){
 		sscanf(token, "%s", filePath);
 		command[1] = 0;
 	}else{
-		if(isDigit(token)){
-			sscanf(token, "%d", &command[1]);
+		if(token != NULL){
+			if(isDigit(token)){
+				sscanf(token, "%d", &command[1]);
+			}
 		}
 	}
 	token = strtok(NULL,delim);
 	if(token!= NULL){
 		if(isDigit(token)){
 			sscanf(token, "%d", &command[2]);
-	}
+		}
 	}
 	token = strtok(NULL,delim);
 	if(token!= NULL){
 		if(isDigit(token)){
 			sscanf(token, "%d", &command[3]);
-	}
+		}
 	}
 	return 0;
 }
 
+int validRange(int* command){
+	int i;
+	int boardRowAndColSize = blockRowSize * blockColSize;
+	if(command[0] == mark_errors){
+		if((command[1] != 0) | (command[1] != 1)){
+			printf("%s", "Error: the value should be 0 or 1\n");
+			return -1;
+		}
+	}else if(command[0] == set){
+		for(i = 1; i <= 2; i++){
+			/* check <X,Y> */
+			if((command[i] > boardRowAndColSize) | (command[i] < 1)){
+				printf("Error: value not in range 0-%d\n", boardRowAndColSize);
+				return -1;
+			}
+		}
+		if((command[3] > boardRowAndColSize) | (command[3] < 0)){
+			/* check <Z> */
+			printf("Error: value not in range 0-%d\n", boardRowAndColSize);
+			return -1;
+		}
+	}else if(command[0] == hint){
+		for(i = 1; i <= 2; i++){
+			/* check <X,Y> */
+			if((command[i] > boardRowAndColSize) | (command[i] < 1)){
+				printf("Error: value not in range 0-%d\n", boardRowAndColSize);
+				return -1;
+			}
+		}
+	}
+	return 0;
+}
 
 int validInput(int* command){
 	/* check if the necessary parameters are supplied */
@@ -141,8 +178,13 @@ int validInput(int* command){
 		printf("%s", "ERROR: invalid command\n");
 		return -1;
 	}
+	if(command[0] == mark_errors){
+		/* call to validRange  if range check is needed */
+		return validRange(command);
+	}
 	return 0;
 }
+
 
 int isDigit(char* token){
 	/* check if the char array contains only digits */
