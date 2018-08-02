@@ -12,6 +12,7 @@
 #include "MainAux.h"
 #include "FilesHandler.h"
 #include "game.h"
+#include "ExSolver.h"
 
 extern Cell** userBoard;/*TODO:Remove */
 extern int blockRowSize;/*TODO:Remove */
@@ -38,6 +39,7 @@ void testing(char* boardStr){
 			userBoard[i][j].limit = 0;
 		}
 	}
+
 }
 
 int main(){
@@ -52,13 +54,33 @@ int main(){
 	/* 134602070567090020928000516600203050072510090010006080701365240256840030400020105 -- 1 solutions */
 	/* 134602070567000020020000500600203050002500090010006080701000200250040030400020105 -- 10 solutions */
 	/* 134602000567090000028000000000203050070510090010006080701000200050040030400000000 -- 44 solutions */
-
 	testing(boardStr);
+
 	printBoard(userBoard);
 
 	srand(seed);
 
+	printf("%s","\n");
+	setCell(0,0,9);
+	printf("%d", setCell(0,0,9));
+	printf("%s","\n");
+
 	setCell(0,2,9);
+	printf("%s","\n");
+	printBoard(userBoard);
+
+	setCell(4,2,9);
+
+	printf("%s","\n");
+	printBoard(userBoard);
+
+	setCell(4,2,9);
+
+	printf("%s","\n");
+	printBoard(userBoard);
+
+	setCell(4,2,3);
+
 	printf("%s","\n");
 	printBoard(userBoard);
 

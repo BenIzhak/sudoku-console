@@ -10,5 +10,7 @@
 
 
 int exBacktrack(Cell** board);
+int validAssignment(Cell** board, int numToCheck, int cellRow, int cellCol);
+
 
 #endif /* EXSOLVER_H_ */

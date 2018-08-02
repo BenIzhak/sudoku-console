@@ -29,6 +29,18 @@ void setMarkErrors(int setting);
 int getMarkErrors();
 
 /*
+ * Function:  findAndMarkErrors
+ * --------------------
+ * 	goes over all cells in board and checks whether their assignment is valid.
+ * 	if it isn't valid mark their cell as an error and change errorsFlag to -1 if there are no
+ * 	errors change errorsFlag to 0
+ *
+ *	returns: -1 if an error was found, 0 if no error was found
+ *
+ */
+void findAndMarkErrors();
+
+/*
  * Function:  setCell
  * --------------------
  * 	sets cell in column of X and row of Y to value of Z
@@ -40,7 +52,32 @@ int getMarkErrors();
  *  Y: row of cell
  *	Z: new value to set cell to
  */
+
 int setCell(int X, int Y, int Z);
 
+/*
+ * Function:  validate
+ * --------------------
+ *	checks if board is valid or not, first by checking for simple errors(same number more than once in a row/column/block
+ *	then using ILP to check if board is solvable
+ *
+ *	returns: 0 - simple error, 1 - board is not solvable, 2 - board is solvable
+ *
+ */
+int validate();
+
+/*
+ * Function:  generate
+ * --------------------
+ *	Generates a puzzle by randomly filling cellsToFill cells with random legal values,
+ *	then solve the board with ILP and keep only cellsToKeep cells
+ *
+ *	returns: 0 - board is not empty, 1 - cellsToFill or cellsToKeep are more than the amount of empty cells
+ *
+ *	cellsToFill: amount of cells to fill with random values
+ *	cellsToKeep: amount of cells to keep after generating random values
+ */
+
+int generate(int cellsToFill, int cellsToKeep);
 
 #endif /* GAME_H_ */

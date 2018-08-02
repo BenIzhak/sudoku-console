@@ -12,6 +12,7 @@
 #include "Cell.h"
 
 
+
 /*
  * Function:  resetCell
  * --------------------
@@ -89,14 +90,16 @@ void updateCell(Cell** board, int numIndex, int cellRow, int cellCol){
  *
  *	returns: -1 if number already appears in row, else it returns 0
  */
-int rowCheck(Cell** board, int num, int cellRow){
+int rowCheck(Cell** board, int num, int cellRow, int cellCol){
 	int i, numCompare;
-	int rowSize = 9;/*TODO:change back to dynamic value or to old value:BLOCK_ROW_SIZE * BLOCK_COL_SIZE;*/
-	for(i = 0; i < rowSize; i++){
-		numCompare = board[cellRow][i].currentNum;
-		if(numCompare != 0){
-			if(numCompare == num){
-				return -1;
+	int colSize = 9;/*TODO:change back to dynamic value or to old value:BLOCK_ROW_SIZE * BLOCK_COL_SIZE;*/
+	for(i = 0; i < colSize; i++){
+		if(i != cellCol){
+			numCompare = board[cellRow][i].currentNum;
+			if(numCompare != 0){
+				if(numCompare == num){
+					return -1;
+				}
 			}
 		}
 	}
@@ -114,14 +117,16 @@ int rowCheck(Cell** board, int num, int cellRow){
  *
  *	returns: -1 if number already appears in row, else it returns 0
  */
-int colCheck(Cell** board, int num,  int cellCol){
+int colCheck(Cell** board, int num, int cellRow, int cellCol){
 	int i, numCompare;
-	int colSize = 9;/*TODO:change back to dynamic value or to old value:BLOCK_ROW_SIZE * BLOCK_COL_SIZE;*/
-	for(i = 0; i < colSize; i++){
-		numCompare = board[i][cellCol].currentNum;
-		if(numCompare != 0){
-			if(numCompare == num){
-				return -1;
+	int rowSize = 9;/*TODO:change back to dynamic value or to old value:BLOCK_ROW_SIZE * BLOCK_COL_SIZE;*/
+	for(i = 0; i < rowSize; i++){
+		if( i != cellRow){
+			numCompare = board[i][cellCol].currentNum;
+			if(numCompare != 0){
+				if(numCompare == num){
+					return -1;
+				}
 			}
 		}
 	}
@@ -201,9 +206,11 @@ int blockCheck(Cell** board,int numToCheck , int cellRow, int cellCol){
 	minBlockLimitCol = currentblockCol - 3;/*TODO:change back to dynamic value or to old currentblockRow - BLOCK_COL_SIZE;*/
 	for(i = minBlockLimitRow; i < currentblockRow; i++){
 		for(j = minBlockLimitCol; j < currentblockCol; j++){
-			currentNum = board[i][j].currentNum;
-			if(numToCheck == currentNum){
-				return -1;
+			if(i != cellRow || j != cellCol){
+				currentNum = board[i][j].currentNum;
+				if((numToCheck == currentNum) && (currentNum != 0)){
+					return -1;
+				}
 			}
 		}
 	}
@@ -213,11 +220,11 @@ int blockCheck(Cell** board,int numToCheck , int cellRow, int cellCol){
 int validAssignment(Cell** board, int numToCheck, int cellRow, int cellCol){
 	int temp = 0;
 
-	temp = rowCheck(board, numToCheck, cellRow);
+	temp = rowCheck(board, numToCheck, cellRow, cellCol);
 	if(temp < 0){
 		return -1;
 	}
-	temp = colCheck(board, numToCheck, cellCol);
+	temp = colCheck(board, numToCheck, cellRow, cellCol);
 	if(temp < 0){
 		return -1;
 	}
