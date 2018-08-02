@@ -9,12 +9,12 @@
 #include <stdlib.h>
 #include "Cell.h"
 #include "Parser.h"
+#include "MainAux.h"
+
 
 extern int blockRowSize;
 extern int blockColSize;
 
-/* 0 - Init mode, 1 - Edit mode, 2 - Solve mode */
-int gameMode;
 
 Cell** setAllocatedMem(int boardRowAndColSize){
 	int i,j;
@@ -47,34 +47,81 @@ Cell** setAllocatedMem(int boardRowAndColSize){
 	return temp;
 }
 
-int getInput(char input[], int command[], char* filePath) {
+int getInput(char input[], int command[], char* filePath, int* numOfArgs) {
+	/* TODO: check on nova that fgets waits for input */
+	printf("%s", "Enter your command:\n");
 	if (fgets(input, 256, stdin) == NULL) {
 		/* EOF CASE */
 		return -1;
 	}
-	parseCommand(input, command, filePath);
-	while (validInput(command) == -1) {
+	parseCommand(input, command, filePath, numOfArgs);
+	while (validInput(command, *numOfArgs) == -1) {
+		printf("%s", "Enter your command:\n");
 		if (fgets(input, 256, stdin) == NULL) {
 			/* EOF CASE */
 			return -1;
 		}
-		parseCommand(input, command, filePath);
+		parseCommand(input, command, filePath, numOfArgs);
 	}
 	return 0;
 }
 
-/*
-void commmandRouter(Cell** gameBoard, Cell** solvedBoard, Cell** tempBoard, int command[], char* filePath) {
+void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 	switch (command[0]) {
-		case 0: solve X
+		case 0: /*solve X*/
+			printf("\n%s ", filePath);
+			printf("%s", "solve X");
 			break;
-		case 1:  edit X
-			if(command[1] == -1){
+		case 1:  /*edit X*/
+			if(numOfArgs > 0){
+				printf("\n%s ", filePath);
+				printf("%s", "edit X");
+			}else{
+				printf("%s", "edit");
 			}
+			break;
+		case 2:	/*mark_errors X*/
+			printf("%s", "errors X");
+			break;
+		case 3: /* print_board */
+			printf("%s", "print_board");
+			break;
+		case 4: /* set X Y Z */
+			printf("%s", "set X Y Z");
+			break;
+		case 5: /* validate */
+			printf("%s", "validate");
+			break;
+		case 6: /* generate X Y */
+			printf("%s", "generate X Y");
+			break;
+		case 7: /* undo */
+			printf("%s", "undo");
+			break;
+		case 8: /* redo */
+			printf("%s", "redo");
+			break;
+		case 9: /* save X */
+			printf("%s", "save X");
+			break;
+		case 10: /* hint X Y */
+			printf("%s", "hint X Y");
+			break;
+		case 11: /* num_solutions */
+			printf("%s", "num_solutions");
+			break;
+		case 12: /* autofill */
+			printf("%s", "autofill");
+			break;
+		case 13: /* reset */
+			printf("%s", "reset");
+			break;
+		case 14: /* exit */
+			printf("%s", "exit");
 			break;
 	}
 }
-*/
+
 
 void boardInit(Cell** table){
 	int i, j, k;
@@ -134,7 +181,7 @@ void printBoard(Cell** table, int markErrors){
 	int boardRowAndColSize = blockColSize * blockRowSize;
 	int separatorRowNum = (4 * boardRowAndColSize) + blockRowSize + 1;
 	int currentNum;
-	char * separatorRow;
+	char* separatorRow;
 
 	separatorRow = (char*) calloc(separatorRowNum, sizeof(char));
 	for(i = 0; i < separatorRowNum; i++){
@@ -167,27 +214,27 @@ void printBoard(Cell** table, int markErrors){
 		printf("%s", "|\n");
 	}
 	printf("%s", separatorRow);
+	free(separatorRow);
 }
 
 
-/*
+
 void gameLoop() {
 	char input[256];
+	char filePath[256];
 	int command[4];
 	int exitFlag = 0;
-	char* filePath = NULL;
-	Cell** userBoard = NULL;
-	Cell** solvedBoard = NULL;
-	Cell** tempBoard = NULL;
-	while (exitFlag == 0) {
-		exitFlag = getInput(input, command, filePath);
-		commmandRouter(userBoard, solvedBoard, tempBoard, command, filePath);
-	}*//* will take command of edit X and Solve X and initilize the boards */
+	int numOfArgs;
 
-	/*if (initGame(gameBoard, solvedBoard, tempBoard) == -1) {
-		 EOF CASE
-		exitGame(gameBoard, solvedBoard, tempBoard);
-	} ** this one initializes the boards, need to move after allocating memory***/
+	gameMode = 0;
+	printf("%s", "Sudoku\n------\n");
+
+
+	while (exitFlag == 0) {
+		exitFlag = getInput(input, command, filePath, &numOfArgs);
+		commmandRouter(command, numOfArgs, filePath);
+	}
+}
 
 
 

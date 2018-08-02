@@ -54,8 +54,7 @@ void cellAssignment(int rowCordinate, int colCordinate ,int num, int fixed){
  */
 int loadBoard(char* filePath){
 	/* reads new m and n values from file, if reading fails returns -1 */
-	/*TODO: check if fscanf success
-	 *TODO: maybe call init board after allocation */
+	/*TODO: check if fscanf success*/
 	FILE* fp = openFile(filePath,"r");
 	int m, n, i, j;
 	int currentNum = 0;
@@ -102,6 +101,7 @@ int loadBoard(char* filePath){
 			i++;
 		}
 	}
+	fclose(fp);
 	return 1;
 }
 
@@ -139,6 +139,7 @@ int saveBoard(char* filePath){
 			}
 		}
 	}
+	fclose(fp);
 	return 1;
 }
 
