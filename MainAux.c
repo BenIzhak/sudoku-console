@@ -17,7 +17,7 @@ extern int blockColSize;
 
 
 Cell** setAllocatedMem(int boardRowAndColSize){
-	int i,j;
+	int i;
 	Cell** temp = (Cell **) malloc(boardRowAndColSize * sizeof(Cell*));
 	if(temp == NULL){
 		printf("%s","Error: setAllocatedMem has failed\n");
@@ -29,7 +29,7 @@ Cell** setAllocatedMem(int boardRowAndColSize){
 				printf("%s","Error: setAllocatedMem has failed\n");
 				return NULL;
 		}
-	}
+	}/*
 	for (i = 0; i < boardRowAndColSize; i++){
 		for (j = 0; j < boardRowAndColSize; j++){
 			temp[i][j].prevNums = (int *) malloc((blockRowSize * blockColSize) * sizeof(int));
@@ -43,7 +43,7 @@ Cell** setAllocatedMem(int boardRowAndColSize){
 					return NULL;
 			}
 		}
-	}
+	}*/
 	return temp;
 }
 
@@ -141,39 +141,21 @@ void boardInit(Cell** table){
 	}
 }
 
-void freeBoardMem(Cell** gameBoard, Cell** solvedBoard, Cell** tempBoard, int BlockRowSize, int BlockColSize){
+void freeBoardMem(Cell** Board, int BlockRowSize, int BlockColSize){
 	int boardRowAndColSize = BlockRowSize * BlockColSize;
-	int i, j;
+	int i;
+	/*
 	for(i = 0; i < boardRowAndColSize; i++){
 		for(j = 0; j < boardRowAndColSize; j++){
-			free(gameBoard[i][j].prevNums);
-			free(gameBoard[i][j].validNums);
+			free(Board[i][j].prevNums);
+			free(Board[i][j].validNums);
 		}
 	}
-	for(i = 0; i < boardRowAndColSize; i++){
-		for(j = 0; j < boardRowAndColSize; j++){
-			free(solvedBoard[i][j].prevNums);
-			free(solvedBoard[i][j].validNums);
-		}
-	}
-	for(i = 0; i < boardRowAndColSize; i++){
-		for(j = 0; j < boardRowAndColSize; j++){
-			free(tempBoard[i][j].prevNums);
-			free(tempBoard[i][j].validNums);
-		}
-	}
+	*/
 	for (i = 0; i < boardRowAndColSize; i++) {
-		free(tempBoard[i]);
+		free(Board[i]);
 	}
-	for (i = 0; i < boardRowAndColSize; i++) {
-		free(solvedBoard[i]);
-	}
-	for (i = 0; i < boardRowAndColSize; i++) {
-		free(gameBoard[i]);
-	}
-	free(tempBoard);
-	free(solvedBoard);
-	free(gameBoard);
+	free(Board);
 }
 
 void printBoard(Cell** table, int markErrors){

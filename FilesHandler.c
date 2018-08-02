@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "MainAux.h"
+#include "game.h"
 
 int blockRowSize;
 int blockColSize;
@@ -67,11 +68,17 @@ int loadBoard(char* filePath){
 	fscanf(fp, "%d", &n);
 
 	/* free memory of previous boards */
-	freeBoardMem(userBoard, solvedBoard, tempBoard , blockRowSize, blockColSize);
+	freeBoardMem(userBoard, blockRowSize, blockColSize);
+	freeBoardMem(tempBoard, blockRowSize, blockColSize);
+	freeBoardMem(solvedBoard, blockRowSize, blockColSize);
 
 	/* set new values to blockRowSize and blockColSize */
 	blockColSize = m;
 	blockRowSize = n;
+
+	/* empty the command list */
+	/*TODO: call hardReset from game.c*/
+
 
 	/* allocate memory for news boards */
 	boardRowAndColSize = blockColSize * blockRowSize;
