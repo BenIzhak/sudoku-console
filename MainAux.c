@@ -47,33 +47,38 @@ Cell** setAllocatedMem(int boardRowAndColSize){
 	return temp;
 }
 
-int getInput(char input[], int command[], char* filePath) {
+int getInput(char input[], int command[], char* filePath, int* numOfArgs) {
 	/* TODO: check on nova that fgets waits for input */
 	printf("%s", "Enter your command:\n");
 	if (fgets(input, 256, stdin) == NULL) {
 		/* EOF CASE */
 		return -1;
 	}
-	parseCommand(input, command, filePath);
-	while (validInput(command) == -1) {
+	parseCommand(input, command, filePath, numOfArgs);
+	while (validInput(command, *numOfArgs) == -1) {
 		printf("%s", "Enter your command:\n");
 		if (fgets(input, 256, stdin) == NULL) {
 			/* EOF CASE */
 			return -1;
 		}
-		parseCommand(input, command, filePath);
+		parseCommand(input, command, filePath, numOfArgs);
 	}
 	return 0;
 }
 
-void commmandRouter(int command[], char* filePath) {
+void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 	switch (command[0]) {
 		case 0: /*solve X*/
-			printf("%s", filePath);
+			printf("\n%s ", filePath);
 			printf("%s", "solve X");
 			break;
 		case 1:  /*edit X*/
-			printf("%s", "edit X");
+			if(numOfArgs > 0){
+				printf("\n%s ", filePath);
+				printf("%s", "edit X");
+			}else{
+				printf("%s", "edit");
+			}
 			break;
 		case 2:	/*mark_errors X*/
 			printf("%s", "errors X");
@@ -176,7 +181,7 @@ void printBoard(Cell** table, int markErrors){
 	int boardRowAndColSize = blockColSize * blockRowSize;
 	int separatorRowNum = (4 * boardRowAndColSize) + blockRowSize + 1;
 	int currentNum;
-	char * separatorRow;
+	char* separatorRow;
 
 	separatorRow = (char*) calloc(separatorRowNum, sizeof(char));
 	for(i = 0; i < separatorRowNum; i++){
@@ -209,23 +214,25 @@ void printBoard(Cell** table, int markErrors){
 		printf("%s", "|\n");
 	}
 	printf("%s", separatorRow);
+	free(separatorRow);
 }
 
 
 
 void gameLoop() {
 	char input[256];
+	char filePath[256];
 	int command[4];
 	int exitFlag = 0;
-	char* filePath = NULL;
+	int numOfArgs;
 
 	gameMode = 0;
 	printf("%s", "Sudoku\n------\n");
 
 
 	while (exitFlag == 0) {
-		exitFlag = getInput(input, command, filePath);
-		commmandRouter(command, filePath);
+		exitFlag = getInput(input, command, filePath, &numOfArgs);
+		commmandRouter(command, numOfArgs, filePath);
 	}
 }
 

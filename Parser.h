@@ -8,7 +8,7 @@
 #ifndef PARSER_H_
 #define PARSER_H_
 
-int parseCommand(char* input, int* command, char* filePath);
+int parseCommand(char* input, int* command, char* filePath, int* numOfArgs);
 
 /*
  * Function:  validInput
@@ -19,7 +19,7 @@ int parseCommand(char* input, int* command, char* filePath);
  *
  *	command: TODO:add description
  */
-int validInput(int* command);
+int validInput(int* command, int numOfArgs);
 
 
 #endif /* PARSER_H_ */

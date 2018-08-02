@@ -34,12 +34,12 @@ enum COMMAND{
 	error
 };
 
-int parseCommand(char* input, int* command, char* filePath){
+int parseCommand(char* input, int* command, char* filePath, int* numOfArgs){
 	int isDigit(char* token);
 	const char delim[7] = " \t\r\n";
 	char *token;
 	int i;
-	filePath = NULL;
+	(*numOfArgs) = 0;
 
 	if(strlen(input) > 256){
 		command[0] = error;
@@ -56,11 +56,8 @@ int parseCommand(char* input, int* command, char* filePath){
 	}
 	/* Get the command type */
 	if(strcmp(token,"solve") == 0){
-
 		command[0] = solve;
-
 	}else if(strcmp(token,"edit") == 0){
-
 		command[0] = edit;
 	}else if(strcmp(token,"mark_errors") == 0){
 		command[0] = mark_errors;
@@ -95,11 +92,12 @@ int parseCommand(char* input, int* command, char* filePath){
 	token = strtok(NULL,delim);
 	if(token!= NULL && (command[0] == solve || command[0] == edit || command[0] == save)){
 		sscanf(token, "%s", filePath);
-		command[1] = 0;
+		(*numOfArgs)++;
 	}else{
 		if(token != NULL){
 			if(isDigit(token)){
 				sscanf(token, "%d", &command[1]);
+				(*numOfArgs)++;
 			}
 		}
 	}
@@ -107,12 +105,14 @@ int parseCommand(char* input, int* command, char* filePath){
 	if(token!= NULL){
 		if(isDigit(token)){
 			sscanf(token, "%d", &command[2]);
+			(*numOfArgs)++;
 		}
 	}
 	token = strtok(NULL,delim);
 	if(token!= NULL){
 		if(isDigit(token)){
 			sscanf(token, "%d", &command[3]);
+			(*numOfArgs)++;
 		}
 	}
 	return 0;
@@ -122,19 +122,19 @@ int validRange(int* command){
 	int i;
 	int boardRowAndColSize = blockRowSize * blockColSize;
 	if(command[0] == mark_errors){
-		if((command[1] != 0) | (command[1] != 1)){
+		if((command[1] != 0) && (command[1] != 1)){
 			printf("%s", "Error: the value should be 0 or 1\n");
 			return -1;
 		}
 	}else if(command[0] == set){
 		for(i = 1; i <= 2; i++){
 			/* check <X,Y> */
-			if((command[i] > boardRowAndColSize) | (command[i] < 1)){
+			if((command[i] > boardRowAndColSize) || (command[i] < 1)){
 				printf("Error: value not in range 0-%d\n", boardRowAndColSize);
 				return -1;
 			}
 		}
-		if((command[3] > boardRowAndColSize) | (command[3] < 0)){
+		if((command[3] > boardRowAndColSize) || (command[3] < 0)){
 			/* check <Z> */
 			printf("Error: value not in range 0-%d\n", boardRowAndColSize);
 			return -1;
@@ -142,7 +142,7 @@ int validRange(int* command){
 	}else if(command[0] == hint){
 		for(i = 1; i <= 2; i++){
 			/* check <X,Y> */
-			if((command[i] > boardRowAndColSize) | (command[i] < 1)){
+			if((command[i] > boardRowAndColSize) || (command[i] < 1)){
 				printf("Error: value not in range 0-%d\n", boardRowAndColSize);
 				return -1;
 			}
@@ -151,34 +151,31 @@ int validRange(int* command){
 	return 0;
 }
 
-int validInput(int* command){
+int validInput(int* command, int numOfArgs){
 	/* check if the necessary parameters are supplied */
 	if(command[0] == error){
 		return -1;
 	}
-	if(command[0] == solve && (command[1] == -1)){
+	if(command[0] == solve && numOfArgs < 1){
 		printf("%s", "ERROR: invalid command\n");
 		return -1;
-	}if(command[0] == mark_errors && (command[1] == -1)){
+	}if(command[0] == set && numOfArgs < 3){
 		printf("%s", "ERROR: invalid command\n");
 		return -1;
-	}if(command[0] == set && (command[1] == -1 || command[2] == -1 || command[3] == -1)){
+	}if(command[0] == generate && numOfArgs < 2){
 		printf("%s", "ERROR: invalid command\n");
 		return -1;
-	}if(command[0] == generate && (command[1] == -1 || command[2] == -1)){
+	}if(command[0] == mark_errors && numOfArgs < 1){
 		printf("%s", "ERROR: invalid command\n");
 		return -1;
-	}if(command[0] == mark_errors && (command[1] == -1 || command[2] == -1)){
+	}if(command[0] == save && numOfArgs < 1){
 		printf("%s", "ERROR: invalid command\n");
 		return -1;
-	}if(command[0] == save && (command[1] == -1)){
-		printf("%s", "ERROR: invalid command\n");
-		return -1;
-	}if(command[0] == hint && (command[1] == -1 || command[2] == -1)){
+	}if(command[0] == hint && numOfArgs < 2){
 		printf("%s", "ERROR: invalid command\n");
 		return -1;
 	}
-	if(command[0] == mark_errors){
+	if(command[0] == mark_errors || command[0] == set || command[0] == hint){
 		/* call to validRange  if range check is needed */
 		return validRange(command);
 	}
@@ -191,6 +188,11 @@ int isDigit(char* token){
 	int i = 0;
 	char c;
 	while(token[i] != 0){
+		if((i == 0 && token[i] == '-') && token[1] != 0){
+			/* negative num case */
+			i++;
+			continue;
+		}
 		c = token[i];
 		if(c > 47 && c < 58){
 			i++;

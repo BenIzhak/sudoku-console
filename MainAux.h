@@ -23,6 +23,5 @@ Cell** setAllocatedMem(int boardRowAndColSize);
 void printBoard(Cell** table, int markErrors);
 void boardInit(Cell** table);
 Cell** setAllocatedMem();
-void boardInit(Cell** table);
 
 #endif /* MAINAUX_H_ */
