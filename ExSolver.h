@@ -10,7 +10,24 @@
 
 
 int exBacktrack(Cell** board);
+
+/*  Function:  validAssignment
+ *	--------------------
+ *  checks if assigning numToCheck at cellCol,cellRow is a valid assignment,
+ *  it doesn't assign it yet
+ *
+ *  input:
+ *  board-intialized 2d array
+ *  numToCheck - number to assign
+ *  cellRow - row of cell to be assigned to
+ *  cellCol - column of cell to be assigned to
+ *
+ *  output:
+ *  0 - valid assignment
+ *  -1 - invalid assignment*/
+
 int validAssignment(Cell** board, int numToCheck, int cellRow, int cellCol);
 
+void availableNumbers(Cell** board, int cellRow, int cellCol);
 
 #endif /* EXSOLVER_H_ */

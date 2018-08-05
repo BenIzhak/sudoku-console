@@ -251,7 +251,7 @@ void availableNumbers(Cell** board, int cellRow, int cellCol){
 	int prevNumFlag;
 	int counter = 0;/* counts the amount of valid numbers*/
 	int num;
-	for(num = 1; num < 10; num++){
+	for(num = 1; num < 10; num++){/*TODO:change to dynamic value */
 		prevNumFlag = board[cellRow][cellCol].prevNums[num - 1];
 		if(prevNumFlag == 0){/* checks if num was previously used */
 			if(validAssignment(board, num, cellRow, cellCol) == 0){/* value is 0 if num is a valid assignment*/

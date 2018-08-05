@@ -69,10 +69,10 @@ int validate();
 /*
  * Function:  generate
  * --------------------
- *	Generates a puzzle by randomly filling cellsToFill cells with random legal values,
- *	then solve the board with ILP and keep only cellsToKeep cells
+ *	Generates a puzzle by using fillAndKeep function
  *
  *	returns: 0 - board is not empty, 1 - cellsToFill or cellsToKeep are more than the amount of empty cells
+ *			 2 - generator failed, 3 - success print board
  *
  *	cellsToFill: amount of cells to fill with random values
  *	cellsToKeep: amount of cells to keep after generating random values

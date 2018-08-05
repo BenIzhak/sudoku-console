@@ -7,6 +7,7 @@
 #include "Cell.h"
 #include "ExSolver.h"
 #include <stdlib.h>
+#include "MainAux.h"
 
 
 static int markErrors = 1;/* TODO:each time we begin a puzzle we need to set it back to 1 */
@@ -97,26 +98,89 @@ int isEmptyBoard(){
 	return flag;
 }
 
+int fillAndKeep(int cellsToFill, int cellsToKeep){/*TODO: debug carefully after adding the call to ILPSOLVER */
+	int rowAndColSize = blockRowSize * blockColSize;
+	int i, j, randCol, randRow, randNum, flag = 0;
+
+	for(i = 0; i < cellsToFill; i++){
+		while(flag == 0){
+			randCol = rand() % rowAndColSize;
+			randRow = rand() % rowAndColSize;
+			/* checking that i havn't chose this cell already */
+			if(userBoard[randRow][randCol].currentNum == 0){
+				flag = 1;
+			}
+		}
+
+		availableNumbers(userBoard, randRow, randCol);
+		if(userBoard[randRow][randCol].limit == 0){
+			return 0;
+		}
+		randNum = rand() % userBoard[randRow][randCol].limit; /* choose a random index from the validNums array */
+
+		userBoard[randRow][randCol].currentNum = userBoard[randRow][randCol].validNums[randNum];
+	}
+
+	/* TODO: add call to ILPsolver and save it in solvedBoard
+	 *
+	 * also check if ILP says there is a solution, if not return 0
+	 *
+	 *  */
+
+	flag = 0;
+	for(i = 0; i < cellsToKeep; i++){
+		/*generate is only available in edit mode, so fixed field is not used.
+		 * i'm using it just to mark cells to keep */
+		while(flag == 0){
+			randCol = rand() % rowAndColSize;
+			randRow = rand() % rowAndColSize;
+			/* checking that i havn't chose this cell already */
+			if(userBoard[randRow][randCol].fixed == 0){
+				flag = 1;
+				solvedBoard[randRow][randCol].fixed = 1;
+			}
+		}
+	}
+
+	for(i = 0; i < (blockRowSize * blockColSize); i++ ){
+		for( j = 0; j < (blockRowSize * blockColSize); j++){
+			if(solvedBoard[i][j].fixed == 0){
+				solvedBoard[i][j].currentNum = 0;
+			}else{
+				solvedBoard[i][j].fixed = 0;
+				/* no need to mark with fixed for now */
+			}
+		}
+	}
+	return 1;
+}
+
 int generate(int cellsToFill, int cellsToKeep){
 	int rowAndColSize = blockRowSize * blockColSize;
 	int emptyCells = (rowAndColSize)*(rowAndColSize);/* if the board is empty, amount of empty cells is N*N */
-	int i, randCol, randRow, randNum;
+	int i;
 
-	if(isEmptyBoard() == 0){
+	if(isEmptyBoard() == 0){/* checks that board is empty */
 		return 0;
 	}
 
-	if((cellsToFill > emptyCells) || (cellsToKeep > emptyCells)){
+	if((cellsToFill > emptyCells) || (cellsToKeep > emptyCells)){/* checks that parameters are valid */
 		return 1;
 	}
 
-	for(i = 0; i < cellsToFill; i++){
-		/* TODO: need to choose a LEGAL! random value for cell, in sense of row/block/col (legal = between 1 to N)*/
-		randCol = rand() % rowAndColSize;
-		randRow = rand() % rowAndColSize;
-		randNum = rand() % rowAndColSize;
-		userBoard[randRow][randCol].currentNum = randNum;
-		/* removing values is from solvedBoard */
+	/* tries 1000 to get a valid board*/
+	for(i = 0; i < 1000; i++){
+		if(fillAndKeep(cellsToFill, cellsToKeep) == 1){
+			return 3;
+		}else{
+			boardInit(userBoard);
+			boardInit(solvedBoard);
+		}
 	}
-	return 0;/*TODO: just to make it compile */
+
+	return 2;
+	/*TODO: should i move the solution to the user board?? yes, use copyboard */
 }
+
+
+
