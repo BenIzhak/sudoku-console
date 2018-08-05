@@ -10,6 +10,7 @@
 #include "MainAux.h"
 #include "CommandsList.h"
 #include <stdio.h>
+#include "ILPSolver.h"
 
 
 static int markErrors = 1;/* TODO:each time we begin a puzzle we need to set it back to 1 */
@@ -145,7 +146,7 @@ int isEmptyBoard(){
 
 int fillAndKeep(int cellsToFill, int cellsToKeep){/*TODO: debug carefully after adding the call to ILPSOLVER */
 	int rowAndColSize = blockRowSize * blockColSize;
-	int i, j, randCol, randRow, randNum, flag = 0;
+	int i, j, randCol, randRow, randNum, flag = 0, isSolved = 0;
 
 	for(i = 0; i < cellsToFill; i++){
 		while(flag == 0){
@@ -166,11 +167,14 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){/*TODO: debug carefully after 
 		userBoard[randRow][randCol].currentNum = userBoard[randRow][randCol].validNums[randNum];
 	}
 
-	/* TODO: add call to ILPsolver and save it in solvedBoard
-	 *
-	 * also check if ILP says there is a solution, if not return 0
-	 *
-	 *  */
+	isSolved = ILPSolver();
+	if(isSolved == 1){
+		copyBoard(solvedBoard, tempBoard);
+	}else{
+		return 0;
+		/* error in ILPSolver, need to try again */
+	}
+
 
 	flag = 0;
 	for(i = 0; i < cellsToKeep; i++){
@@ -213,7 +217,7 @@ int generate(int cellsToFill, int cellsToKeep){
 		return 1;
 	}
 
-	/* tries 1000 to get a valid board*/
+	/* tries for 1000 iterations to get a valid board*/
 	for(i = 0; i < 1000; i++){
 		if(fillAndKeep(cellsToFill, cellsToKeep) == 1){
 			return 3;
@@ -223,7 +227,7 @@ int generate(int cellsToFill, int cellsToKeep){
 		}
 	}
 
+	copyBoard(userBoard, solvedBoard);
 	return 2;
-	/*TODO: should i move the solution to the user board?? yes, use copyboard */
 }
 

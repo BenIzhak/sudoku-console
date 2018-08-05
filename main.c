@@ -15,15 +15,37 @@
 #include "ExSolver.h"
 
 
-int main(){
 
-	int seed = time(NULL);
+int main(){
+	int code;
+
+	/*int seed = time(NULL);
 	SP_BUFF_SET();
 
 	srand(seed);
 
-	gameLoop();
+	gameLoop();*/
+	boardInit(userBoard);
+	boardInit(solvedBoard);
+	boardInit(tempBoard);
 
+	code = generate(20,5);
+	switch(code){
+		case 0:
+			printf("%s", "not empty");
+			break;
+		case 1:
+			printf("%s", "parameters are not valid");
+			break;
+		case 2:
+			printf("%s","generator failed");
+			break;
+		case 3:
+			printBoard(userBoard);
+			break;
+		default:
+			break;
+	}
 
 	return 0;
 }
