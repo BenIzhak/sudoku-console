@@ -19,8 +19,8 @@ int gameMode;
 
 void gameLoop();
 void freeBoardMem(Cell** gameBoard, Cell** solvedBoard, Cell** tempBoard, int BlockRowSize, int BlockColSize);
-Cell** setAllocatedMem(int boardRowAndColSize);
-void printBoard(Cell** table, int markErrors);
+Cell** setAllocatedMem();
+void printBoard(Cell** table);
 void boardInit(Cell** table);
 Cell** setAllocatedMem();
 

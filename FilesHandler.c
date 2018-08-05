@@ -9,8 +9,8 @@
 #include <string.h>
 #include "MainAux.h"
 
-int blockRowSize;
-int blockColSize;
+int blockRowSize = 3; /*TODO: hard coded value need to be deleted */
+int blockColSize = 3; /*TODO: hard coded value need to be deleted  */
 
 extern Cell** userBoard;
 extern Cell** solvedBoard;
