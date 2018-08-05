@@ -157,8 +157,9 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){/*TODO: debug carefully after 
 				flag = 1;
 			}
 		}
-
+		printf("%s", "******160******");
 		availableNumbers(userBoard, randRow, randCol);
+		printf("%s", "******162******");
 		if(userBoard[randRow][randCol].limit == 0){
 			return 0;
 		}

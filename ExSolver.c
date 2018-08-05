@@ -12,7 +12,7 @@
 #include "Cell.h"
 
 
-
+/*TODO:make it dynamic! */
 /*
  * Function:  resetCell
  * --------------------

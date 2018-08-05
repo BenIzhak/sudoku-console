@@ -15,9 +15,9 @@
 extern int blockRowSize;
 extern int blockColSize;
 
-Cell** userBoard;
-Cell** solvedBoard;
-Cell** tempBoard;
+extern Cell** userBoard; /* TODO: delete extern, just for testing */
+extern Cell** solvedBoard;/* TODO: delete extern, just for testing */
+extern Cell** tempBoard;/* TODO: delete extern, just for testing */
 
 /* 0 - Init mode, 1 - Edit mode, 2 - Solve mode */
 int gameMode;
@@ -133,19 +133,15 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 
 
 void boardInit(Cell** table){
-	int i, j, k;
+	int i, j;
 	int boardRowAndColSize = blockRowSize * blockColSize;
 	for(i = 0; i < boardRowAndColSize; i++){
 		for(j = 0; j < boardRowAndColSize; j++){
-			for (k = 0; k < boardRowAndColSize; k++) {/* initializes prevNums as not used nums*/
-				table[i][j].prevNums[k] = 0;
-			}
 			table[i][j].currentNum = 0;
 			table[i][j].fixed = 0;
 			table[i][j].isInput = 0;
 			table[i][j].limit = boardRowAndColSize;
 			table[i][j].isError = 0;
-
 		}
 	}
 }

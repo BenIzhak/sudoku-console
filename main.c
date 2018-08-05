@@ -14,22 +14,28 @@
 #include "game.h"
 #include "ExSolver.h"
 
+Cell** userBoard;/* TODO: delete, just for testing */
+Cell** solvedBoard;/* TODO: delete, just for testing */
+Cell** tempBoard;/* TODO: delete, just for testing */
 
 
 int main(){
 	int code;
-
-	/*int seed = time(NULL);
 	SP_BUFF_SET();
+	/*int seed = time(NULL);
+
 
 	srand(seed);
 
 	gameLoop();*/
+	userBoard = setAllocatedMem();
+	solvedBoard = setAllocatedMem();
+	tempBoard = setAllocatedMem();
+
 	boardInit(userBoard);
 	boardInit(solvedBoard);
 	boardInit(tempBoard);
-
-	code = generate(20,5);
+	code = generate(20, 5);
 	switch(code){
 		case 0:
 			printf("%s", "not empty");
@@ -46,6 +52,6 @@ int main(){
 		default:
 			break;
 	}
-
+	printf("%s","\n");
 	return 0;
 }
