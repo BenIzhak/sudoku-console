@@ -22,6 +22,6 @@ void freeBoardMem(Cell** Board, int BlockRowSize, int BlockColSize);
 Cell** setAllocatedMem(int boardRowAndColSize);
 void printBoard(Cell** table, int markErrors);
 void boardInit(Cell** table);
-Cell** setAllocatedMem();
+void copyBoard(Cell** dstBoard, Cell** srcBoard);
 
 #endif /* MAINAUX_H_ */

@@ -6,9 +6,13 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include "CommandsList.h"
 #include "MainAux.h"
+#include "Cell.h"
 
+extern int blockRowSize;
+extern int blockColSize;
 
 void addCommand(dllNode** head, dllNode** lastNode, dllNode** currentNode, Cell** info){
 	/* head is a pointer to the start of the list */
@@ -36,8 +40,8 @@ void addCommand(dllNode** head, dllNode** lastNode, dllNode** currentNode, Cell*
 void deleteFromCurrent(dllNode** lastNode, dllNode** currentNode){
 	/* delete all the nodes from the current node (exclude) */
 	while(*lastNode != *currentNode){
+		free((*lastNode)->info);
 		(*lastNode) = (*lastNode)-> previous;
-		/*TODO: free info memory*/
 		free((*lastNode)->next);
 		(*lastNode)->next = NULL;
 	}
@@ -64,13 +68,38 @@ void deleteList(dllNode** head, dllNode** lastNode, dllNode** currentNode){
 	}
 	while(*lastNode != *head){
 		/* delete all the nodes except the head */
+		free((*lastNode)->info);
 		(*lastNode) = (*lastNode)-> previous;
 		free((*lastNode)->next);
 		(*lastNode)->next = NULL;
 	}
 	/* delete the head */
+	free((*head)->info);
 	free(*head);
 	(*head) = NULL;
 	(*lastNode) = NULL;
 	(*currentNode) = NULL;
+}
+
+void boardDiff(dllNode** currentNode, dllNode** otherNode,char *command){
+	/* command is string: Redo/Undo */
+	int i, j;
+	Cell **currentBoard, **otherBoard;
+	currentBoard = (*currentNode)->info;
+	otherBoard = (*otherNode)->info;
+	for(i = 0; i < blockRowSize; i++){
+		for(j = 0; j < blockColSize; j++){
+			if(currentBoard[i][j].currentNum != otherBoard[i][j].currentNum){
+				if(currentBoard[i][j].currentNum != 0 && otherBoard[i][j].currentNum != 0){
+					printf("%s %d,%d: from %d to %d\n", command, (j+1), (i+1), currentBoard[i][j].currentNum, otherBoard[i][j].currentNum);
+				}else{
+					if(currentBoard[i][j].currentNum == 0){
+						printf("%s %d,%d: from %c to %d\n", command, (j+1), (i+1), '_', otherBoard[i][j].currentNum);
+					}else{
+						printf("%s %d,%d: from %d to %c\n", command, (j+1), (i+1), currentBoard[i][j].currentNum, '_');
+					}
+				}
+			}
+		}
+	}
 }

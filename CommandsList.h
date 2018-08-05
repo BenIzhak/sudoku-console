@@ -24,7 +24,7 @@ void initList(dllNode** head, dllNode** lastNode, dllNode** currentNode, Cell** 
 
 void deleteList(dllNode** head, dllNode** lastNode, dllNode** currentNode);
 
-
+void boardDiff(dllNode** currentNode, dllNode** otherNode,char *command);
 
 
 

@@ -29,7 +29,7 @@ Cell** setAllocatedMem(int boardRowAndColSize){
 				printf("%s","Error: setAllocatedMem has failed\n");
 				return NULL;
 		}
-	}/*
+	}/* TODO: move to solver
 	for (i = 0; i < boardRowAndColSize; i++){
 		for (j = 0; j < boardRowAndColSize; j++){
 			temp[i][j].prevNums = (int *) malloc((blockRowSize * blockColSize) * sizeof(int));
@@ -144,7 +144,7 @@ void boardInit(Cell** table){
 void freeBoardMem(Cell** Board, int BlockRowSize, int BlockColSize){
 	int boardRowAndColSize = BlockRowSize * BlockColSize;
 	int i;
-	/*
+	/*TODO: move to solver
 	for(i = 0; i < boardRowAndColSize; i++){
 		for(j = 0; j < boardRowAndColSize; j++){
 			free(Board[i][j].prevNums);
@@ -197,6 +197,29 @@ void printBoard(Cell** table, int markErrors){
 	}
 	printf("%s", separatorRow);
 	free(separatorRow);
+}
+
+/*
+ * Function:  copyBoard
+ * --------------------
+ * copies srcBoard board to dstBoard
+ *
+ *  dstBoard: 2d array holding a sudoku board, copy destination
+ *  srcBoard: 2d array holding a sudoku board, copy source
+ *
+ */
+void copyBoard(Cell** dstBoard, Cell** srcBoard){
+	int i, j;
+	int boardRow = blockRowSize * blockColSize;
+	int boardCol = boardRow;
+	for(i = 0; i < boardRow; i++){
+		for(j = 0; j < boardCol; j++){
+			dstBoard[i][j].currentNum = srcBoard[i][j].currentNum;
+			dstBoard[i][j].fixed = srcBoard[i][j].fixed;
+			dstBoard[i][j].isInput = srcBoard[i][j].isInput;
+			dstBoard[i][j].isError = srcBoard[i][j].isError;
+		}
+	}
 }
 
 

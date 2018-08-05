@@ -76,10 +76,6 @@ int loadBoard(char* filePath){
 	blockColSize = m;
 	blockRowSize = n;
 
-	/* empty the command list */
-	/*TODO: call hardReset from game.c*/
-
-
 	/* allocate memory for news boards */
 	boardRowAndColSize = blockColSize * blockRowSize;
 	userBoard = setAllocatedMem(boardRowAndColSize);
@@ -108,7 +104,12 @@ int loadBoard(char* filePath){
 			i++;
 		}
 	}
+	/* we don't need the file anymore, we can close it */
 	fclose(fp);
+
+	/* update the command list */
+	hardReset(userBoard);
+
 	return 1;
 }
 
