@@ -23,9 +23,12 @@ void addCommand(dllNode** head, dllNode** lastNode, dllNode** currentNode, Cell*
 	newCommand->info = info;
 	newCommand->next = NULL;
 
-	if(*head == NULL){
+	if(head == NULL){
 		/* in case the newCommand is the first command */
 		newCommand->previous = NULL;
+		head = &newCommand;
+		lastNode = &newCommand;
+		currentNode = &newCommand;
 		*head = newCommand;
 		*lastNode = newCommand;
 		*currentNode = newCommand;
@@ -35,6 +38,8 @@ void addCommand(dllNode** head, dllNode** lastNode, dllNode** currentNode, Cell*
 	(*lastNode)->next = newCommand;
 	newCommand->previous = *lastNode;
 	lastNode = &newCommand;
+
+	currentNode = lastNode;
 }
 
 void deleteFromCurrent(dllNode** lastNode, dllNode** currentNode){
@@ -52,6 +57,9 @@ void initList(dllNode** head, dllNode** lastNode, dllNode** currentNode, Cell** 
 	dllNode* firstNode = NULL;
 	firstNode = (dllNode*) malloc(sizeof(dllNode));
 	firstNode->info = info;
+	head = &firstNode;
+	lastNode = &firstNode;
+	currentNode = &firstNode;
 	(*head) = firstNode;
 	(*lastNode) = firstNode;
 	(*currentNode) = firstNode;

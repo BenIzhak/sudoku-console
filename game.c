@@ -77,6 +77,7 @@ int setCell(int col, int row, int val){
 
 	findAndMarkErrors();
 
+	addCommand(head, lastNode, currentNode, userBoard);
 
 	return 0;
 }
@@ -92,7 +93,9 @@ void reset(){
 
 void hardReset(Cell** info){
 	/* delete the whole command list and initialize a new one */
-	deleteList(head, lastNode, currentNode);
+	if(head != NULL){
+		deleteList(head, lastNode, currentNode);
+	}
 	initList(head, lastNode, currentNode, info);
 }
 
@@ -252,5 +255,6 @@ void startDefaultBoard(){
 
 	/* update the command list */
 	hardReset(userBoard);
+	initList(head, lastNode, currentNode, userBoard);
 }
 

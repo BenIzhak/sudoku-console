@@ -109,7 +109,8 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 			break;
 		case 4: /* set X Y Z */
 			if(gameMode == 1 || gameMode == 2){
-				setCell(command[1], command[2], command[3]);
+				setCell(command[1]-1, command[2]-1, command[3]);
+				printBoard(userBoard);
 			}else{
 				printf("%s", "ERROR: invalid command\n");
 			}
@@ -161,13 +162,10 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 
 
 void boardInit(Cell** table){
-	int i, j, k;
+	int i, j;
 	int boardRowAndColSize = blockRowSize * blockColSize;
 	for(i = 0; i < boardRowAndColSize; i++){
 		for(j = 0; j < boardRowAndColSize; j++){
-			for (k = 0; k < boardRowAndColSize; k++) {/* initializes prevNums as not used nums*/
-				table[i][j].prevNums[k] = 0;
-			}
 			table[i][j].currentNum = 0;
 			table[i][j].fixed = 0;
 			table[i][j].isInput = 0;
@@ -189,6 +187,9 @@ void freeBoardMem(Cell** Board, int BlockRowSize, int BlockColSize){
 		}
 	}
 	*/
+	if(Board == NULL){
+		return;
+	}
 	for (i = 0; i < boardRowAndColSize; i++) {
 		free(Board[i]);
 	}
@@ -198,7 +199,7 @@ void freeBoardMem(Cell** Board, int BlockRowSize, int BlockColSize){
 void printBoard(Cell** table){
 	int i, j;
 	int boardRowAndColSize = blockColSize * blockRowSize;
-	int separatorRowNum = (4 * boardRowAndColSize) + blockRowSize + 1;
+	int separatorRowNum = (4 * boardRowAndColSize) + blockRowSize + 2;
 	int currentNum;
 	char * separatorRow;
 	int markErrors = getMarkErrors();
@@ -207,6 +208,7 @@ void printBoard(Cell** table){
 	for(i = 0; i < separatorRowNum; i++){
 		separatorRow[i] = '-';
 	}
+	separatorRow[separatorRowNum -1] = 0;
 	for(i = 0; i < boardRowAndColSize; i++){
 		if(i % blockRowSize == 0){
 			printf("%s\n", separatorRow);
@@ -233,7 +235,7 @@ void printBoard(Cell** table){
 		}
 		printf("%s", "|\n");
 	}
-	printf("%s", separatorRow);
+	printf("%s\n", separatorRow);
 	free(separatorRow);
 }
 
