@@ -15,7 +15,6 @@
 extern int blockRowSize;
 extern int blockColSize;
 
-
 Cell** userBoard;
 Cell** solvedBoard;
 Cell** tempBoard;
@@ -24,8 +23,9 @@ Cell** tempBoard;
 int gameMode;
 
 Cell** setAllocatedMem(){
-	int i,j;
+	int i;
 	int boardRowAndColSize = blockRowSize * blockColSize;
+
 	Cell** temp = (Cell **) malloc(boardRowAndColSize * sizeof(Cell*));
 
 	if(temp == NULL){
@@ -38,7 +38,7 @@ Cell** setAllocatedMem(){
 				printf("%s","Error: setAllocatedMem has failed\n");
 				return NULL;
 		}
-	}
+	}/* TODO: move to solver
 	for (i = 0; i < boardRowAndColSize; i++){
 		for (j = 0; j < boardRowAndColSize; j++){
 			temp[i][j].prevNums = (int *) malloc((blockRowSize * blockColSize) * sizeof(int));
@@ -52,7 +52,7 @@ Cell** setAllocatedMem(){
 					return NULL;
 			}
 		}
-	}
+	}*/
 	return temp;
 }
 
@@ -150,39 +150,21 @@ void boardInit(Cell** table){
 	}
 }
 
-void freeBoardMem(Cell** gameBoard, Cell** solvedBoard, Cell** tempBoard, int BlockRowSize, int BlockColSize){
+void freeBoardMem(Cell** Board, int BlockRowSize, int BlockColSize){
 	int boardRowAndColSize = BlockRowSize * BlockColSize;
-	int i, j;
+	int i;
+	/*TODO: move to solver
 	for(i = 0; i < boardRowAndColSize; i++){
 		for(j = 0; j < boardRowAndColSize; j++){
-			free(gameBoard[i][j].prevNums);
-			free(gameBoard[i][j].validNums);
+			free(Board[i][j].prevNums);
+			free(Board[i][j].validNums);
 		}
 	}
-	for(i = 0; i < boardRowAndColSize; i++){
-		for(j = 0; j < boardRowAndColSize; j++){
-			free(solvedBoard[i][j].prevNums);
-			free(solvedBoard[i][j].validNums);
-		}
-	}
-	for(i = 0; i < boardRowAndColSize; i++){
-		for(j = 0; j < boardRowAndColSize; j++){
-			free(tempBoard[i][j].prevNums);
-			free(tempBoard[i][j].validNums);
-		}
-	}
+	*/
 	for (i = 0; i < boardRowAndColSize; i++) {
-		free(tempBoard[i]);
+		free(Board[i]);
 	}
-	for (i = 0; i < boardRowAndColSize; i++) {
-		free(solvedBoard[i]);
-	}
-	for (i = 0; i < boardRowAndColSize; i++) {
-		free(gameBoard[i]);
-	}
-	free(tempBoard);
-	free(solvedBoard);
-	free(gameBoard);
+	free(Board);
 }
 
 void printBoard(Cell** table){
@@ -225,6 +207,29 @@ void printBoard(Cell** table){
 	}
 	printf("%s", separatorRow);
 	free(separatorRow);
+}
+
+/*
+ * Function:  copyBoard
+ * --------------------
+ * copies srcBoard board to dstBoard
+ *
+ *  dstBoard: 2d array holding a sudoku board, copy destination
+ *  srcBoard: 2d array holding a sudoku board, copy source
+ *
+ */
+void copyBoard(Cell** dstBoard, Cell** srcBoard){
+	int i, j;
+	int boardRow = blockRowSize * blockColSize;
+	int boardCol = boardRow;
+	for(i = 0; i < boardRow; i++){
+		for(j = 0; j < boardCol; j++){
+			dstBoard[i][j].currentNum = srcBoard[i][j].currentNum;
+			dstBoard[i][j].fixed = srcBoard[i][j].fixed;
+			dstBoard[i][j].isInput = srcBoard[i][j].isInput;
+			dstBoard[i][j].isError = srcBoard[i][j].isError;
+		}
+	}
 }
 
 

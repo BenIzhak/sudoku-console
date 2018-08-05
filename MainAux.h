@@ -18,10 +18,10 @@ Cell** tempBoard;
 int gameMode;
 
 void gameLoop();
-void freeBoardMem(Cell** gameBoard, Cell** solvedBoard, Cell** tempBoard, int BlockRowSize, int BlockColSize);
 Cell** setAllocatedMem();
 void printBoard(Cell** table);
+void freeBoardMem(Cell** Board, int BlockRowSize, int BlockColSize);
 void boardInit(Cell** table);
-Cell** setAllocatedMem();
+void copyBoard(Cell** dstBoard, Cell** srcBoard);
 
 #endif /* MAINAUX_H_ */

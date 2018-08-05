@@ -70,6 +70,7 @@ int validate();
  * --------------------
  *	Generates a puzzle by using fillAndKeep function
  *
+ *
  *	returns: 0 - board is not empty, 1 - cellsToFill or cellsToKeep are more than the amount of empty cells
  *			 2 - generator failed, 3 - success print board
  *
@@ -78,5 +79,8 @@ int validate();
  */
 
 int generate(int cellsToFill, int cellsToKeep);
+
+void reset();
+void hardReset(Cell** info);
 
 #endif /* GAME_H_ */

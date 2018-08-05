@@ -8,6 +8,8 @@
 #include "ExSolver.h"
 #include <stdlib.h>
 #include "MainAux.h"
+#include "CommandsList.h"
+#include <stdio.h>
 
 
 static int markErrors = 1;/* TODO:each time we begin a puzzle we need to set it back to 1 */
@@ -18,6 +20,9 @@ extern Cell** tempBoard;
 extern int gameMode;
 extern int blockRowSize;
 extern int blockColSize;
+dllNode** head;
+dllNode** lastNode;
+dllNode** currentNode;
 
 void setMarkErrors(int setting){
 	markErrors = setting;
@@ -72,7 +77,47 @@ int setCell(int col, int row, int val){
 
 	findAndMarkErrors();
 
+
 	return 0;
+}
+
+
+void reset(){
+	/* undo all moves, reverting the board to its original loaded state. */
+	(*currentNode) = (*head);
+	deleteFromCurrent(lastNode,currentNode);
+	copyBoard(userBoard, (*currentNode)->info);
+	printf("Board reset\n");
+}
+
+void hardReset(Cell** info){
+	/* delete the whole command list and initialize a new one */
+	deleteList(head, lastNode, currentNode);
+	initList(head, lastNode, currentNode, info);
+}
+
+void undo(){
+	dllNode *prevCommnad;
+	if(currentNode == head){
+		printf("%s","Error: no moves to undo\n");
+		return;
+	}
+	boardDiff(currentNode, &((*currentNode)->previous),"Undo");
+	prevCommnad = (*currentNode)->previous;
+	currentNode = &prevCommnad;
+	copyBoard(userBoard, (*currentNode)->info);
+}
+
+void redo(){
+	dllNode *nextCommand;
+	if(currentNode == lastNode){
+		printf("%s","Error: no moves to redo\n");
+		return;
+	}
+	boardDiff(currentNode, &((*currentNode)->next) ,"Redo");
+	nextCommand = (*currentNode)->next;
+	currentNode = &nextCommand;
+	copyBoard(userBoard, (*currentNode)->info);
 }
 
 
