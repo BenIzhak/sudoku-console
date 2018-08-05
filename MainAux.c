@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include "Cell.h"
 #include "Parser.h"
+#include "FilesHandler.h"
+#include "MainAux.h"
 #include "game.h" /* TODO: DO NOT REMOVE */
 
 
@@ -82,21 +84,35 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 			printf("%s", "solve X");
 			break;
 		case 1:  /*edit X*/
+			gameMode = 1;
 			if(numOfArgs > 0){
-				printf("\n%s ", filePath);
-				printf("%s", "edit X");
+				if(loadBoard(filePath) == -1){
+					printf("%s", "Error: File cannot be opened\n");
+				}
 			}else{
-				printf("%s", "edit");
+				startDefaultBoard();
 			}
 			break;
 		case 2:	/*mark_errors X*/
-			printf("%s", "errors X");
+			if(gameMode == 2){
+				setMarkErrors(command[1]);
+			}else{
+				printf("%s", "ERROR: invalid command\n");
+			}
 			break;
 		case 3: /* print_board */
-			printf("%s", "print_board");
+			if(gameMode == 1 || gameMode == 2){
+				printBoard(userBoard);
+			}else{
+				printf("%s", "ERROR: invalid command\n");
+			}
 			break;
 		case 4: /* set X Y Z */
-			printf("%s", "set X Y Z");
+			if(gameMode == 1 || gameMode == 2){
+				setCell(command[1], command[2], command[3]);
+			}else{
+				printf("%s", "ERROR: invalid command\n");
+			}
 			break;
 		case 5: /* validate */
 			printf("%s", "validate");
@@ -105,10 +121,18 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 			printf("%s", "generate X Y");
 			break;
 		case 7: /* undo */
-			printf("%s", "undo");
+			if(gameMode == 1 || gameMode == 2){
+				undo();
+			}else{
+				printf("%s", "ERROR: invalid command\n");
+			}
 			break;
 		case 8: /* redo */
-			printf("%s", "redo");
+			if(gameMode == 1 || gameMode == 2){
+				redo();
+			}else{
+				printf("%s", "ERROR: invalid command\n");
+			}
 			break;
 		case 9: /* save X */
 			printf("%s", "save X");
@@ -123,7 +147,11 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 			printf("%s", "autofill");
 			break;
 		case 13: /* reset */
-			printf("%s", "reset");
+			if(gameMode == 1 || gameMode == 2){
+				reset();
+			}else{
+				printf("%s", "ERROR: invalid command\n");
+			}
 			break;
 		case 14: /* exit */
 			printf("%s", "exit");

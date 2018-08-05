@@ -227,3 +227,30 @@ int generate(int cellsToFill, int cellsToKeep){
 	/*TODO: should i move the solution to the user board?? yes, use copyboard */
 }
 
+void startDefaultBoard(){
+	int boardRowAndColSize;
+
+	/* free memory of previous boards */
+	freeBoardMem(userBoard, blockRowSize, blockColSize);
+	freeBoardMem(tempBoard, blockRowSize, blockColSize);
+	freeBoardMem(solvedBoard, blockRowSize, blockColSize);
+
+	/* set new values to blockRowSize and blockColSize */
+	blockColSize = 3;
+	blockRowSize = 3;
+
+	/* allocate memory for news boards */
+	boardRowAndColSize = blockColSize * blockRowSize;
+	userBoard = setAllocatedMem(boardRowAndColSize);
+	tempBoard = setAllocatedMem(boardRowAndColSize);
+	solvedBoard = setAllocatedMem(boardRowAndColSize);
+
+	/* init the boards */
+	boardInit(userBoard);
+	boardInit(tempBoard);
+	boardInit(solvedBoard);
+
+	/* update the command list */
+	hardReset(userBoard);
+}
+

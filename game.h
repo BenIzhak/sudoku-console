@@ -83,4 +83,9 @@ int generate(int cellsToFill, int cellsToKeep);
 void reset();
 void hardReset(Cell** info);
 
+void startDefaultBoard();
+
+void redo();
+void undo();
+
 #endif /* GAME_H_ */
