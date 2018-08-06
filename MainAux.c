@@ -80,8 +80,10 @@ int getInput(char input[], int command[], char* filePath, int* numOfArgs) {
 void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 	switch (command[0]) {
 		case 0: /*solve X*/
-			printf("\n%s ", filePath);
-			printf("%s", "solve X");
+			gameMode = 2;
+			if(loadBoard(filePath) == -1){
+				printf("%s", "Error: File cannot be opened\n");
+			}
 			break;
 		case 1:  /*edit X*/
 			gameMode = 1;
@@ -176,8 +178,8 @@ void boardInit(Cell** table){
 	}
 }
 
-void freeBoardMem(Cell** Board, int BlockRowSize, int BlockColSize){
-	int boardRowAndColSize = BlockRowSize * BlockColSize;
+void freeBoardMem(Cell** Board){
+	int boardRowAndColSize = blockRowSize * blockColSize;
 	int i;
 	/*TODO: move to solver
 	for(i = 0; i < boardRowAndColSize; i++){
