@@ -232,6 +232,7 @@ int blockCheck(Cell** board,int numToCheck , int cellRow, int cellCol){
 	int i,j;
 	int currentblockRow, currentblockCol;
 	int minBlockLimitRow, minBlockLimitCol;
+
 	currentblockRow = getcurrentblockRow(cellRow) + 1;
 	currentblockCol = getcurrentblockCol(cellCol) + 1;
 	minBlockLimitRow = currentblockRow - blockRowSize;

@@ -270,8 +270,7 @@ int ILPSolver() {
 	freeMem(lowerBounds, val, vtype, ind);
 	return exitILP(&env, &model, error, optimStatus, sol, boardRowAndColSize, valuesMatrixDim);
 }
-
 */
-int solver(){
+int sol(){
 	return 0;
 }
