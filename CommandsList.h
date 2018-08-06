@@ -10,23 +10,31 @@
 
 #include "Cell.h"
 
-typedef struct dllNode{/* definition of the stack's nodes */
+typedef struct dllNode{
 	Cell** info;
 	struct dllNode* next;
     struct dllNode* previous;
 }dllNode;
 
-void addCommand(dllNode** head, dllNode** lastNode, dllNode** currentNode, Cell** info);
+typedef struct dll{/* definition of the Doubly Linked List */
+	struct dllNode* head;
+    struct dllNode* currentNode;
+    struct dllNode* lastNode;
+}dll;
 
-void deleteFromCurrent(dllNode** lastNode, dllNode** currentNode);
+void addCommand(dll* list, Cell** info);
 
-void initList(dllNode** head, dllNode** lastNode, dllNode** currentNode, Cell** info);
+void deleteFromCurrent(dll* list);
 
-void deleteList(dllNode** head, dllNode** lastNode, dllNode** currentNode);
+dll* allocateListMem();
 
-void boardDiff(dllNode** currentNode, dllNode** otherNode,char *command);
+void initList(dll* list, Cell** info);
 
+void deleteListNodes(dll* list);
 
+void boardDiff(dll* list, dllNode* otherNode,char *command);
+
+void freeListMem(dll* list);
 
 
 #endif /* COMMANDSLIST_H_ */

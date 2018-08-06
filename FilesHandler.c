@@ -9,21 +9,21 @@
 #include <string.h>
 #include "MainAux.h"
 #include "game.h"
+#include "CommandsList.h"
 
-int blockRowSize = 3; /*TODO: hard coded value need to be deleted */
-int blockColSize = 3; /*TODO: hard coded value need to be deleted  */
+int blockRowSize;
+int blockColSize;
 
 extern Cell** userBoard;
 extern Cell** solvedBoard;
 extern Cell** tempBoard;
 
+extern dll* commandsList;
+
 
 FILE* openFile(char* filePath, const char* mode){
 	FILE* fp = NULL;
 	fp = fopen(filePath, mode);
-	if(fp == NULL){
-		printf("%s","Error: File cannot be opened\n");
-	}
 	return fp;
 }
 
@@ -68,9 +68,9 @@ int loadBoard(char* filePath){
 	fscanf(fp, "%d", &n);
 
 	/* free memory of previous boards */
-	freeBoardMem(userBoard, blockRowSize, blockColSize);
-	freeBoardMem(tempBoard, blockRowSize, blockColSize);
-	freeBoardMem(solvedBoard, blockRowSize, blockColSize);
+	freeBoardMem(userBoard);
+	freeBoardMem(tempBoard);
+	freeBoardMem(solvedBoard);
 
 	/* set new values to blockRowSize and blockColSize */
 	blockColSize = m;
@@ -86,6 +86,7 @@ int loadBoard(char* filePath){
 	boardInit(userBoard);
 	boardInit(tempBoard);
 	boardInit(solvedBoard);
+
 
 	/* update the cells*/
 	i = 0, j = 0;
@@ -107,8 +108,16 @@ int loadBoard(char* filePath){
 	/* we don't need the file anymore, we can close it */
 	fclose(fp);
 
+
 	/* update the command list */
-	hardReset(userBoard);
+	if(commandsList == NULL){
+		/* commandList doesn't exist, so create and initialize one */
+		commandsList = allocateListMem();
+		initList(commandsList, userBoard);
+	}else{
+		/* commandList exists, so update the command list */
+		hardReset(userBoard);
+	}
 
 	return 1;
 }

@@ -21,9 +21,7 @@ extern Cell** tempBoard;
 extern int gameMode;
 extern int blockRowSize;
 extern int blockColSize;
-dllNode** head;
-dllNode** lastNode;
-dllNode** currentNode;
+dll* commandsList;
 
 void setMarkErrors(int setting){
 	markErrors = setting;
@@ -78,6 +76,11 @@ int setCell(int col, int row, int val){
 
 	findAndMarkErrors();
 
+	if(commandsList->currentNode != commandsList->lastNode){
+		/* clear the redo part of the list */
+		deleteFromCurrent(commandsList);
+	}
+	addCommand(commandsList, userBoard);
 
 	return 0;
 }
@@ -85,40 +88,43 @@ int setCell(int col, int row, int val){
 
 void reset(){
 	/* undo all moves, reverting the board to its original loaded state. */
-	(*currentNode) = (*head);
-	deleteFromCurrent(lastNode,currentNode);
-	copyBoard(userBoard, (*currentNode)->info);
+	(commandsList->currentNode) = (commandsList->head);
+	deleteFromCurrent(commandsList);
+	copyBoard(userBoard, (commandsList->currentNode)->info);
 	printf("Board reset\n");
 }
 
 void hardReset(Cell** info){
 	/* delete the whole command list and initialize a new one */
-	deleteList(head, lastNode, currentNode);
-	initList(head, lastNode, currentNode, info);
+	if((commandsList->head) != NULL){
+		deleteListNodes(commandsList);
+	}
+	initList(commandsList, info);
 }
 
 void undo(){
 	dllNode *prevCommnad;
-	if(currentNode == head){
+	if((commandsList->currentNode) == (commandsList->head)){
 		printf("%s","Error: no moves to undo\n");
 		return;
 	}
-	boardDiff(currentNode, &((*currentNode)->previous),"Undo");
-	prevCommnad = (*currentNode)->previous;
-	currentNode = &prevCommnad;
-	copyBoard(userBoard, (*currentNode)->info);
+	prevCommnad = (commandsList->currentNode)->previous;
+	boardDiff(commandsList, prevCommnad,"Undo");
+	commandsList->currentNode = prevCommnad;
+	copyBoard(userBoard, prevCommnad->info);
 }
 
 void redo(){
 	dllNode *nextCommand;
-	if(currentNode == lastNode){
+	if((commandsList->currentNode) == (commandsList->lastNode)){
 		printf("%s","Error: no moves to redo\n");
 		return;
 	}
-	boardDiff(currentNode, &((*currentNode)->next) ,"Redo");
-	nextCommand = (*currentNode)->next;
-	currentNode = &nextCommand;
-	copyBoard(userBoard, (*currentNode)->info);
+	nextCommand = (commandsList->currentNode)->next;
+	boardDiff(commandsList, nextCommand,"Redo");
+	nextCommand = (commandsList->currentNode)->next;
+	commandsList->currentNode = nextCommand;
+	copyBoard(userBoard, nextCommand->info);
 }
 
 
@@ -237,5 +243,38 @@ int generate(int cellsToFill, int cellsToKeep){
 	}
 	exitSolver(userBoard);/* no need for ExSolver's fields any more, can free it. */
 	return 2;/* generate failed */
+}
+
+void startDefaultBoard(){
+	int boardRowAndColSize;
+
+	/* free memory of previous boards */
+	freeBoardMem(userBoard);
+	freeBoardMem(tempBoard);
+	freeBoardMem(solvedBoard);
+
+	/* set new values to blockRowSize and blockColSize */
+	blockColSize = 3;
+	blockRowSize = 3;
+
+	/* allocate memory for news boards */
+	boardRowAndColSize = blockColSize * blockRowSize;
+	userBoard = setAllocatedMem(boardRowAndColSize);
+	tempBoard = setAllocatedMem(boardRowAndColSize);
+	solvedBoard = setAllocatedMem(boardRowAndColSize);
+
+	/* init the boards */
+	boardInit(userBoard);
+	boardInit(tempBoard);
+	boardInit(solvedBoard);
+
+	if(commandsList == NULL){
+		/* commandList doesn't exist, so create and initialize one */
+		commandsList = allocateListMem();
+		initList(commandsList, userBoard);
+	}else{
+		/* commandList exists, so update the command list */
+		hardReset(userBoard);
+	}
 }
 

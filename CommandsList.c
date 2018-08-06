@@ -14,81 +14,101 @@
 extern int blockRowSize;
 extern int blockColSize;
 
-void addCommand(dllNode** head, dllNode** lastNode, dllNode** currentNode, Cell** info){
-	/* head is a pointer to the start of the list */
+void addCommand(dll* list, Cell** info){
+	/* allocate memory to the new node and put info */
 	dllNode* newCommand = NULL;
-
-	/* allocate memory and put info */
+	Cell** boardCopy = NULL;
 	newCommand = (dllNode*) malloc(sizeof(dllNode));
-	newCommand->info = info;
+	boardCopy = setAllocatedMem();
+	copyBoard(boardCopy, info);
+	newCommand->info = boardCopy;
 	newCommand->next = NULL;
 
-	if(*head == NULL){
+	if(list->head == NULL){
 		/* in case the newCommand is the first command */
 		newCommand->previous = NULL;
-		*head = newCommand;
-		*lastNode = newCommand;
-		*currentNode = newCommand;
+		list->head = newCommand;
+		list->currentNode = newCommand;
+		list->lastNode = newCommand;
 		return;
 	}
-
-	(*lastNode)->next = newCommand;
-	newCommand->previous = *lastNode;
-	lastNode = &newCommand;
+	newCommand->previous = list->lastNode;
+	(list->lastNode)->next = newCommand;
+	list->currentNode = newCommand;
+	list->lastNode = newCommand;
 }
 
-void deleteFromCurrent(dllNode** lastNode, dllNode** currentNode){
+void deleteFromCurrent(dll* list){
 	/* delete all the nodes from the current node (exclude) */
-	while(*lastNode != *currentNode){
-		free((*lastNode)->info);
-		(*lastNode) = (*lastNode)-> previous;
-		free((*lastNode)->next);
-		(*lastNode)->next = NULL;
+	while(list->lastNode != list->currentNode){
+		freeBoardMem((list->lastNode)->info);
+		(list->lastNode) = (list->lastNode)-> previous;
+		free((list->lastNode)->next);
+		(list->lastNode)->next = NULL;
 	}
 }
 
-void initList(dllNode** head, dllNode** lastNode, dllNode** currentNode, Cell** info){
-	/* create new list (new node) */
-	dllNode* firstNode = NULL;
-	firstNode = (dllNode*) malloc(sizeof(dllNode));
-	firstNode->info = info;
-	(*head) = firstNode;
-	(*lastNode) = firstNode;
-	(*currentNode) = firstNode;
+dll* allocateListMem(){
+	dll *lst = NULL;
+	lst = (dll *) malloc(sizeof(dll));
+	return lst;
 }
 
-void deleteList(dllNode** head, dllNode** lastNode, dllNode** currentNode){
+void initList(dll* list, Cell** info){
+	/* initialize new list */
+	dllNode* firstNode = NULL;
+	Cell** boardCopy = NULL;
+	firstNode = (dllNode*) malloc(sizeof(dllNode));
+	boardCopy = setAllocatedMem();
+	copyBoard(boardCopy, info);
+	firstNode->info = boardCopy;
+	firstNode->next = NULL;
+	firstNode->previous = NULL;
+	list->head = firstNode;
+	list->currentNode = firstNode;
+	list->lastNode = firstNode;
+}
+
+void deleteListNodes(dll* list){
 	/* delete all the nodes are currently in the list.
-	 * then head, lastNode and currentNode are point to NULL */
-	if((*head) == NULL){
+	 * then head, lastNode and currentNode are point to NULL
+	 * the list it's self is NOT deleted*/
+	if((list->head) == NULL){
 		/* there is nothing to delete */
-		(*lastNode) = NULL;
-		(*currentNode) = NULL;
+		(list->currentNode) = NULL;
+		(list->lastNode) = NULL;
 		return;
 	}
-	while(*lastNode != *head){
+	while((list->currentNode) != (list->head)){
 		/* delete all the nodes except the head */
-		free((*lastNode)->info);
-		(*lastNode) = (*lastNode)-> previous;
-		free((*lastNode)->next);
-		(*lastNode)->next = NULL;
+		freeBoardMem((list->lastNode)->info);
+		(list->lastNode) = (list->lastNode)-> previous;
+		free((list->lastNode)->next);
+		(list->lastNode)->next = NULL;
 	}
 	/* delete the head */
-	free((*head)->info);
-	free(*head);
-	(*head) = NULL;
-	(*lastNode) = NULL;
-	(*currentNode) = NULL;
+	freeBoardMem((list->head)->info);
+	free(list->head);
+	(list->head) = NULL;
+	(list->currentNode) = NULL;
+	(list->lastNode) = NULL;
 }
 
-void boardDiff(dllNode** currentNode, dllNode** otherNode,char *command){
+void freeListMem(dll* list){
+	/* free ONLY the list memory and NOT it's nodes
+	 * use only AFTER deleteListNodes to avoid memory leaks */
+	free(list);
+}
+
+void boardDiff(dll* list, dllNode* otherNode,char *command){
 	/* command is string: Redo/Undo */
 	int i, j;
 	Cell **currentBoard, **otherBoard;
-	currentBoard = (*currentNode)->info;
-	otherBoard = (*otherNode)->info;
-	for(i = 0; i < blockRowSize; i++){
-		for(j = 0; j < blockColSize; j++){
+	int boardRowAndColSize = blockColSize * blockRowSize;
+	currentBoard = (list->currentNode)->info;
+	otherBoard = otherNode->info;
+	for(i = 0; i < boardRowAndColSize; i++){
+		for(j = 0; j < boardRowAndColSize; j++){
 			if(currentBoard[i][j].currentNum != otherBoard[i][j].currentNum){
 				if(currentBoard[i][j].currentNum != 0 && otherBoard[i][j].currentNum != 0){
 					printf("%s %d,%d: from %d to %d\n", command, (j+1), (i+1), currentBoard[i][j].currentNum, otherBoard[i][j].currentNum);

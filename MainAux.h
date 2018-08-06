@@ -20,7 +20,7 @@ int gameMode;
 void gameLoop();
 Cell** setAllocatedMem();
 void printBoard(Cell** table);
-void freeBoardMem(Cell** Board, int BlockRowSize, int BlockColSize);
+void freeBoardMem(Cell** Board);
 void boardInit(Cell** table);
 void copyBoard(Cell** dstBoard, Cell** srcBoard);
 

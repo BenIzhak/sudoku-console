@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include "Cell.h"
 #include "Parser.h"
+#include "FilesHandler.h"
+#include "MainAux.h"
 #include "game.h" /* TODO: DO NOT REMOVE */
 
 
@@ -64,25 +66,42 @@ int getInput(char input[], int command[], char* filePath, int* numOfArgs) {
 void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 	switch (command[0]) {
 		case 0: /*solve X*/
-			printf("\n%s ", filePath);
-			printf("%s", "solve X");
+			gameMode = 2;
+			if(loadBoard(filePath) == -1){
+				printf("%s", "Error: File cannot be opened\n");
+			}
 			break;
 		case 1:  /*edit X*/
+			gameMode = 1;
 			if(numOfArgs > 0){
-				printf("\n%s ", filePath);
-				printf("%s", "edit X");
+				if(loadBoard(filePath) == -1){
+					printf("%s", "Error: File cannot be opened\n");
+				}
 			}else{
-				printf("%s", "edit");
+				startDefaultBoard();
 			}
 			break;
 		case 2:	/*mark_errors X*/
-			printf("%s", "errors X");
+			if(gameMode == 2){
+				setMarkErrors(command[1]);
+			}else{
+				printf("%s", "ERROR: invalid command\n");
+			}
 			break;
 		case 3: /* print_board */
-			printf("%s", "print_board");
+			if(gameMode == 1 || gameMode == 2){
+				printBoard(userBoard);
+			}else{
+				printf("%s", "ERROR: invalid command\n");
+			}
 			break;
 		case 4: /* set X Y Z */
-			printf("%s", "set X Y Z");
+			if(gameMode == 1 || gameMode == 2){
+				setCell(command[1]-1, command[2]-1, command[3]);
+				printBoard(userBoard);
+			}else{
+				printf("%s", "ERROR: invalid command\n");
+			}
 			break;
 		case 5: /* validate */
 			printf("%s", "validate");
@@ -91,10 +110,18 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 			printf("%s", "generate X Y");
 			break;
 		case 7: /* undo */
-			printf("%s", "undo");
+			if(gameMode == 1 || gameMode == 2){
+				undo();
+			}else{
+				printf("%s", "ERROR: invalid command\n");
+			}
 			break;
 		case 8: /* redo */
-			printf("%s", "redo");
+			if(gameMode == 1 || gameMode == 2){
+				redo();
+			}else{
+				printf("%s", "ERROR: invalid command\n");
+			}
 			break;
 		case 9: /* save X */
 			printf("%s", "save X");
@@ -109,7 +136,11 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 			printf("%s", "autofill");
 			break;
 		case 13: /* reset */
-			printf("%s", "reset");
+			if(gameMode == 1 || gameMode == 2){
+				reset();
+			}else{
+				printf("%s", "ERROR: invalid command\n");
+			}
 			break;
 		case 14: /* exit */
 			printf("%s", "exit");
@@ -132,9 +163,12 @@ void boardInit(Cell** table){
 	}
 }
 
-void freeBoardMem(Cell** Board, int BlockRowSize, int BlockColSize){
-	int boardRowAndColSize = BlockRowSize * BlockColSize;
+void freeBoardMem(Cell** Board){
+	int boardRowAndColSize = blockRowSize * blockColSize;
 	int i;
+	if(Board == NULL){
+		return;
+	}
 	for (i = 0; i < boardRowAndColSize; i++) {
 		free(Board[i]);
 	}
@@ -144,7 +178,7 @@ void freeBoardMem(Cell** Board, int BlockRowSize, int BlockColSize){
 void printBoard(Cell** table){
 	int i, j;
 	int boardRowAndColSize = blockColSize * blockRowSize;
-	int separatorRowNum = (4 * boardRowAndColSize) + blockRowSize + 1;
+	int separatorRowNum = (4 * boardRowAndColSize) + blockRowSize + 2;
 	int currentNum;
 	char * separatorRow;
 	int markErrors = getMarkErrors();
@@ -153,6 +187,7 @@ void printBoard(Cell** table){
 	for(i = 0; i < separatorRowNum; i++){
 		separatorRow[i] = '-';
 	}
+	separatorRow[separatorRowNum -1] = 0;
 	for(i = 0; i < boardRowAndColSize; i++){
 		if(i % blockRowSize == 0){
 			printf("%s\n", separatorRow);
@@ -179,7 +214,7 @@ void printBoard(Cell** table){
 		}
 		printf("%s", "|\n");
 	}
-	printf("%s", separatorRow);
+	printf("%s\n", separatorRow);
 	free(separatorRow);
 }
 
