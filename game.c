@@ -14,7 +14,7 @@
 
 
 static int markErrors = 1;/* TODO:each time we begin a puzzle we need to set it back to 1 */
-static int errorsFlag = 0;/* flag which is 0 if there are no errors in board, 1 if there are errors */
+static int errorsFlag = 0;/* TODO:reset back to 0 when starting a new board; flag which is 0 if there are no errors in board, 1 if there are errors */
 extern Cell** userBoard;
 extern Cell** solvedBoard;
 extern Cell** tempBoard;
@@ -61,6 +61,19 @@ void findAndMarkErrors(){
 	}
 	if(flag == 0){ errorsFlag = 0; }
 }
+/*
+ * 	Function:  newSetCommand
+ * --------------------
+ *	this function adds a new set or an autofill to the commands list,
+ *
+ */
+void newSetCommand(){
+	if(commandsList->currentNode != commandsList->lastNode){
+		/* clear the redo part of the list */
+		deleteFromCurrent(commandsList);
+	}
+	addCommand(commandsList, userBoard);
+}
 
 int setCell(int col, int row, int val){
 	if(userBoard[row][col].fixed == 1){/* no need to check which game mode because fixed cells are only available while in solve mode */
@@ -76,11 +89,7 @@ int setCell(int col, int row, int val){
 
 	findAndMarkErrors();
 
-	if(commandsList->currentNode != commandsList->lastNode){
-		/* clear the redo part of the list */
-		deleteFromCurrent(commandsList);
-	}
-	addCommand(commandsList, userBoard);
+	newSetCommand();
 
 	return 0;
 }
@@ -277,4 +286,31 @@ void startDefaultBoard(){
 		hardReset(userBoard);
 	}
 }
+/* (-1) - this is a board with an error */
+int autoFill(){
+	int i,j;
 
+	if(errorsFlag){
+		return -1;
+	}
+
+	boardInit(tempBoard);
+	copyBoard(tempBoard, userBoard);/* copy the user board to tempboard, so i can make changes without changing the userboard */
+	initBoardSolver(userBoard);
+
+	for(i = 0; i < (blockRowSize * blockColSize); i++ ){
+		for( j = 0; j < (blockRowSize * blockColSize); j++){
+			availableNumbers(userBoard, i, j);/* checking available numbers in the original board */
+			if(userBoard[i][j].limit == 1){/* there's only one number available */
+				tempBoard[i][j].currentNum = tempBoard[i][j].validNums[0];
+				printf("Cell <%d,%d> set to %d\n", j, i, tempBoard[i][j].validNums[0]);
+			}
+		}
+	}
+
+	copyBoard(userBoard, tempBoard);
+	findAndMarkErrors();
+	exitSolver(userBoard);
+	newSetCommand();
+	return 0;
+}
