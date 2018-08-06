@@ -73,6 +73,9 @@ void deleteListNodes(dll* list){
 	/* delete all the nodes are currently in the list.
 	 * then head, lastNode and currentNode are point to NULL
 	 * the list it's self is NOT deleted*/
+	if(list == NULL){
+		return;
+	}
 	if((list->head) == NULL){
 		/* there is nothing to delete */
 		(list->currentNode) = NULL;
@@ -88,7 +91,9 @@ void deleteListNodes(dll* list){
 	}
 	/* delete the head */
 	freeBoardMem((list->head)->info);
-	free(list->head);
+	if(list->head != NULL){
+		free(list->head);
+	}
 	(list->head) = NULL;
 	(list->currentNode) = NULL;
 	(list->lastNode) = NULL;
@@ -97,7 +102,9 @@ void deleteListNodes(dll* list){
 void freeListMem(dll* list){
 	/* free ONLY the list memory and NOT it's nodes
 	 * use only AFTER deleteListNodes to avoid memory leaks */
-	free(list);
+	if(list != NULL){
+		free(list);
+	}
 }
 
 void boardDiff(dll* list, dllNode* otherNode,char *command){

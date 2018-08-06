@@ -4,12 +4,12 @@
  *  Created on: 1 Aug 2018
  *      Author: Raz
  */
+#include <stdio.h>
+#include <stdlib.h>
 #include "Cell.h"
 #include "ExSolver.h"
-#include <stdlib.h>
 #include "MainAux.h"
 #include "CommandsList.h"
-#include <stdio.h>
 #include "ILPSolver.h"
 
 
@@ -278,3 +278,46 @@ void startDefaultBoard(){
 	}
 }
 
+void setHint(int col, int row){
+	/* col and row starting with zero
+	 * boardIsSolvable = 2 <-> board is unsolvable
+	 * boardISSolvable = 1 <-> board is solvable */
+	/*int boardIsSolvable;*/
+	if(getErrorsFlag()){
+		printf("%s", "Error: board contains erroneous values\n");
+		return;
+	}
+	if(userBoard[row][col].fixed == 1){
+		printf("%s", "Error: cell is fixed\n");
+		return;
+	}
+	if(userBoard[row][col].currentNum != 0){
+		printf("%s", "Error: cell already contains a value\n");
+		return;
+	}
+	/* TODO: uncomment the line below AND the decleration of boardIsSolvable */
+	/*boardIsSolvable = ILPSolver();
+	if(boardIsSolvable == 2){
+		printf("%s", "Error: board is unsolvable\n");
+		return;
+	}else{
+		userBoard[row][col].currentNum = solvedBoard[row][col].currentNum;
+		userBoard[row][col].isInput = 1;
+		printf("Hint: set cell to %d\n", solvedBoard[row][col].currentNum);
+	}
+	*/
+
+}
+
+void exitGame(){
+	/* free boards memory */
+	freeBoardMem(userBoard);
+	freeBoardMem(tempBoard);
+	freeBoardMem(solvedBoard);
+
+	/* free command list memory */
+	deleteListNodes(commandsList);
+	freeListMem(commandsList);
+	printf("%s", "Exiting...\n");
+
+}
