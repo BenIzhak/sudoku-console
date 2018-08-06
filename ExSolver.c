@@ -11,8 +11,39 @@
 #include "Stack.h"
 #include "Cell.h"
 
+extern int blockRowSize;
+extern int blockColSize;
 
-/*TODO:make it dynamic! */
+void initBoardSolver(Cell** board){
+	int i, j, k, boardRowAndColSize = blockRowSize * blockColSize;
+
+	for (i = 0; i < boardRowAndColSize; i++){
+		for (j = 0; j < boardRowAndColSize; j++){
+			board[i][j].prevNums = (int *) malloc((boardRowAndColSize) * sizeof(int));
+			board[i][j].validNums = (int *) malloc((boardRowAndColSize) * sizeof(int));
+			if(board[i][j].prevNums == NULL){
+				printf("%s","Error: initBoardSolver has failed\n");
+			}
+			if(board[i][j].validNums == NULL){
+				printf("%s","Error: initBoardSolver has failed\n");
+			}
+			for(k = 0; k < boardRowAndColSize; k++){/* initializes prevNums as not used nums*/
+				board[i][j].prevNums[k] = 0;
+			}
+		}
+	}
+}
+
+void exitSolver(Cell** board){
+	int i, j, boardRowAndColSize = blockRowSize * blockColSize;
+
+	for(i = 0; i < boardRowAndColSize; i++){
+		for(j = 0; j < boardRowAndColSize; j++){
+			free(board[i][j].prevNums);
+			free(board[i][j].validNums);
+		}
+	}
+}
 /*
  * Function:  resetCell
  * --------------------
@@ -23,11 +54,12 @@
  *	cellCol: column of cell to reset
  */
 void resetCell(Cell** board, int cellRow, int cellCol){
-	int i;
+	int i, amountOfNums = blockRowSize*blockColSize;
+
 	board[cellRow][cellCol].currentNum = 0;
 
 	/* initializes prevNums as not used nums*/
-	for (i = 0; i < 9; i++) {/*TODO: change to dynamic size of prevNums*/
+	for (i = 0; i < amountOfNums; i++) {
 		board[cellRow][cellCol].prevNums[i] = 0;
 	}
 
@@ -45,7 +77,7 @@ void resetCell(Cell** board, int cellRow, int cellCol){
 void resetCells(Cell** board, cellIndex tempIndex, int cellCol, int cellRow){
 	int dstRow = tempIndex.row;
 	int dstCol = tempIndex.col;
-	int boardSize = 9;/* TODO: need to change to dynamic value */
+	int boardSize = blockRowSize*blockColSize;
 
 	while(dstRow != cellRow || dstCol != cellCol){
 
@@ -92,7 +124,7 @@ void updateCell(Cell** board, int numIndex, int cellRow, int cellCol){
  */
 int rowCheck(Cell** board, int num, int cellRow, int cellCol){
 	int i, numCompare;
-	int colSize = 9;/*TODO:change back to dynamic value or to old value:BLOCK_ROW_SIZE * BLOCK_COL_SIZE;*/
+	int colSize = (blockColSize*blockRowSize);
 	for(i = 0; i < colSize; i++){
 		if(i != cellCol){
 			numCompare = board[cellRow][i].currentNum;
@@ -119,7 +151,7 @@ int rowCheck(Cell** board, int num, int cellRow, int cellCol){
  */
 int colCheck(Cell** board, int num, int cellRow, int cellCol){
 	int i, numCompare;
-	int rowSize = 9;/*TODO:change back to dynamic value or to old value:BLOCK_ROW_SIZE * BLOCK_COL_SIZE;*/
+	int rowSize = blockRowSize*blockColSize;
 	for(i = 0; i < rowSize; i++){
 		if( i != cellRow){
 			numCompare = board[i][cellCol].currentNum;
@@ -144,15 +176,15 @@ int colCheck(Cell** board, int num, int cellRow, int cellCol){
  *	returns: number of ending column of the block of the column cellCol
  */
 int getcurrentblockCol(int cellCol){
-	int boardSize = 9;/*TODO:change back to dynamic value or to old value:BLOCK_ROW_SIZE * BLOCK_COL_SIZE;*/
-	int i = 3 - 1;/*TODO:change back to dynamic value or to old value:BLOCK_COL_SIZE - 1;*/
+	int boardSize = blockRowSize*blockColSize;
+	int i = blockColSize - 1;
 	float calcPos = 0;/* calculates relation between block end and cell position */
 	while(i <= boardSize){
 		calcPos = cellCol / (float) i;
 		if(calcPos <= 1.0){
 			return i;
 		}
-		i += 3;/*TODO:change back to dynamic value or to old value:BLOCK_COL_SIZE;*/
+		i += blockColSize;
 	}
 	return -1;
 }
@@ -168,15 +200,15 @@ int getcurrentblockCol(int cellCol){
  *	returns: number of ending row of the block of the column cellRow
  */
 int getcurrentblockRow(int cellRow){
-	int boardSize = 9;/*TODO:change back to dynamic value or to old value:BLOCK_ROW_SIZE * BLOCK_COL_SIZE;*/
-	int i = 3 - 1;/*TODO:change back to dynamic value or to old value:BLOCK_COL_SIZE - 1;*/
+	int boardSize = blockColSize*blockRowSize;
+	int i = blockRowSize - 1;
 	float calcPos = 0;/* calculates relation between block end and cell position */
 	while(i <= boardSize){
 		calcPos = cellRow / (float) i;
 		if(calcPos <= 1.0){
 			return i;
 		}
-		i += 3;/*TODO:change back to dynamic value or to old BLOCK_ROW_SIZE;*/
+		i += blockRowSize;
 	}
 	return -1;
 }
@@ -202,8 +234,8 @@ int blockCheck(Cell** board,int numToCheck , int cellRow, int cellCol){
 	int minBlockLimitRow, minBlockLimitCol;
 	currentblockRow = getcurrentblockRow(cellRow) + 1;
 	currentblockCol = getcurrentblockCol(cellCol) + 1;
-	minBlockLimitRow = currentblockRow - 3;/*TODO:change back to dynamic value or to old currentblockRow - BLOCK_ROW_SIZE;*/
-	minBlockLimitCol = currentblockCol - 3;/*TODO:change back to dynamic value or to old currentblockRow - BLOCK_COL_SIZE;*/
+	minBlockLimitRow = currentblockRow - blockRowSize;
+	minBlockLimitCol = currentblockCol - blockColSize;
 	for(i = minBlockLimitRow; i < currentblockRow; i++){
 		for(j = minBlockLimitCol; j < currentblockCol; j++){
 			if(i != cellRow || j != cellCol){
@@ -251,7 +283,8 @@ void availableNumbers(Cell** board, int cellRow, int cellCol){
 	int prevNumFlag;
 	int counter = 0;/* counts the amount of valid numbers*/
 	int num;
-	for(num = 1; num < 10; num++){/*TODO:change to dynamic value */
+	int maxNum = blockRowSize*blockColSize;
+	for(num = 1; num <= maxNum; num++){
 		prevNumFlag = board[cellRow][cellCol].prevNums[num - 1];
 		if(prevNumFlag == 0){/* checks if num was previously used */
 			if(validAssignment(board, num, cellRow, cellCol) == 0){/* value is 0 if num is a valid assignment*/
@@ -274,11 +307,13 @@ void availableNumbers(Cell** board, int cellRow, int cellCol){
  *
  */
 int exBacktrack(Cell** board){
-	int limit, flag = 1, cellCol = 0, cellRow = 0, boardSize = 9, countSols = 0;
+	int limit, flag = 1, cellCol = 0, cellRow = 0, boardSize = blockColSize*blockRowSize, countSols = 0;
 	int frstColIndex = -1; /* column of the first empty cell */
 	int frstRowIndex = -1; /* row of the first empty cell */
 	cellIndex tempIndex;
 	node* lastEmpty = NULL; /* pointer to last empty cell */
+
+	initBoardSolver(board);
 
 	push(&lastEmpty, -1, -1);
 
@@ -345,5 +380,6 @@ int exBacktrack(Cell** board){
 			}
 		}
 	}
+	exitSolver(board);
 	return countSols;
 }

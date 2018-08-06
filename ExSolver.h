@@ -8,6 +8,22 @@
 #ifndef EXSOLVER_H_
 #define EXSOLVER_H_
 
+/*  Function:  initBoardSolver
+ *	--------------------
+ *	initialize prevnums and validnums arrays which are used only in ExSolver.c functions
+ *
+ *  input:
+ *  board-intialized 2d array*/
+void initBoardSolver(Cell** board);
+
+/*  Function:  exitSolver
+ *	--------------------
+ *	free validnums and prevnums memory,
+ *	when exiting the exSolver there is no need of prevnums and validnums memory any more,
+ *
+ *  input:
+ *  board-intialized 2d array*/
+void exitSolver(Cell** board);
 
 int exBacktrack(Cell** board);
 

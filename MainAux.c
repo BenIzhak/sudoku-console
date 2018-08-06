@@ -38,21 +38,7 @@ Cell** setAllocatedMem(){
 				printf("%s","Error: setAllocatedMem has failed\n");
 				return NULL;
 		}
-	}/* TODO: move to solver
-	for (i = 0; i < boardRowAndColSize; i++){
-		for (j = 0; j < boardRowAndColSize; j++){
-			temp[i][j].prevNums = (int *) malloc((blockRowSize * blockColSize) * sizeof(int));
-			temp[i][j].validNums = (int *) malloc((blockRowSize * blockColSize) * sizeof(int));
-			if(temp[i][j].prevNums == NULL){
-				printf("%s","Error: setAllocatedMem has failed\n");
-				return NULL;
-			}
-			if(temp[i][j].validNums == NULL){
-				printf("%s","Error: setAllocatedMem has failed\n");
-					return NULL;
-			}
-		}
-	}*/
+	}
 	return temp;
 }
 
@@ -149,14 +135,6 @@ void boardInit(Cell** table){
 void freeBoardMem(Cell** Board, int BlockRowSize, int BlockColSize){
 	int boardRowAndColSize = BlockRowSize * BlockColSize;
 	int i;
-	/*TODO: move to solver
-	for(i = 0; i < boardRowAndColSize; i++){
-		for(j = 0; j < boardRowAndColSize; j++){
-			free(Board[i][j].prevNums);
-			free(Board[i][j].validNums);
-		}
-	}
-	*/
 	for (i = 0; i < boardRowAndColSize; i++) {
 		free(Board[i]);
 	}

@@ -146,7 +146,8 @@ int isEmptyBoard(){
 
 int fillAndKeep(int cellsToFill, int cellsToKeep){/*TODO: debug carefully after adding the call to ILPSOLVER */
 	int rowAndColSize = blockRowSize * blockColSize;
-	int i, j, randCol, randRow, randNum, flag = 0, isSolved = 0;
+	int i, j, randCol, randRow, randNum, flag = 0;
+	/* intisSolved = 0;*/
 
 	for(i = 0; i < cellsToFill; i++){
 		while(flag == 0){
@@ -157,6 +158,7 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){/*TODO: debug carefully after 
 				flag = 1;
 			}
 		}
+
 		printf("%s", "******160******");
 		availableNumbers(userBoard, randRow, randCol);
 		printf("%s", "******162******");
@@ -167,14 +169,14 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){/*TODO: debug carefully after 
 
 		userBoard[randRow][randCol].currentNum = userBoard[randRow][randCol].validNums[randNum];
 	}
-
+	/*
 	isSolved = ILPSolver();
 	if(isSolved == 1){
 		copyBoard(solvedBoard, tempBoard);
 	}else{
 		return 0;
-		/* error in ILPSolver, need to try again */
-	}
+		 error in ILPSolver, need to try again
+	}*/
 
 
 	flag = 0;
@@ -210,6 +212,7 @@ int generate(int cellsToFill, int cellsToKeep){
 	int emptyCells = (rowAndColSize)*(rowAndColSize);/* if the board is empty, amount of empty cells is N*N */
 	int i;
 
+
 	if(isEmptyBoard() == 0){/* checks that board is empty */
 		return 0;
 	}
@@ -218,9 +221,12 @@ int generate(int cellsToFill, int cellsToKeep){
 		return 1;
 	}
 
+	initBoardSolver(userBoard);/* getting ready to use ExSolver's functions */
+
 	/* tries for 1000 iterations to get a valid board*/
 	for(i = 0; i < 1000; i++){
 		if(fillAndKeep(cellsToFill, cellsToKeep) == 1){
+			exitSolver(userBoard);
 			return 3;
 		}else{
 			boardInit(userBoard);
@@ -228,6 +234,7 @@ int generate(int cellsToFill, int cellsToKeep){
 		}
 	}
 
+	exitSolver(userBoard);/* no need for ExSolver's fields any more, can free it. */
 	copyBoard(userBoard, solvedBoard);
 	return 2;
 }
