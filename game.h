@@ -88,4 +88,7 @@ void startDefaultBoard();
 void redo();
 void undo();
 
+void setHint(int col, int row);
+void exitGame();
+
 #endif /* GAME_H_ */

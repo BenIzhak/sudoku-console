@@ -6,9 +6,9 @@
  */
 #include <stdio.h>
 #include <time.h>
+#include <stdlib.h>
 #include "Cell.h"
 #include "SPBufferset.h"
-#include <stdlib.h>
 #include "MainAux.h"
 #include "FilesHandler.h"
 #include "game.h"

@@ -51,7 +51,11 @@ int getInput(char input[], int command[], char* filePath, int* numOfArgs) {
 		/* EOF CASE */
 		return -1;
 	}
+
 	parseCommand(input, command, filePath, numOfArgs);
+	if(strcmp(input, "exit") == 0){
+		return 1;
+	}
 	while (validInput(command, *numOfArgs) == -1) {
 		printf("%s", "Enter your command:\n");
 		if (fgets(input, 256, stdin) == NULL) {
@@ -59,6 +63,9 @@ int getInput(char input[], int command[], char* filePath, int* numOfArgs) {
 			return -1;
 		}
 		parseCommand(input, command, filePath, numOfArgs);
+		if(strcmp(input, "exit") == 0){
+			return 1;
+		}
 	}
 	return 0;
 }
@@ -127,7 +134,11 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 			printf("%s", "save X");
 			break;
 		case 10: /* hint X Y */
-			printf("%s", "hint X Y");
+			if(gameMode == 2){
+				setHint(command[1] - 1, command[2] - 1);
+			}else{
+				printf("%s", "ERROR: invalid command\n");
+			}
 			break;
 		case 11: /* num_solutions */
 			printf("%s", "num_solutions");
@@ -143,7 +154,7 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 			}
 			break;
 		case 14: /* exit */
-			printf("%s", "exit");
+			exitGame();
 			break;
 	}
 }
