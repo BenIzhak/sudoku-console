@@ -11,17 +11,34 @@
 #include "MainAux.h"
 #include "CommandsList.h"
 #include "ILPSolver.h"
+#include "filesHandler.h"
+#include "def.h"
 
 
-static int markErrors = 1;/* TODO:each time we begin a puzzle we need to set it back to 1 */
+static int gameMode;
+
+
+static int markErrors;/* TODO:each time we begin a puzzle we need to set it back to 1 */
 static int errorsFlag = 0;/* TODO:reset back to 0 when starting a new board; flag which is 0 if there are no errors in board, 1 if there are errors */
 extern Cell** userBoard;
 extern Cell** solvedBoard;
 extern Cell** tempBoard;
-extern int gameMode;
 extern int blockRowSize;
 extern int blockColSize;
-dll* commandsList;
+
+static dll* commandsList;
+
+
+
+
+int getGameMode(){
+	return gameMode;
+}
+
+void setGameMode(int modeNum){
+	gameMode = modeNum;
+}
+
 
 void setMarkErrors(int setting){
 	markErrors = setting;
@@ -94,7 +111,6 @@ int setCell(int col, int row, int val){
 	return 0;
 }
 
-
 void reset(){
 	/* undo all moves, reverting the board to its original loaded state. */
 	(commandsList->currentNode) = (commandsList->head);
@@ -109,6 +125,19 @@ void hardReset(Cell** info){
 		deleteListNodes(commandsList);
 	}
 	initList(commandsList, info);
+}
+
+void startNewCommandsList(){
+	/* if commandsList does not exist -> create new one
+	 * if commandsList exist -> hardReset it*/
+	if(commandsList == NULL){
+		/* commandList doesn't exist, so create and initialize one */
+		commandsList = allocateListMem();
+		initList(commandsList, userBoard);
+	}else{
+		/* commandList exists, so update the command list */
+		hardReset(userBoard);
+	}
 }
 
 void undo(){
@@ -135,8 +164,6 @@ void redo(){
 	commandsList->currentNode = nextCommand;
 	copyBoard(userBoard, nextCommand->info);
 }
-
-
 
 int validate(){
 
@@ -255,6 +282,7 @@ int generate(int cellsToFill, int cellsToKeep){
 }
 
 void startDefaultBoard(){
+	/* TODO: add constants */
 	int boardRowAndColSize;
 
 	/* free memory of previous boards */
@@ -263,8 +291,8 @@ void startDefaultBoard(){
 	freeBoardMem(solvedBoard);
 
 	/* set new values to blockRowSize and blockColSize */
-	blockColSize = 3;
-	blockRowSize = 3;
+	blockColSize = DEFAULT_BLOCK_COL_SIZE;
+	blockRowSize = DEFAULT_BLOCK_ROW_SIZE;
 
 	/* allocate memory for news boards */
 	boardRowAndColSize = blockColSize * blockRowSize;
@@ -277,21 +305,15 @@ void startDefaultBoard(){
 	boardInit(tempBoard);
 	boardInit(solvedBoard);
 
-	if(commandsList == NULL){
-		/* commandList doesn't exist, so create and initialize one */
-		commandsList = allocateListMem();
-		initList(commandsList, userBoard);
-	}else{
-		/* commandList exists, so update the command list */
-		hardReset(userBoard);
-	}
+	startNewCommandsList();
+
 }
 /* (-1) - this is a board with an error */
 int autoFill(){
 	/* TODO: do something about the case when the board doesn't change
 	 * TODO: delete all the nodes after autofill command */
 	int i,j;
-
+	int anyChanges = 0;
 	if(errorsFlag){
 		return -1;
 	}
@@ -304,6 +326,7 @@ int autoFill(){
 		for( j = 0; j < (blockRowSize * blockColSize); j++){
 			availableNumbers(userBoard, i, j);/* checking available numbers in the original board */
 			if(userBoard[i][j].limit == 1){/* there's only one number available */
+				anyChanges = 1;
 				tempBoard[i][j].currentNum = tempBoard[i][j].validNums[0];
 				printf("Cell <%d,%d> set to %d\n", j, i, tempBoard[i][j].validNums[0]);
 			}
@@ -314,7 +337,9 @@ int autoFill(){
 	copyBoard(userBoard, tempBoard);
 	findAndMarkErrors();
 	exitSolver(userBoard);
-	newSetCommand();
+	if(anyChanges){
+		newSetCommand();
+	}
 	return 0;
 }
 
@@ -349,7 +374,27 @@ void setHint(int col, int row){
 
 }
 
-void exitGame(){
+void solveCommand(char* filePath){
+	gameMode = SOLVE_MODE;
+	markErrors = 1;
+	if(loadBoard(filePath) == -1){
+		printf("%s", "Error: File cannot be opened\n");
+	}
+}
+
+void editCommand(char* filePath , int numOfArgs){
+	gameMode = EDIT_MODE;
+	markErrors = 1;
+	if(numOfArgs > 0){
+		if(loadBoard(filePath) == -1){
+			printf("%s", "Error: File cannot be opened\n");
+		}
+	}else{
+		startDefaultBoard();
+	}
+}
+
+void exitGameCommand(){
 	/* free boards memory */
 	freeBoardMem(userBoard);
 	freeBoardMem(tempBoard);
@@ -361,3 +406,5 @@ void exitGame(){
 	printf("%s", "Exiting...\n");
 
 }
+
+

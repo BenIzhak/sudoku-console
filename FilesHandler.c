@@ -18,8 +18,6 @@ extern Cell** userBoard;
 extern Cell** solvedBoard;
 extern Cell** tempBoard;
 
-extern dll* commandsList;
-
 
 FILE* openFile(char* filePath, const char* mode){
 	FILE* fp = NULL;
@@ -108,16 +106,8 @@ int loadBoard(char* filePath){
 	/* we don't need the file anymore, we can close it */
 	fclose(fp);
 
-
 	/* update the command list */
-	if(commandsList == NULL){
-		/* commandList doesn't exist, so create and initialize one */
-		commandsList = allocateListMem();
-		initList(commandsList, userBoard);
-	}else{
-		/* commandList exists, so update the command list */
-		hardReset(userBoard);
-	}
+	startNewCommandsList();
 
 	return 1;
 }

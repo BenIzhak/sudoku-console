@@ -14,8 +14,6 @@ Cell** userBoard;
 Cell** solvedBoard;
 Cell** tempBoard;
 
-/* 0 - Init mode, 1 - Edit mode, 2 - Solve mode */
-int gameMode;
 
 void gameLoop();
 Cell** setAllocatedMem();

@@ -80,8 +80,16 @@ int validate();
 
 int generate(int cellsToFill, int cellsToKeep);
 
+void solveCommand(char* filePath);
+void editCommand(char* filePath , int numOfArgs);
+
+int getGameMode();
+void setGameMode(int modeNum);
+
 void reset();
 void hardReset(Cell** info);
+
+void startNewCommandsList();
 
 void startDefaultBoard();
 
@@ -89,6 +97,6 @@ void redo();
 void undo();
 
 void setHint(int col, int row);
-void exitGame();
+void exitGameCommand();
 
 #endif /* GAME_H_ */
