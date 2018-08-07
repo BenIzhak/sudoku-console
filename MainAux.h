@@ -13,9 +13,6 @@
 struct boardData{
 	 int blockRowSize;
 	 int blockColSize;
-	 Cell** userBoard;
-	 Cell** solvedBoard;
-	 Cell** tempBoard;
 };
 
 typedef struct boardData boardData;
@@ -28,6 +25,9 @@ void freeBoardMem(Cell** Board);
 void boardInit(Cell** table);
 void copyBoard(Cell** dstBoard, Cell** srcBoard);
 boardData getBoardData();
+Cell** getUserBoard();
+Cell** getSolvedBoard();
+Cell** getTempBoard();
 void setBlockRowSize(int size);
 void setBlockColSize(int size);
 #endif /* MAINAUX_H_ */

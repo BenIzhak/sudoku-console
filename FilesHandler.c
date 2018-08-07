@@ -20,20 +20,21 @@ FILE* openFile(char* filePath, const char* mode){
 }
 
 void cellAssignment(int rowCordinate, int colCordinate ,int num, int fixed){
-	boardData brdData = getBoardData();
+	Cell** userBoard = getUserBoard();
+	Cell** tempBoard = getTempBoard();
 
 	/* fixed = 1 if cell is fixed and fixed = 0 otherwise */
-	brdData.userBoard[rowCordinate][colCordinate].currentNum = num;
+	userBoard[rowCordinate][colCordinate].currentNum = num;
 	if(fixed){
-		brdData.userBoard[rowCordinate][colCordinate].fixed = 1;
+		userBoard[rowCordinate][colCordinate].fixed = 1;
 	}else{
-		brdData.userBoard[rowCordinate][colCordinate].fixed = 0;
+		userBoard[rowCordinate][colCordinate].fixed = 0;
 	}
-	brdData.tempBoard[rowCordinate][colCordinate].currentNum = num;
+	tempBoard[rowCordinate][colCordinate].currentNum = num;
 	if(fixed){
-		brdData.tempBoard[rowCordinate][colCordinate].fixed = 1;
+		tempBoard[rowCordinate][colCordinate].fixed = 1;
 	}else{
-		brdData.tempBoard[rowCordinate][colCordinate].fixed = 0;
+		tempBoard[rowCordinate][colCordinate].fixed = 0;
 	}
 }
 
@@ -54,6 +55,10 @@ int loadBoard(char* filePath){
 	char dot;
 	int boardRowAndColSize;
 	boardData brdData = getBoardData();
+	Cell** userBoard = getUserBoard();
+	Cell** tempBoard = getTempBoard();
+	Cell** solvedBoard = getSolvedBoard();
+
 	if(fp == NULL){
 		return -1;
 	}
@@ -61,9 +66,9 @@ int loadBoard(char* filePath){
 	fscanf(fp, "%d", &n);
 
 	/* free memory of previous boards */
-	freeBoardMem(brdData.userBoard);
-	freeBoardMem(brdData.tempBoard);
-	freeBoardMem(brdData.solvedBoard);
+	freeBoardMem(userBoard);
+	freeBoardMem(tempBoard);
+	freeBoardMem(solvedBoard);
 
 	/* set new values to blockRowSize and blockColSize */
 	setBlockColSize(m);
@@ -71,14 +76,14 @@ int loadBoard(char* filePath){
 
 	/* allocate memory for news boards */
 	boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
-	brdData.userBoard = setAllocatedMem(boardRowAndColSize);
-	brdData.tempBoard = setAllocatedMem(boardRowAndColSize);
-	brdData.solvedBoard = setAllocatedMem(boardRowAndColSize);
+	userBoard = setAllocatedMem(boardRowAndColSize);
+	tempBoard = setAllocatedMem(boardRowAndColSize);
+	solvedBoard = setAllocatedMem(boardRowAndColSize);
 
 	/* init the boards */
-	boardInit(brdData.userBoard);
-	boardInit(brdData.tempBoard);
-	boardInit(brdData.solvedBoard);
+	boardInit(userBoard);
+	boardInit(tempBoard);
+	boardInit(solvedBoard);
 
 
 	/* update the cells*/
@@ -109,18 +114,19 @@ int loadBoard(char* filePath){
 
 int saveBoard(char* filePath){
 	FILE* fp = openFile(filePath,"w");
-	int i, j;
-	int currentNum, fixed;
+	int i, j, currentNum, fixed;
 	boardData brdData = getBoardData();
+	Cell** userBoard = getUserBoard();
 	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
+
 	if(fp == NULL){
 		return -1;
 	}
 	fprintf(fp, "%d %d \n", brdData.blockColSize, brdData.blockRowSize);
 	for(i = 0; i < boardRowAndColSize; i++){
 		for(j = 0; j < boardRowAndColSize; j++){
-			currentNum = brdData.userBoard[i][j].currentNum;
-			fixed = brdData.userBoard[i][j].fixed;
+			currentNum = userBoard[i][j].currentNum;
+			fixed = userBoard[i][j].fixed;
 			if(j == 0){
 				if(fixed){
 					fprintf(fp, "%d.", currentNum);

@@ -14,13 +14,24 @@
 #include "game.h"
 #include "def.h"
 
-
+static Cell** userBoard;
+static Cell** solvedBoard;
+static Cell** tempBoard;
 static boardData brdData;
 
 boardData getBoardData(){
 	return brdData;
 }
 
+Cell** getUserBoard(){
+	return userBoard;
+}
+Cell** getSolvedBoard(){
+	return solvedBoard;
+}
+Cell** getTempBoard(){
+	return tempBoard;
+}
 void setBlockRowSize(int size){
 	brdData.blockRowSize = size;
 }
@@ -28,6 +39,7 @@ void setBlockRowSize(int size){
 void setBlockColSize(int size){
 	brdData.blockColSize = size;
 }
+
 
 
 Cell** setAllocatedMem(){
@@ -95,7 +107,7 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 		case 3: /* print_board */
 
 			if(gameMode == EDIT_MODE || gameMode == SOLVE_MODE){
-				printBoard(brdData.userBoard);
+				printBoard(getUserBoard());
 			}else{
 				printf("%s", "ERROR: invalid command\n");
 			}
@@ -103,7 +115,7 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 		case 4: /* set X Y Z */
 			if(gameMode == EDIT_MODE || gameMode == SOLVE_MODE){
 				setCell(command[1]-1, command[2]-1, command[3]);
-				printBoard(brdData.userBoard);
+				printBoard(getUserBoard());
 			}else{
 				printf("%s", "ERROR: invalid command\n");
 			}
