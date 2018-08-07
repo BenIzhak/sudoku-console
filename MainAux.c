@@ -12,7 +12,7 @@
 #include "FilesHandler.h"
 #include "MainAux.h"
 #include "game.h"
-
+#include "def.h"
 
 
 static boardData brdData;
@@ -77,39 +77,31 @@ int getInput(char input[], int command[], char* filePath, int* numOfArgs) {
 }
 
 void commmandRouter(int command[], int numOfArgs ,char* filePath) {
+	int gameMode = getGameMode();
 	switch (command[0]) {
 		case 0: /*solve X*/
-			gameMode = 2;
-			if(loadBoard(filePath) == -1){
-				printf("%s", "Error: File cannot be opened\n");
-			}
+			solveCommand(filePath);
 			break;
 		case 1:  /*edit X*/
-			gameMode = 1;
-			if(numOfArgs > 0){
-				if(loadBoard(filePath) == -1){
-					printf("%s", "Error: File cannot be opened\n");
-				}
-			}else{
-				startDefaultBoard();
-			}
+			editCommand(filePath , numOfArgs);
 			break;
 		case 2:	/*mark_errors X*/
-			if(gameMode == 2){
+			if(gameMode == SOLVE_MODE){
 				setMarkErrors(command[1]);
 			}else{
 				printf("%s", "ERROR: invalid command\n");
 			}
 			break;
 		case 3: /* print_board */
-			if(gameMode == 1 || gameMode == 2){
+
+			if(gameMode == EDIT_MODE || gameMode == SOLVE_MODE){
 				printBoard(brdData.userBoard);
 			}else{
 				printf("%s", "ERROR: invalid command\n");
 			}
 			break;
 		case 4: /* set X Y Z */
-			if(gameMode == 1 || gameMode == 2){
+			if(gameMode == EDIT_MODE || gameMode == SOLVE_MODE){
 				setCell(command[1]-1, command[2]-1, command[3]);
 				printBoard(brdData.userBoard);
 			}else{
@@ -123,14 +115,14 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 			printf("%s", "generate X Y");
 			break;
 		case 7: /* undo */
-			if(gameMode == 1 || gameMode == 2){
+			if(gameMode == EDIT_MODE || gameMode == SOLVE_MODE){
 				undo();
 			}else{
 				printf("%s", "ERROR: invalid command\n");
 			}
 			break;
 		case 8: /* redo */
-			if(gameMode == 1 || gameMode == 2){
+			if(gameMode == EDIT_MODE || gameMode == SOLVE_MODE){
 				redo();
 			}else{
 				printf("%s", "ERROR: invalid command\n");
@@ -140,7 +132,7 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 			printf("%s", "save X");
 			break;
 		case 10: /* hint X Y */
-			if(gameMode == 2){
+			if(SOLVE_MODE){
 				setHint(command[1] - 1, command[2] - 1);
 			}else{
 				printf("%s", "ERROR: invalid command\n");
@@ -153,14 +145,14 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 			printf("%s", "autofill");
 			break;
 		case 13: /* reset */
-			if(gameMode == 1 || gameMode == 2){
+			if(gameMode == EDIT_MODE || gameMode == SOLVE_MODE){
 				reset();
 			}else{
 				printf("%s", "ERROR: invalid command\n");
 			}
 			break;
 		case 14: /* exit */
-			exitGame();
+			exitGameCommand();
 			break;
 	}
 }
@@ -199,7 +191,7 @@ void printBoard(Cell** table){
 	int currentNum;
 	char * separatorRow;
 	int markErrors = getMarkErrors();
-
+	int gameMode = getGameMode();
 	separatorRow = (char*) calloc(separatorRowNum, sizeof(char));
 	for(i = 0; i < separatorRowNum; i++){
 		separatorRow[i] = '-';
@@ -222,7 +214,7 @@ void printBoard(Cell** table){
 			}
 			if(table[i][j].fixed){
 				printf("%s", ".");
-			}else if(table[i][j].isError && (gameMode == 1 || markErrors == 1)){
+			}else if(table[i][j].isError && (gameMode == EDIT_MODE || markErrors == 1)){
 				printf("%s", "*");
 			}else{
 				printf("%s", " ");
@@ -266,8 +258,7 @@ void gameLoop() {
 	int command[4];
 	int exitFlag = 0;
 	int numOfArgs;
-
-	gameMode = 0;
+	setGameMode(INIT_MODE);
 	printf("%s", "Sudoku\n------\n");
 
 

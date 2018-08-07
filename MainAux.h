@@ -20,8 +20,6 @@ struct boardData{
 
 typedef struct boardData boardData;
 
-/* 0 - Init mode, 1 - Edit mode, 2 - Solve mode */
-int gameMode;
 
 void gameLoop();
 Cell** setAllocatedMem();

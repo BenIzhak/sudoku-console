@@ -11,7 +11,6 @@
 #include "game.h"
 #include "CommandsList.h"
 
-extern dll* commandsList;
 
 
 FILE* openFile(char* filePath, const char* mode){
@@ -102,16 +101,8 @@ int loadBoard(char* filePath){
 	/* we don't need the file anymore, we can close it */
 	fclose(fp);
 
-
 	/* update the command list */
-	if(commandsList == NULL){
-		/* commandList doesn't exist, so create and initialize one */
-		commandsList = allocateListMem();
-		initList(commandsList, brdData.userBoard);
-	}else{
-		/* commandList exists, so update the command list */
-		hardReset(brdData.userBoard);
-	}
+	startNewCommandsList();
 
 	return 1;
 }

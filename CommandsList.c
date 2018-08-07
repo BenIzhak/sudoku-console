@@ -81,7 +81,7 @@ void deleteListNodes(dll* list){
 		(list->lastNode) = NULL;
 		return;
 	}
-	while((list->currentNode) != (list->head)){
+	while((list->lastNode) != (list->head)){
 		/* delete all the nodes except the head */
 		freeBoardMem((list->lastNode)->info);
 		(list->lastNode) = (list->lastNode)-> previous;
