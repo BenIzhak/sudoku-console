@@ -288,6 +288,8 @@ void startDefaultBoard(){
 }
 /* (-1) - this is a board with an error */
 int autoFill(){
+	/* TODO: do something about the case when the board doesn't change
+	 * TODO: delete all the nodes after autofill command */
 	int i,j;
 
 	if(errorsFlag){

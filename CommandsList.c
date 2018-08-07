@@ -49,6 +49,7 @@ void deleteFromCurrent(dll* list){
 }
 
 dll* allocateListMem(){
+	/* allocate memory for the dll struct */
 	dll *lst = NULL;
 	lst = (dll *) malloc(sizeof(dll));
 	return lst;
