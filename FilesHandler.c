@@ -11,13 +11,6 @@
 #include "game.h"
 #include "CommandsList.h"
 
-int blockRowSize;
-int blockColSize;
-
-extern Cell** userBoard;
-extern Cell** solvedBoard;
-extern Cell** tempBoard;
-
 extern dll* commandsList;
 
 
@@ -28,18 +21,20 @@ FILE* openFile(char* filePath, const char* mode){
 }
 
 void cellAssignment(int rowCordinate, int colCordinate ,int num, int fixed){
+	boardData brdData = getBoardData();
+
 	/* fixed = 1 if cell is fixed and fixed = 0 otherwise */
-	userBoard[rowCordinate][colCordinate].currentNum = num;
+	brdData.userBoard[rowCordinate][colCordinate].currentNum = num;
 	if(fixed){
-		userBoard[rowCordinate][colCordinate].fixed = 1;
+		brdData.userBoard[rowCordinate][colCordinate].fixed = 1;
 	}else{
-		userBoard[rowCordinate][colCordinate].fixed = 0;
+		brdData.userBoard[rowCordinate][colCordinate].fixed = 0;
 	}
-	tempBoard[rowCordinate][colCordinate].currentNum = num;
+	brdData.tempBoard[rowCordinate][colCordinate].currentNum = num;
 	if(fixed){
-		tempBoard[rowCordinate][colCordinate].fixed = 1;
+		brdData.tempBoard[rowCordinate][colCordinate].fixed = 1;
 	}else{
-		tempBoard[rowCordinate][colCordinate].fixed = 0;
+		brdData.tempBoard[rowCordinate][colCordinate].fixed = 0;
 	}
 }
 
@@ -49,8 +44,6 @@ void cellAssignment(int rowCordinate, int colCordinate ,int num, int fixed){
  *  loads file into boards
  *  returns 0 on success and -1 if failed
  *
- *  userBoard: 2d array holding a sudoku board, it holds the board the user is using
- *  tempBoard: 2d array holding a sudoku board, just a temp board, values doesn't matter
  *  filePath: string of the file's path
  */
 int loadBoard(char* filePath){
@@ -61,6 +54,7 @@ int loadBoard(char* filePath){
 	int currentNum = 0;
 	char dot;
 	int boardRowAndColSize;
+	boardData brdData = getBoardData();
 	if(fp == NULL){
 		return -1;
 	}
@@ -68,24 +62,24 @@ int loadBoard(char* filePath){
 	fscanf(fp, "%d", &n);
 
 	/* free memory of previous boards */
-	freeBoardMem(userBoard);
-	freeBoardMem(tempBoard);
-	freeBoardMem(solvedBoard);
+	freeBoardMem(brdData.userBoard);
+	freeBoardMem(brdData.tempBoard);
+	freeBoardMem(brdData.solvedBoard);
 
 	/* set new values to blockRowSize and blockColSize */
-	blockColSize = m;
-	blockRowSize = n;
+	setBlockColSize(m);
+	setBlockRowSize(n);
 
 	/* allocate memory for news boards */
-	boardRowAndColSize = blockColSize * blockRowSize;
-	userBoard = setAllocatedMem(boardRowAndColSize);
-	tempBoard = setAllocatedMem(boardRowAndColSize);
-	solvedBoard = setAllocatedMem(boardRowAndColSize);
+	boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
+	brdData.userBoard = setAllocatedMem(boardRowAndColSize);
+	brdData.tempBoard = setAllocatedMem(boardRowAndColSize);
+	brdData.solvedBoard = setAllocatedMem(boardRowAndColSize);
 
 	/* init the boards */
-	boardInit(userBoard);
-	boardInit(tempBoard);
-	boardInit(solvedBoard);
+	boardInit(brdData.userBoard);
+	boardInit(brdData.tempBoard);
+	boardInit(brdData.solvedBoard);
 
 
 	/* update the cells*/
@@ -113,10 +107,10 @@ int loadBoard(char* filePath){
 	if(commandsList == NULL){
 		/* commandList doesn't exist, so create and initialize one */
 		commandsList = allocateListMem();
-		initList(commandsList, userBoard);
+		initList(commandsList, brdData.userBoard);
 	}else{
 		/* commandList exists, so update the command list */
-		hardReset(userBoard);
+		hardReset(brdData.userBoard);
 	}
 
 	return 1;
@@ -126,15 +120,16 @@ int saveBoard(char* filePath){
 	FILE* fp = openFile(filePath,"w");
 	int i, j;
 	int currentNum, fixed;
-	int boardRowAndColSize = blockColSize * blockRowSize;
+	boardData brdData = getBoardData();
+	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
 	if(fp == NULL){
 		return -1;
 	}
-	fprintf(fp, "%d %d \n", blockColSize, blockRowSize);
+	fprintf(fp, "%d %d \n", brdData.blockColSize, brdData.blockRowSize);
 	for(i = 0; i < boardRowAndColSize; i++){
 		for(j = 0; j < boardRowAndColSize; j++){
-			currentNum = userBoard[i][j].currentNum;
-			fixed = userBoard[i][j].fixed;
+			currentNum = brdData.userBoard[i][j].currentNum;
+			fixed = brdData.userBoard[i][j].fixed;
 			if(j == 0){
 				if(fixed){
 					fprintf(fp, "%d.", currentNum);

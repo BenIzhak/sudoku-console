@@ -11,8 +11,6 @@
 #include "MainAux.h"
 #include "Cell.h"
 
-extern int blockRowSize;
-extern int blockColSize;
 
 void addCommand(dll* list, Cell** info){
 	/* allocate memory to the new node and put info */
@@ -111,7 +109,8 @@ void boardDiff(dll* list, dllNode* otherNode,char *command){
 	/* command is string: Redo/Undo */
 	int i, j;
 	Cell **currentBoard, **otherBoard;
-	int boardRowAndColSize = blockColSize * blockRowSize;
+	boardData brdData = getBoardData();
+	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
 	currentBoard = (list->currentNode)->info;
 	otherBoard = otherNode->info;
 	for(i = 0; i < boardRowAndColSize; i++){
