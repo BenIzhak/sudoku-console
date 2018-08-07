@@ -16,8 +16,9 @@
 
 
 static int gameMode;
-
-
+extern Cell** userBoard;
+extern Cell** tempBoard;
+extern Cell** solvedBoard;
 static int markErrors;/* TODO:each time we begin a puzzle we need to set it back to 1 */
 static int errorsFlag = 0;/* TODO:reset back to 0 when starting a new board; flag which is 0 if there are no errors in board, 1 if there are errors */
 static dll* commandsList;
@@ -57,7 +58,6 @@ void findAndMarkErrors(){
 	int i, j;
 	int flag = 0;
 	boardData brdData = getBoardData();
-	Cell** userBoard = getUserBoard();
 	for(i = 0; i < (brdData.blockRowSize * brdData.blockColSize); i++ ){
 		for( j = 0; j < (brdData.blockRowSize * brdData.blockColSize); j++){
 			if(userBoard[i][j].fixed == 0){
@@ -80,7 +80,6 @@ void findAndMarkErrors(){
  *
  */
 void newSetCommand(){
-	Cell** userBoard = getUserBoard();
 	if(commandsList->currentNode != commandsList->lastNode){
 		/* clear the redo part of the list */
 		deleteFromCurrent(commandsList);
@@ -89,7 +88,6 @@ void newSetCommand(){
 }
 
 int setCell(int col, int row, int val){
-	Cell** userBoard = getUserBoard();
 	if(userBoard[row][col].fixed == 1){/* no need to check which game mode because fixed cells are only available while in solve mode */
 			return -1;
 	}
@@ -110,7 +108,6 @@ int setCell(int col, int row, int val){
 
 void reset(){
 	/* undo all moves, reverting the board to its original loaded state. */
-	Cell** userBoard = getUserBoard();
 	(commandsList->currentNode) = (commandsList->head);
 	deleteFromCurrent(commandsList);
 	copyBoard(userBoard, (commandsList->currentNode)->info);
@@ -128,7 +125,6 @@ void hardReset(Cell** info){
 void startNewCommandsList(){
 	/* if commandsList does not exist -> create new one
 	 * if commandsList exist -> hardReset it*/
-	Cell** userBoard = getUserBoard();
 	if(commandsList == NULL){
 		/* commandList doesn't exist, so create and initialize one */
 		commandsList = allocateListMem();
@@ -141,7 +137,6 @@ void startNewCommandsList(){
 
 void undo(){
 	dllNode *prevCommnad;
-	Cell** userBoard = getUserBoard();
 
 	if((commandsList->currentNode) == (commandsList->head)){
 		printf("%s","Error: no moves to undo\n");
@@ -156,7 +151,6 @@ void undo(){
 
 void redo(){
 	dllNode *nextCommand;
-	Cell** userBoard = getUserBoard();
 
 	if((commandsList->currentNode) == (commandsList->lastNode)){
 		printf("%s","Error: no moves to redo\n");
@@ -183,7 +177,7 @@ int validate(){
 int isEmptyBoard(){
 	int i, j, flag = 1;
 	boardData brdData = getBoardData();
-	Cell** userBoard = getUserBoard();
+
 	for(i = 0; i < (brdData.blockRowSize * brdData.blockColSize); i++ ){
 		for( j = 0; j < (brdData.blockRowSize * brdData.blockColSize); j++){
 			if(userBoard[i][j].currentNum != 0){flag = 0;}
@@ -194,8 +188,6 @@ int isEmptyBoard(){
 
 int fillAndKeep(int cellsToFill, int cellsToKeep){
 	boardData brdData = getBoardData();
-	Cell** userBoard = getUserBoard();
-	Cell** solvedBoard = getSolvedBoard();
 	int rowAndColSize = brdData.blockRowSize * brdData.blockColSize;
 	int i, j, randCol, randRow, randNum, flag = 0;
 	/*isSolved = 0;*/
@@ -261,8 +253,6 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){
 
 int generate(int cellsToFill, int cellsToKeep){
 	boardData brdData = getBoardData();
-	Cell** userBoard = getUserBoard();
-	Cell** solvedBoard = getSolvedBoard();
 	int rowAndColSize = brdData.blockRowSize * brdData.blockColSize;
 	int emptyCells = (rowAndColSize)*(rowAndColSize);/* if the board is empty, amount of empty cells is N*N */
 	int i;
@@ -297,9 +287,6 @@ void startDefaultBoard(){
 	/* TODO: add constants */
 	int boardRowAndColSize;
 	boardData brdData = getBoardData();
-	Cell** userBoard = getUserBoard();
-	Cell** solvedBoard = getSolvedBoard();
-	Cell** tempBoard = getTempBoard();
 
 	/* free memory of previous boards */
 	freeBoardMem(userBoard);
@@ -332,8 +319,6 @@ int autoFill(){
 	 * TODO: delete all the nodes after autofill command */
 	int i,j;
 	boardData brdData = getBoardData();
-	Cell** userBoard = getUserBoard();
-	Cell** tempBoard = getTempBoard();
 	int anyChanges = 0;
 	if(errorsFlag){
 		return -1;
@@ -370,7 +355,6 @@ void setHint(int col, int row){
 	 * boardIsSolvable = 2 <-> board is unsolvable
 	 * boardISSolvable = 1 <-> board is solvable */
 	/*int boardIsSolvable;*/
-	Cell** userBoard = getUserBoard();
 
 	if(getErrorsFlag()){
 		printf("%s", "Error: board contains erroneous values\n");
@@ -421,9 +405,6 @@ void editCommand(char* filePath , int numOfArgs){
 
 void exitGameCommand(){
 
-	Cell** userBoard = getUserBoard();
-	Cell** tempBoard = getTempBoard();
-	Cell** solvedBoard = getSolvedBoard();
 	/* free boards memory */
 	freeBoardMem(userBoard);
 	freeBoardMem(tempBoard);

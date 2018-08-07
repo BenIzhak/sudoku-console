@@ -11,6 +11,9 @@
 #include "game.h"
 #include "CommandsList.h"
 
+extern Cell** userBoard;
+extern Cell** tempBoard;
+extern Cell** solvedBoard;
 
 
 FILE* openFile(char* filePath, const char* mode){
@@ -20,8 +23,6 @@ FILE* openFile(char* filePath, const char* mode){
 }
 
 void cellAssignment(int rowCordinate, int colCordinate ,int num, int fixed){
-	Cell** userBoard = getUserBoard();
-	Cell** tempBoard = getTempBoard();
 
 	/* fixed = 1 if cell is fixed and fixed = 0 otherwise */
 	userBoard[rowCordinate][colCordinate].currentNum = num;
@@ -55,9 +56,6 @@ int loadBoard(char* filePath){
 	char dot;
 	int boardRowAndColSize;
 	boardData brdData = getBoardData();
-	Cell** userBoard = getUserBoard();
-	Cell** tempBoard = getTempBoard();
-	Cell** solvedBoard = getSolvedBoard();
 
 	if(fp == NULL){
 		return -1;
@@ -116,7 +114,6 @@ int saveBoard(char* filePath){
 	FILE* fp = openFile(filePath,"w");
 	int i, j, currentNum, fixed;
 	boardData brdData = getBoardData();
-	Cell** userBoard = getUserBoard();
 	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
 
 	if(fp == NULL){

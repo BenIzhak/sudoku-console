@@ -14,24 +14,15 @@
 #include "game.h"
 #include "def.h"
 
-static Cell** userBoard;
-static Cell** solvedBoard;
-static Cell** tempBoard;
+Cell** userBoard;
+Cell** solvedBoard;
+Cell** tempBoard;
 static boardData brdData;
 
 boardData getBoardData(){
 	return brdData;
 }
 
-Cell** getUserBoard(){
-	return userBoard;
-}
-Cell** getSolvedBoard(){
-	return solvedBoard;
-}
-Cell** getTempBoard(){
-	return tempBoard;
-}
 void setBlockRowSize(int size){
 	brdData.blockRowSize = size;
 }
@@ -105,9 +96,8 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 			}
 			break;
 		case 3: /* print_board */
-
 			if(gameMode == EDIT_MODE || gameMode == SOLVE_MODE){
-				printBoard(getUserBoard());
+				printBoard(userBoard);
 			}else{
 				printf("%s", "ERROR: invalid command\n");
 			}
@@ -115,16 +105,16 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 		case 4: /* set X Y Z */
 			if(gameMode == EDIT_MODE || gameMode == SOLVE_MODE){
 				setCell(command[1]-1, command[2]-1, command[3]);
-				printBoard(getUserBoard());
+				printBoard(userBoard);
 			}else{
 				printf("%s", "ERROR: invalid command\n");
 			}
 			break;
 		case 5: /* validate */
-			printf("%s", "validate");
+
 			break;
 		case 6: /* generate X Y */
-			printf("%s", "generate X Y");
+
 			break;
 		case 7: /* undo */
 			if(gameMode == EDIT_MODE || gameMode == SOLVE_MODE){
@@ -151,7 +141,7 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 			}
 			break;
 		case 11: /* num_solutions */
-			printf("%s", "num_solutions");
+
 			break;
 		case 12: /* autofill */
 			printf("%s", "autofill");
