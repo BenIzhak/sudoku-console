@@ -10,12 +10,11 @@
 #include <string.h>
 #include "Stack.h"
 #include "Cell.h"
-
-extern int blockRowSize;
-extern int blockColSize;
+#include "MainAux.h"
 
 void initBoardSolver(Cell** board){
-	int i, j, k, boardRowAndColSize = blockRowSize * blockColSize;
+	boardData brdData = getBoardData();
+	int i, j, k, boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize;
 
 	for (i = 0; i < boardRowAndColSize; i++){
 		for (j = 0; j < boardRowAndColSize; j++){
@@ -35,7 +34,8 @@ void initBoardSolver(Cell** board){
 }
 
 void exitSolver(Cell** board){
-	int i, j, boardRowAndColSize = blockRowSize * blockColSize;
+	boardData brdData = getBoardData();
+	int i, j, boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize;
 
 	for(i = 0; i < boardRowAndColSize; i++){
 		for(j = 0; j < boardRowAndColSize; j++){
@@ -54,7 +54,8 @@ void exitSolver(Cell** board){
  *	cellCol: column of cell to reset
  */
 void resetCell(Cell** board, int cellRow, int cellCol){
-	int i, amountOfNums = blockRowSize*blockColSize;
+	boardData brdData = getBoardData();
+	int i, amountOfNums = brdData.blockRowSize * brdData.blockColSize;
 
 	board[cellRow][cellCol].currentNum = 0;
 
@@ -77,7 +78,8 @@ void resetCell(Cell** board, int cellRow, int cellCol){
 void resetCells(Cell** board, cellIndex tempIndex, int cellCol, int cellRow){
 	int dstRow = tempIndex.row;
 	int dstCol = tempIndex.col;
-	int boardSize = blockRowSize*blockColSize;
+	boardData brdData = getBoardData();
+	int boardSize = brdData.blockRowSize * brdData.blockColSize;
 
 	while(dstRow != cellRow || dstCol != cellCol){
 
@@ -124,7 +126,8 @@ void updateCell(Cell** board, int numIndex, int cellRow, int cellCol){
  */
 int rowCheck(Cell** board, int num, int cellRow, int cellCol){
 	int i, numCompare;
-	int colSize = (blockColSize*blockRowSize);
+	boardData brdData = getBoardData();
+	int colSize = (brdData.blockRowSize * brdData.blockColSize);
 	for(i = 0; i < colSize; i++){
 		if(i != cellCol){
 			numCompare = board[cellRow][i].currentNum;
@@ -151,7 +154,8 @@ int rowCheck(Cell** board, int num, int cellRow, int cellCol){
  */
 int colCheck(Cell** board, int num, int cellRow, int cellCol){
 	int i, numCompare;
-	int rowSize = blockRowSize*blockColSize;
+	boardData brdData = getBoardData();
+	int rowSize = brdData.blockRowSize * brdData.blockColSize;
 	for(i = 0; i < rowSize; i++){
 		if( i != cellRow){
 			numCompare = board[i][cellCol].currentNum;
@@ -176,15 +180,16 @@ int colCheck(Cell** board, int num, int cellRow, int cellCol){
  *	returns: number of ending column of the block of the column cellCol
  */
 int getcurrentblockCol(int cellCol){
-	int boardSize = blockRowSize*blockColSize;
-	int i = blockColSize - 1;
+	boardData brdData = getBoardData();
+	int boardSize = brdData.blockRowSize * brdData.blockColSize;
+	int i = brdData.blockColSize - 1;
 	float calcPos = 0;/* calculates relation between block end and cell position */
 	while(i <= boardSize){
 		calcPos = cellCol / (float) i;
 		if(calcPos <= 1.0){
 			return i;
 		}
-		i += blockColSize;
+		i += brdData.blockColSize;
 	}
 	return -1;
 }
@@ -200,15 +205,16 @@ int getcurrentblockCol(int cellCol){
  *	returns: number of ending row of the block of the column cellRow
  */
 int getcurrentblockRow(int cellRow){
-	int boardSize = blockColSize*blockRowSize;
-	int i = blockRowSize - 1;
+	boardData brdData = getBoardData();
+	int boardSize = brdData.blockRowSize * brdData.blockColSize;
+	int i = brdData.blockRowSize - 1;
 	float calcPos = 0;/* calculates relation between block end and cell position */
 	while(i <= boardSize){
 		calcPos = cellRow / (float) i;
 		if(calcPos <= 1.0){
 			return i;
 		}
-		i += blockRowSize;
+		i += brdData.blockRowSize;
 	}
 	return -1;
 }
@@ -232,11 +238,12 @@ int blockCheck(Cell** board,int numToCheck , int cellRow, int cellCol){
 	int i,j;
 	int currentblockRow, currentblockCol;
 	int minBlockLimitRow, minBlockLimitCol;
+	boardData brdData = getBoardData();
 
 	currentblockRow = getcurrentblockRow(cellRow) + 1;
 	currentblockCol = getcurrentblockCol(cellCol) + 1;
-	minBlockLimitRow = currentblockRow - blockRowSize;
-	minBlockLimitCol = currentblockCol - blockColSize;
+	minBlockLimitRow = currentblockRow - brdData.blockRowSize;
+	minBlockLimitCol = currentblockCol - brdData.blockColSize;
 	for(i = minBlockLimitRow; i < currentblockRow; i++){
 		for(j = minBlockLimitCol; j < currentblockCol; j++){
 			if(i != cellRow || j != cellCol){
@@ -284,7 +291,8 @@ void availableNumbers(Cell** board, int cellRow, int cellCol){
 	int prevNumFlag;
 	int counter = 0;/* counts the amount of valid numbers*/
 	int num;
-	int maxNum = blockRowSize*blockColSize;
+	boardData brdData = getBoardData();
+	int maxNum = brdData.blockRowSize * brdData.blockColSize;
 	for(num = 1; num <= maxNum; num++){
 		prevNumFlag = board[cellRow][cellCol].prevNums[num - 1];
 		if(prevNumFlag == 0){/* checks if num was previously used */
@@ -308,7 +316,8 @@ void availableNumbers(Cell** board, int cellRow, int cellCol){
  *
  */
 int exBacktrack(Cell** board){
-	int limit, flag = 1, cellCol = 0, cellRow = 0, boardSize = blockColSize*blockRowSize, countSols = 0;
+	boardData brdData = getBoardData();
+	int limit, flag = 1, cellCol = 0, cellRow = 0, boardSize = (brdData.blockRowSize * brdData.blockColSize), countSols = 0;
 	int frstColIndex = -1; /* column of the first empty cell */
 	int frstRowIndex = -1; /* row of the first empty cell */
 	cellIndex tempIndex;

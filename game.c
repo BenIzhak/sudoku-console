@@ -15,12 +15,7 @@
 
 static int markErrors = 1;/* TODO:each time we begin a puzzle we need to set it back to 1 */
 static int errorsFlag = 0;/* TODO:reset back to 0 when starting a new board; flag which is 0 if there are no errors in board, 1 if there are errors */
-extern Cell** userBoard;
-extern Cell** solvedBoard;
-extern Cell** tempBoard;
 extern int gameMode;
-extern int blockRowSize;
-extern int blockColSize;
 dll* commandsList;
 
 void setMarkErrors(int setting){
@@ -46,15 +41,16 @@ void findAndMarkErrors(){
 	/*TODO:if needed, can speed up by going over just cells in same row/col/block as the cell which was changed*/
 	int i, j;
 	int flag = 0;
-	for(i = 0; i < (blockRowSize * blockColSize); i++ ){
-		for( j = 0; j < (blockRowSize * blockColSize); j++){
-			if(userBoard[i][j].fixed == 0){
-				if( (validAssignment(userBoard, userBoard[i][j].currentNum, i , j) == -1) ){
-					userBoard[i][j].isError = 1;
+	boardData brdData = getBoardData();
+	for(i = 0; i < (brdData.blockRowSize * brdData.blockColSize); i++ ){
+		for( j = 0; j < (brdData.blockRowSize * brdData.blockColSize); j++){
+			if(brdData.userBoard[i][j].fixed == 0){
+				if( (validAssignment(brdData.userBoard, brdData.userBoard[i][j].currentNum, i , j) == -1) ){
+					brdData.userBoard[i][j].isError = 1;
 					flag = 1;
 					errorsFlag = flag;
 				}else{
-					userBoard[i][j].isError = 0;
+					brdData.userBoard[i][j].isError = 0;
 				}
 			}
 		}
@@ -68,24 +64,26 @@ void findAndMarkErrors(){
  *
  */
 void newSetCommand(){
+	boardData brdData = getBoardData();
 	if(commandsList->currentNode != commandsList->lastNode){
 		/* clear the redo part of the list */
 		deleteFromCurrent(commandsList);
 	}
-	addCommand(commandsList, userBoard);
+	addCommand(commandsList, brdData.userBoard);
 }
 
 int setCell(int col, int row, int val){
-	if(userBoard[row][col].fixed == 1){/* no need to check which game mode because fixed cells are only available while in solve mode */
+	boardData brdData = getBoardData();
+	if(brdData.userBoard[row][col].fixed == 1){/* no need to check which game mode because fixed cells are only available while in solve mode */
 			return -1;
 	}
 
-	if(userBoard[row][col].currentNum == val){
+	if(brdData.userBoard[row][col].currentNum == val){
 		return 0;
 	}
 
-	userBoard[row][col].isInput = 1;
-	userBoard[row][col].currentNum = val;
+	brdData.userBoard[row][col].isInput = 1;
+	brdData.userBoard[row][col].currentNum = val;
 
 	findAndMarkErrors();
 
@@ -97,9 +95,10 @@ int setCell(int col, int row, int val){
 
 void reset(){
 	/* undo all moves, reverting the board to its original loaded state. */
+	boardData brdData = getBoardData();
 	(commandsList->currentNode) = (commandsList->head);
 	deleteFromCurrent(commandsList);
-	copyBoard(userBoard, (commandsList->currentNode)->info);
+	copyBoard(brdData.userBoard, (commandsList->currentNode)->info);
 	printf("Board reset\n");
 }
 
@@ -113,27 +112,33 @@ void hardReset(Cell** info){
 
 void undo(){
 	dllNode *prevCommnad;
+	boardData brdData = getBoardData();
+
 	if((commandsList->currentNode) == (commandsList->head)){
 		printf("%s","Error: no moves to undo\n");
 		return;
 	}
+
 	prevCommnad = (commandsList->currentNode)->previous;
 	boardDiff(commandsList, prevCommnad,"Undo");
 	commandsList->currentNode = prevCommnad;
-	copyBoard(userBoard, prevCommnad->info);
+	copyBoard(brdData.userBoard, prevCommnad->info);
 }
 
 void redo(){
 	dllNode *nextCommand;
+	boardData brdData = getBoardData();
+
 	if((commandsList->currentNode) == (commandsList->lastNode)){
 		printf("%s","Error: no moves to redo\n");
 		return;
 	}
+
 	nextCommand = (commandsList->currentNode)->next;
 	boardDiff(commandsList, nextCommand,"Redo");
 	nextCommand = (commandsList->currentNode)->next;
 	commandsList->currentNode = nextCommand;
-	copyBoard(userBoard, nextCommand->info);
+	copyBoard(brdData.userBoard, nextCommand->info);
 }
 
 
@@ -149,18 +154,20 @@ int validate(){
 }
 
 int isEmptyBoard(){
-
 	int i, j, flag = 1;
-	for(i = 0; i < (blockRowSize * blockColSize); i++ ){
-		for( j = 0; j < (blockRowSize * blockColSize); j++){
-			if(userBoard[i][j].currentNum != 0){flag = 0;}
+	boardData brdData = getBoardData();
+
+	for(i = 0; i < (brdData.blockRowSize * brdData.blockColSize); i++ ){
+		for( j = 0; j < (brdData.blockRowSize * brdData.blockColSize); j++){
+			if(brdData.userBoard[i][j].currentNum != 0){flag = 0;}
 		}
 	}
 	return flag;
 }
 
 int fillAndKeep(int cellsToFill, int cellsToKeep){
-	int rowAndColSize = blockRowSize * blockColSize;
+	boardData brdData = getBoardData();
+	int rowAndColSize = brdData.blockRowSize * brdData.blockColSize;
 	int i, j, randCol, randRow, randNum, flag = 0;
 	/*isSolved = 0;*/
 
@@ -170,18 +177,18 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){
 			randCol = rand() % rowAndColSize;
 			randRow = rand() % rowAndColSize;
 			/* checking that i havn't chose this cell already */
-			if(userBoard[randRow][randCol].currentNum == 0){
+			if(brdData.userBoard[randRow][randCol].currentNum == 0){
 				flag = 1;
 			}
 		}
 
 		flag = 0;
-		availableNumbers(userBoard, randRow, randCol);
-		if(userBoard[randRow][randCol].limit == 0){
+		availableNumbers(brdData.userBoard, randRow, randCol);
+		if(brdData.userBoard[randRow][randCol].limit == 0){
 			return 0;
 		}
-		randNum = rand() % userBoard[randRow][randCol].limit; /* choose a random index from the validNums array */
-		userBoard[randRow][randCol].currentNum = userBoard[randRow][randCol].validNums[randNum];
+		randNum = rand() % brdData.userBoard[randRow][randCol].limit; /* choose a random index from the validNums array */
+		brdData.userBoard[randRow][randCol].currentNum = brdData.userBoard[randRow][randCol].validNums[randNum];
 	}
 
 	/*isSolved = ILPSolver();
@@ -201,21 +208,21 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){
 			randCol = rand() % rowAndColSize;
 			randRow = rand() % rowAndColSize;
 			/* checking that i havn't chose this cell already */
-			if(userBoard[randRow][randCol].fixed == 0){
+			if(brdData.userBoard[randRow][randCol].fixed == 0){
 				flag = 1;
-				solvedBoard[randRow][randCol].fixed = 1;
+				brdData.solvedBoard[randRow][randCol].fixed = 1;
 			}
 		}
 		flag = 0;
 	}
 
 	/* going over cells with fixed = 0 and removing them from the board */
-	for(i = 0; i < (blockRowSize * blockColSize); i++ ){
-		for( j = 0; j < (blockRowSize * blockColSize); j++){
-			if(solvedBoard[i][j].fixed == 0){
-				solvedBoard[i][j].currentNum = 0;
+	for(i = 0; i < (brdData.blockRowSize * brdData.blockColSize); i++ ){
+		for( j = 0; j < (brdData.blockRowSize * brdData.blockColSize); j++){
+			if(brdData.solvedBoard[i][j].fixed == 0){
+				brdData.solvedBoard[i][j].currentNum = 0;
 			}else{
-				solvedBoard[i][j].fixed = 0;
+				brdData.solvedBoard[i][j].fixed = 0;
 				/* no need to mark with fixed for now */
 			}
 		}
@@ -224,7 +231,8 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){
 }
 
 int generate(int cellsToFill, int cellsToKeep){
-	int rowAndColSize = blockRowSize * blockColSize;
+	boardData brdData = getBoardData();
+	int rowAndColSize = brdData.blockRowSize * brdData.blockColSize;
 	int emptyCells = (rowAndColSize)*(rowAndColSize);/* if the board is empty, amount of empty cells is N*N */
 	int i;
 
@@ -237,53 +245,54 @@ int generate(int cellsToFill, int cellsToKeep){
 		return 1;
 	}
 
-	initBoardSolver(userBoard);/* getting ready to use ExSolver's functions */
+	initBoardSolver(brdData.userBoard);/* getting ready to use ExSolver's functions */
 
 	/* tries for 1000 iterations to get a valid board*/
 	for(i = 0; i < 1000; i++){
 		if(fillAndKeep(cellsToFill, cellsToKeep) == 1){
-			exitSolver(userBoard);
-			copyBoard(userBoard, solvedBoard);
+			exitSolver(brdData.userBoard);
+			copyBoard(brdData.userBoard, brdData.solvedBoard);
 			return 3;
 		}else{
-			boardInit(userBoard);
-			boardInit(solvedBoard);
+			boardInit(brdData.userBoard);
+			boardInit(brdData.solvedBoard);
 		}
 	}
-	exitSolver(userBoard);/* no need for ExSolver's fields any more, can free it. */
+	exitSolver(brdData.userBoard);/* no need for ExSolver's fields any more, can free it. */
 	return 2;/* generate failed */
 }
 
 void startDefaultBoard(){
 	int boardRowAndColSize;
+	boardData brdData = getBoardData();
 
 	/* free memory of previous boards */
-	freeBoardMem(userBoard);
-	freeBoardMem(tempBoard);
-	freeBoardMem(solvedBoard);
+	freeBoardMem(brdData.userBoard);
+	freeBoardMem(brdData.tempBoard);
+	freeBoardMem(brdData.solvedBoard);
 
 	/* set new values to blockRowSize and blockColSize */
-	blockColSize = 3;
-	blockRowSize = 3;
+	setBlockColSize(3);
+	setBlockRowSize(3);
 
 	/* allocate memory for news boards */
-	boardRowAndColSize = blockColSize * blockRowSize;
-	userBoard = setAllocatedMem(boardRowAndColSize);
-	tempBoard = setAllocatedMem(boardRowAndColSize);
-	solvedBoard = setAllocatedMem(boardRowAndColSize);
+	boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
+	brdData.userBoard = setAllocatedMem(boardRowAndColSize);
+	brdData.tempBoard = setAllocatedMem(boardRowAndColSize);
+	brdData.solvedBoard = setAllocatedMem(boardRowAndColSize);
 
 	/* init the boards */
-	boardInit(userBoard);
-	boardInit(tempBoard);
-	boardInit(solvedBoard);
+	boardInit(brdData.userBoard);
+	boardInit(brdData.tempBoard);
+	boardInit(brdData.solvedBoard);
 
 	if(commandsList == NULL){
 		/* commandList doesn't exist, so create and initialize one */
 		commandsList = allocateListMem();
-		initList(commandsList, userBoard);
+		initList(commandsList, brdData.userBoard);
 	}else{
 		/* commandList exists, so update the command list */
-		hardReset(userBoard);
+		hardReset(brdData.userBoard);
 	}
 }
 /* (-1) - this is a board with an error */
@@ -291,29 +300,30 @@ int autoFill(){
 	/* TODO: do something about the case when the board doesn't change
 	 * TODO: delete all the nodes after autofill command */
 	int i,j;
+	boardData brdData = getBoardData();
 
 	if(errorsFlag){
 		return -1;
 	}
 
-	boardInit(tempBoard);
-	copyBoard(tempBoard, userBoard);/* copy the user board to tempboard, so i can make changes without changing the userboard */
-	initBoardSolver(userBoard);
+	boardInit(brdData.tempBoard);
+	copyBoard(brdData.tempBoard, brdData.userBoard);/* copy the user board to tempboard, so i can make changes without changing the userboard */
+	initBoardSolver(brdData.userBoard);
 
-	for(i = 0; i < (blockRowSize * blockColSize); i++ ){
-		for( j = 0; j < (blockRowSize * blockColSize); j++){
-			availableNumbers(userBoard, i, j);/* checking available numbers in the original board */
-			if(userBoard[i][j].limit == 1){/* there's only one number available */
-				tempBoard[i][j].currentNum = tempBoard[i][j].validNums[0];
-				printf("Cell <%d,%d> set to %d\n", j, i, tempBoard[i][j].validNums[0]);
+	for(i = 0; i < (brdData.blockRowSize * brdData.blockColSize); i++ ){
+		for( j = 0; j < (brdData.blockRowSize * brdData.blockColSize); j++){
+			availableNumbers(brdData.userBoard, i, j);/* checking available numbers in the original board */
+			if(brdData.userBoard[i][j].limit == 1){/* there's only one number available */
+				brdData.tempBoard[i][j].currentNum = brdData.tempBoard[i][j].validNums[0];
+				printf("Cell <%d,%d> set to %d\n", j, i, brdData.tempBoard[i][j].validNums[0]);
 			}
 		}
 	}
 
 
-	copyBoard(userBoard, tempBoard);
+	copyBoard(brdData.userBoard, brdData.tempBoard);
 	findAndMarkErrors();
-	exitSolver(userBoard);
+	exitSolver(brdData.userBoard);
 	newSetCommand();
 	return 0;
 }
@@ -323,15 +333,16 @@ void setHint(int col, int row){
 	 * boardIsSolvable = 2 <-> board is unsolvable
 	 * boardISSolvable = 1 <-> board is solvable */
 	/*int boardIsSolvable;*/
+	boardData brdData = getBoardData();
 	if(getErrorsFlag()){
 		printf("%s", "Error: board contains erroneous values\n");
 		return;
 	}
-	if(userBoard[row][col].fixed == 1){
+	if(brdData.userBoard[row][col].fixed == 1){
 		printf("%s", "Error: cell is fixed\n");
 		return;
 	}
-	if(userBoard[row][col].currentNum != 0){
+	if(brdData.userBoard[row][col].currentNum != 0){
 		printf("%s", "Error: cell already contains a value\n");
 		return;
 	}
@@ -350,10 +361,11 @@ void setHint(int col, int row){
 }
 
 void exitGame(){
+	boardData brdData = getBoardData();
 	/* free boards memory */
-	freeBoardMem(userBoard);
-	freeBoardMem(tempBoard);
-	freeBoardMem(solvedBoard);
+	freeBoardMem(brdData.userBoard);
+	freeBoardMem(brdData.tempBoard);
+	freeBoardMem(brdData.solvedBoard);
 
 	/* free command list memory */
 	deleteListNodes(commandsList);

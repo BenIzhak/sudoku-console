@@ -12,7 +12,4 @@
 int loadBoard(char* filePath);
 int saveBoard(char* filePath);
 
-
-
-
 #endif /* FILESHANDLER_H_ */

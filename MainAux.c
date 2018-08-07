@@ -11,22 +11,28 @@
 #include "Parser.h"
 #include "FilesHandler.h"
 #include "MainAux.h"
-#include "game.h" /* TODO: DO NOT REMOVE */
+#include "game.h"
 
 
-extern int blockRowSize;
-extern int blockColSize;
 
-extern Cell** userBoard; /* TODO: delete extern, just for testing */
-extern Cell** solvedBoard;/* TODO: delete extern, just for testing */
-extern Cell** tempBoard;/* TODO: delete extern, just for testing */
+static boardData brdData;
 
-/* 0 - Init mode, 1 - Edit mode, 2 - Solve mode */
-int gameMode;
+boardData getBoardData(){
+	return brdData;
+}
+
+void setBlockRowSize(int size){
+	brdData.blockRowSize = size;
+}
+
+void setBlockColSize(int size){
+	brdData.blockColSize = size;
+}
+
 
 Cell** setAllocatedMem(){
 	int i;
-	int boardRowAndColSize = blockRowSize * blockColSize;
+	int boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize;
 
 	Cell** temp = (Cell **) malloc(boardRowAndColSize * sizeof(Cell*));
 
@@ -97,7 +103,7 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 			break;
 		case 3: /* print_board */
 			if(gameMode == 1 || gameMode == 2){
-				printBoard(userBoard);
+				printBoard(brdData.userBoard);
 			}else{
 				printf("%s", "ERROR: invalid command\n");
 			}
@@ -105,7 +111,7 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 		case 4: /* set X Y Z */
 			if(gameMode == 1 || gameMode == 2){
 				setCell(command[1]-1, command[2]-1, command[3]);
-				printBoard(userBoard);
+				printBoard(brdData.userBoard);
 			}else{
 				printf("%s", "ERROR: invalid command\n");
 			}
@@ -162,7 +168,7 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 
 void boardInit(Cell** table){
 	int i, j;
-	int boardRowAndColSize = blockRowSize * blockColSize;
+	int boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize;
 	for(i = 0; i < boardRowAndColSize; i++){
 		for(j = 0; j < boardRowAndColSize; j++){
 			table[i][j].currentNum = 0;
@@ -175,7 +181,7 @@ void boardInit(Cell** table){
 }
 
 void freeBoardMem(Cell** Board){
-	int boardRowAndColSize = blockRowSize * blockColSize;
+	int boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize;
 	int i;
 	if(Board == NULL){
 		return;
@@ -188,8 +194,8 @@ void freeBoardMem(Cell** Board){
 
 void printBoard(Cell** table){
 	int i, j;
-	int boardRowAndColSize = blockColSize * blockRowSize;
-	int separatorRowNum = (4 * boardRowAndColSize) + blockRowSize + 2;
+	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
+	int separatorRowNum = (4 * boardRowAndColSize) + brdData.blockRowSize + 2;
 	int currentNum;
 	char * separatorRow;
 	int markErrors = getMarkErrors();
@@ -200,11 +206,11 @@ void printBoard(Cell** table){
 	}
 	separatorRow[separatorRowNum -1] = 0;
 	for(i = 0; i < boardRowAndColSize; i++){
-		if(i % blockRowSize == 0){
+		if(i % brdData.blockRowSize == 0){
 			printf("%s\n", separatorRow);
 		}
 		for(j = 0; j < boardRowAndColSize; j++){
-			if(j % blockColSize == 0){
+			if(j % brdData.blockColSize == 0){
 				printf("%s", "|");
 			}
 			currentNum = table[i][j].currentNum;
@@ -240,7 +246,7 @@ void printBoard(Cell** table){
  */
 void copyBoard(Cell** dstBoard, Cell** srcBoard){
 	int i, j;
-	int boardRow = blockRowSize * blockColSize;
+	int boardRow = brdData.blockRowSize * brdData.blockColSize;
 	int boardCol = boardRow;
 	for(i = 0; i < boardRow; i++){
 		for(j = 0; j < boardCol; j++){

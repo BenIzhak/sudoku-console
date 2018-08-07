@@ -8,12 +8,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "MainAux.h"
 
 /* TODO:
  * 1. check if the line "Enter your command:" is printed even after blank line */
-
-extern int blockRowSize;
-extern int blockColSize;
 
 enum COMMAND{
 	solve,
@@ -120,7 +118,8 @@ int parseCommand(char* input, int* command, char* filePath, int* numOfArgs){
 
 int validRange(int* command){
 	int i;
-	int boardRowAndColSize = blockRowSize * blockColSize;
+	boardData brdData = getBoardData();
+	int boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize;
 	if(command[0] == mark_errors){
 		if((command[1] != 0) && (command[1] != 1)){
 			printf("%s", "Error: the value should be 0 or 1\n");
