@@ -11,6 +11,7 @@
 #include "Stack.h"
 #include "Cell.h"
 #include "MainAux.h"
+#include "game.h"
 
 void initBoardSolver(Cell** board){
 	boardData brdData = getBoardData();
@@ -315,7 +316,7 @@ void availableNumbers(Cell** board, int cellRow, int cellCol){
  *	returns: amount of different solutions
  *
  */
-int exBacktrack(Cell** board){
+void exBacktrack(Cell** board){
 	boardData brdData = getBoardData();
 	int limit, flag = 1, cellCol = 0, cellRow = 0, boardSize = (brdData.blockRowSize * brdData.blockColSize), countSols = 0;
 	int frstColIndex = -1; /* column of the first empty cell */
@@ -323,6 +324,10 @@ int exBacktrack(Cell** board){
 	cellIndex tempIndex;
 	node* lastEmpty = NULL; /* pointer to last empty cell */
 
+	if(getErrorsFlag() == 1){
+		printf("%s", "Error: board contains erroneous values\n");
+		return;
+	}
 	initBoardSolver(board);
 
 	push(&lastEmpty, -1, -1);
@@ -391,5 +396,11 @@ int exBacktrack(Cell** board){
 		}
 	}
 	exitSolver(board);
-	return countSols;
+	printf("Number of solutions: %d\n", countSols);
+	if(countSols == 1){
+		printf("%s", "This is a good board!\n");
+	}
+	if(countSols > 1){
+		printf("%s", "The puzzle has more than 1 solution, try to edit it further\n");
+	}
 }

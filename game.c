@@ -164,14 +164,20 @@ void redo(){
 	copyBoard(userBoard, nextCommand->info);
 }
 
-int validate(){
-
+void validate(){
+	/* int isSolved = 0; */
 	if(errorsFlag == 1){
-		return 0;
+		printf("%s", "Error: board contains erroneous values\n");
+	}else{
+		/*TODO:add call to ILPSolver and print message if board is solvable or not */
+		/*isSolved = ILPSolver();
+		if(isSolved == 1){
+			printf("%s", "Validation passed: board is solvable\n");
+		}else{
+			printf("%s", "Validation failed: board is unsolvable\n");
+			 error in ILPSolver, need to try again
+		}*/
 	}
-
-	/*TODO:add call to ILPSolver and print message if board is solvable or not */
-	return 2;
 }
 
 int isEmptyBoard(){
@@ -251,19 +257,21 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){
 	return 1;
 }
 
-int generate(int cellsToFill, int cellsToKeep){
+void generate(int cellsToFill, int cellsToKeep){
 	boardData brdData = getBoardData();
 	int rowAndColSize = brdData.blockRowSize * brdData.blockColSize;
 	int emptyCells = (rowAndColSize)*(rowAndColSize);/* if the board is empty, amount of empty cells is N*N */
 	int i;
 
 
-	if(isEmptyBoard() == 0){/* checks that board is empty */
-		return 0;
+	if((cellsToFill > emptyCells) || (cellsToKeep > emptyCells)){/* checks that parameters are valid */
+		printf("Error: value not in range 0-%d\n", emptyCells);
+		return;
 	}
 
-	if((cellsToFill > emptyCells) || (cellsToKeep > emptyCells)){/* checks that parameters are valid */
-		return 1;
+	if(isEmptyBoard() == 0){/* checks that board is empty */
+		printf("%s", "Error: board is not empty \n");
+		return;
 	}
 
 	initBoardSolver(userBoard);/* getting ready to use ExSolver's functions */
@@ -273,14 +281,15 @@ int generate(int cellsToFill, int cellsToKeep){
 		if(fillAndKeep(cellsToFill, cellsToKeep) == 1){
 			exitSolver(userBoard);
 			copyBoard(userBoard, solvedBoard);
-			return 3;
+			printBoard(userBoard);
+			return;
 		}else{
 			boardInit(userBoard);
 			boardInit(solvedBoard);
 		}
 	}
 	exitSolver(userBoard);/* no need for ExSolver's fields any more, can free it. */
-	return 2;/* generate failed */
+	printf("%s", "Error: puzzle generator failed\n");
 }
 
 void startDefaultBoard(){
@@ -313,15 +322,15 @@ void startDefaultBoard(){
 	startNewCommandsList();
 
 }
-/* (-1) - this is a board with an error */
-int autoFill(){
-	/* TODO: do something about the case when the board doesn't change
-	 * TODO: delete all the nodes after autofill command */
+
+
+void autoFill(){
 	int i,j;
 	boardData brdData = getBoardData();
 	int anyChanges = 0;
 	if(errorsFlag){
-		return -1;
+		printf("%s", "Error: board contains erroneous values\n");
+		return;
 	}
 
 	boardInit(tempBoard);
@@ -347,7 +356,7 @@ int autoFill(){
 	if(anyChanges){
 		newSetCommand();
 	}
-	return 0;
+	printBoard(userBoard);
 }
 
 void setHint(int col, int row){
@@ -401,6 +410,44 @@ void editCommand(char* filePath , int numOfArgs){
 	}else{
 		startDefaultBoard();
 	}
+}
+
+void saveCommand(char* filePath){
+	int i, j;
+	FILE* fp;
+	boardData brdData = getBoardData();
+	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
+	if(gameMode == EDIT_MODE){
+		if(errorsFlag){
+			printf("%s", "Error: board contains erroneous values\n");
+			return;
+		}
+		/* TODO: remove comment...
+		if(!(ILPSolver() == 1)){
+			printf("%s", "Error: board validation failed\n");
+			return;
+		}
+		*/
+	}
+	fp = openFile(filePath,"w");
+	if(fp == NULL){
+		printf("%s", "Error: File cannot be created or modified\n");
+		return;
+	}
+	if(gameMode == EDIT_MODE){
+		copyBoard(tempBoard, userBoard);
+		for(i = 0; i < boardRowAndColSize; i++){
+			for(j = 0; j < boardRowAndColSize; j++){
+				if(tempBoard[i][j].currentNum != 0){
+					tempBoard[i][j].fixed = 1;
+				}
+			}
+		}
+	}else if(gameMode == SOLVE_MODE){
+		copyBoard(tempBoard, userBoard);
+	}
+	saveBoard(fp);
+	printf("Saved to: %s\n", filePath);
 }
 
 void exitGameCommand(){

@@ -28,14 +28,18 @@ void cellAssignment(int rowCordinate, int colCordinate ,int num, int fixed){
 	userBoard[rowCordinate][colCordinate].currentNum = num;
 	if(fixed){
 		userBoard[rowCordinate][colCordinate].fixed = 1;
+		userBoard[rowCordinate][colCordinate].isInput = 0;
 	}else{
 		userBoard[rowCordinate][colCordinate].fixed = 0;
+		userBoard[rowCordinate][colCordinate].isInput = 1;
 	}
 	tempBoard[rowCordinate][colCordinate].currentNum = num;
 	if(fixed){
 		tempBoard[rowCordinate][colCordinate].fixed = 1;
+		tempBoard[rowCordinate][colCordinate].isInput = 0;
 	}else{
 		tempBoard[rowCordinate][colCordinate].fixed = 0;
+		tempBoard[rowCordinate][colCordinate].isInput = 1;
 	}
 }
 
@@ -110,20 +114,15 @@ int loadBoard(char* filePath){
 	return 1;
 }
 
-int saveBoard(char* filePath){
-	FILE* fp = openFile(filePath,"w");
+void saveBoard(FILE* fp){
 	int i, j, currentNum, fixed;
 	boardData brdData = getBoardData();
 	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
-
-	if(fp == NULL){
-		return -1;
-	}
 	fprintf(fp, "%d %d \n", brdData.blockColSize, brdData.blockRowSize);
 	for(i = 0; i < boardRowAndColSize; i++){
 		for(j = 0; j < boardRowAndColSize; j++){
-			currentNum = userBoard[i][j].currentNum;
-			fixed = userBoard[i][j].fixed;
+			currentNum = tempBoard[i][j].currentNum;
+			fixed = tempBoard[i][j].fixed;
 			if(j == 0){
 				if(fixed){
 					fprintf(fp, "%d.", currentNum);
@@ -146,8 +145,8 @@ int saveBoard(char* filePath){
 		}
 	}
 	fclose(fp);
-	return 1;
 }
+
 
 
 

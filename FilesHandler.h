@@ -10,6 +10,7 @@
 #include "Cell.h"
 
 int loadBoard(char* filePath);
-int saveBoard(char* filePath);
+void saveBoard(FILE* fp);
+FILE* openFile(char* filePath, const char* mode);
 
 #endif /* FILESHANDLER_H_ */

@@ -39,6 +39,7 @@ int getMarkErrors();
  */
 void findAndMarkErrors();
 
+int getErrorsFlag();
 /*
  * Function:  setCell
  * --------------------
@@ -51,7 +52,6 @@ void findAndMarkErrors();
  *  Y: row of cell
  *	Z: new value to set cell to
  */
-
 int setCell(int X, int Y, int Z);
 
 /*
@@ -63,7 +63,7 @@ int setCell(int X, int Y, int Z);
  *	returns: 0 - simple error, 1 - board is not solvable, 2 - board is solvable
  *
  */
-int validate();
+void validate();
 
 /*
  * Function:  generate
@@ -71,14 +71,11 @@ int validate();
  *	Generates a puzzle by using fillAndKeep function
  *
  *
- *	returns: 0 - board is not empty, 1 - cellsToFill or cellsToKeep are more than the amount of empty cells
- *			 2 - generator failed, 3 - success print board
- *
  *	cellsToFill: amount of cells to fill with random values
  *	cellsToKeep: amount of cells to keep after generating random values
  */
 
-int generate(int cellsToFill, int cellsToKeep);
+void generate(int cellsToFill, int cellsToKeep);
 
 void solveCommand(char* filePath);
 void editCommand(char* filePath , int numOfArgs);
@@ -98,5 +95,7 @@ void undo();
 
 void setHint(int col, int row);
 void exitGameCommand();
+
+void autoFill();
 
 #endif /* GAME_H_ */

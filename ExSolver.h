@@ -25,7 +25,7 @@ void initBoardSolver(Cell** board);
  *  board-intialized 2d array*/
 void exitSolver(Cell** board);
 
-int exBacktrack(Cell** board);
+void exBacktrack(Cell** board);
 
 /*  Function:  validAssignment
  *	--------------------

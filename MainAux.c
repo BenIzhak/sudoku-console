@@ -11,6 +11,7 @@
 #include "Parser.h"
 #include "FilesHandler.h"
 #include "MainAux.h"
+#include "ExSolver.h"
 #include "game.h"
 #include "def.h"
 
@@ -111,10 +112,18 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 			}
 			break;
 		case 5: /* validate */
-
+			if(gameMode == EDIT_MODE || gameMode == SOLVE_MODE){
+				validate();
+			}else{
+				printf("%s", "ERROR: invalid command\n");
+			}
 			break;
 		case 6: /* generate X Y */
-
+			if(gameMode == EDIT_MODE){
+				generate(command[1], command[2]);
+			}else{
+				printf("%s", "ERROR: invalid command\n");
+			}
 			break;
 		case 7: /* undo */
 			if(gameMode == EDIT_MODE || gameMode == SOLVE_MODE){
@@ -131,20 +140,32 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 			}
 			break;
 		case 9: /* save X */
-			printf("%s", "save X");
+			if(gameMode == EDIT_MODE || gameMode == SOLVE_MODE){
+				solveCommand(filePath);
+			}else{
+				printf("%s", "ERROR: invalid command\n");
+			}
 			break;
 		case 10: /* hint X Y */
-			if(SOLVE_MODE){
+			if(gameMode == SOLVE_MODE){
 				setHint(command[1] - 1, command[2] - 1);
 			}else{
 				printf("%s", "ERROR: invalid command\n");
 			}
 			break;
 		case 11: /* num_solutions */
-
+			if(gameMode == EDIT_MODE || gameMode == SOLVE_MODE){
+				exBacktrack(userBoard);
+			}else{
+				printf("%s", "ERROR: invalid command\n");
+			}
 			break;
 		case 12: /* autofill */
-			printf("%s", "autofill");
+			if(gameMode == SOLVE_MODE){
+				autoFill();
+			}else{
+				printf("%s", "ERROR: invalid command\n");
+			}
 			break;
 		case 13: /* reset */
 			if(gameMode == EDIT_MODE || gameMode == SOLVE_MODE){
