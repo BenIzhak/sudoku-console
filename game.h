@@ -19,6 +19,16 @@
 void setMarkErrors(int setting);
 
 /*
+ * Function:  validate
+ * --------------------
+ *	checks if board is valid or not, first by checking for simple errors(same number more than once in a row/column/block
+ *	then using ILP to check if board is solvable
+ *
+ *	isDone: used as flag, 0 - validating but the board is not completed, 1 - validating and all cells are filled
+ *
+ */
+void validate(int isDone);
+/*
  * Function:  getMarkErrors
  * --------------------
  * 	returns mark_errors value
@@ -54,16 +64,6 @@ int getErrorsFlag();
  */
 int setCell(int X, int Y, int Z);
 
-/*
- * Function:  validate
- * --------------------
- *	checks if board is valid or not, first by checking for simple errors(same number more than once in a row/column/block
- *	then using ILP to check if board is solvable
- *
- *	returns: 0 - simple error, 1 - board is not solvable, 2 - board is solvable
- *
- */
-void validate();
 
 /*
  * Function:  generate

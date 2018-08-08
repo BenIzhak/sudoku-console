@@ -35,7 +35,11 @@ void setGameMode(int modeNum){
 
 
 void setMarkErrors(int setting){
-	markErrors = setting;
+	if(setting == 0 || setting == 1){
+		markErrors = setting;
+	}else{
+		printf("%s","Error: the value should be 0 or 1\n");
+	}
 }
 
 int getMarkErrors(){
@@ -86,14 +90,54 @@ void newSetCommand(){
 	}
 	addCommand(commandsList, userBoard);
 }
-
-int setCell(int col, int row, int val){
-	if(userBoard[row][col].fixed == 1){/* no need to check which game mode because fixed cells are only available while in solve mode */
-			return -1;
+void validate(int isDone){
+	/* int isSolved = 0; */
+	if(errorsFlag == 1){
+		if(isDone == 0){
+			printf("%s", "Error: board contains erroneous values\n");
+		}else{
+			printf("%s", "Puzzle solution erroneous\n");
+		}
+	}else{
+		/*TODO:add call to ILPSolver and print message if board is solvable or not */
+		/*isSolved = ILPSolver();
+		if(isSolved == 1){
+			if(isDone == 0){
+				printf("%s", "Validation passed: board is solvable\n");
+			}else{
+				game is done and solution is correct
+				printf("%s", "Puzzle solved successfully\n",");
+				gameMode = INIT_MODE;
+			}
+		}else{
+			if(isDone == 0){
+				printf("%s", "Validation failed: board is unsolvable\n");
+			}else{
+				printf("%s", "Puzzle solution erroneous\n");
+			}
+			 error in ILPSolver, need to try again
+		}*/
+	}
+}
+void isFinished(Cell** board){
+	int flag = 0, i, j;
+	boardData brdData = getBoardData();
+	for(i = 0; i < (brdData.blockRowSize * brdData.blockColSize); i++){
+		for(j = 0; j < (brdData.blockRowSize * brdData.blockColSize); j++){
+			if(board[i][j].currentNum == 0){
+				flag = 1;
+			}
+		}
 	}
 
-	if(userBoard[row][col].currentNum == val){
-		return 0;
+	if(flag == 0 && gameMode == SOLVE_MODE){
+		validate(1);
+	}
+}
+void setCell(int col, int row, int val){
+	if(userBoard[row][col].fixed == 1){/* no need to check which game mode because fixed cells are only available while in solve mode */
+		printf("%s", "Error: cell is fixed\n");
+		return;
 	}
 
 	userBoard[row][col].isInput = 1;
@@ -102,8 +146,8 @@ int setCell(int col, int row, int val){
 	findAndMarkErrors();
 
 	newSetCommand();
-
-	return 0;
+	printBoard(userBoard);
+	isFinished(userBoard);
 }
 
 void reset(){
@@ -164,22 +208,6 @@ void redo(){
 	copyBoard(userBoard, nextCommand->info);
 }
 
-void validate(){
-	/* int isSolved = 0; */
-	if(errorsFlag == 1){
-		printf("%s", "Error: board contains erroneous values\n");
-	}else{
-		/*TODO:add call to ILPSolver and print message if board is solvable or not */
-		/*isSolved = ILPSolver();
-		if(isSolved == 1){
-			printf("%s", "Validation passed: board is solvable\n");
-		}else{
-			printf("%s", "Validation failed: board is unsolvable\n");
-			 error in ILPSolver, need to try again
-		}*/
-	}
-}
-
 int isEmptyBoard(){
 	int i, j, flag = 1;
 	boardData brdData = getBoardData();
@@ -191,7 +219,19 @@ int isEmptyBoard(){
 	}
 	return flag;
 }
-
+/*
+ * Function:  fillAndKeep
+ * --------------------
+ *	randomizing cellsToFill cells and then choosing a random legal value for each cell
+ *	then solves the filled board using the ILPSolver
+ *	randomizing cellsToKeep cells and keeping only them
+ *
+ *	return 0  if failed, 1 if successful
+ *
+ *
+ *	cellsToFill: amount of cells to fill with random values
+ *	cellsToKeep: amount of cells to keep after generating random values
+ */
 int fillAndKeep(int cellsToFill, int cellsToKeep){
 	boardData brdData = getBoardData();
 	int rowAndColSize = brdData.blockRowSize * brdData.blockColSize;
@@ -320,7 +360,6 @@ void startDefaultBoard(){
 	boardInit(solvedBoard);
 
 	startNewCommandsList();
-
 }
 
 
@@ -357,6 +396,7 @@ void autoFill(){
 		newSetCommand();
 	}
 	printBoard(userBoard);
+	isFinished(userBoard);
 }
 
 void setHint(int col, int row){
@@ -461,6 +501,7 @@ void exitGameCommand(){
 	deleteListNodes(commandsList);
 	freeListMem(commandsList);
 	printf("%s", "Exiting...\n");
+	exit(0);
 
 }
 

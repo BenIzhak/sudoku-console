@@ -10,6 +10,7 @@
 #include "MainAux.h"
 #include "game.h"
 #include "CommandsList.h"
+#include "def.h"
 
 extern Cell** userBoard;
 extern Cell** tempBoard;
@@ -51,7 +52,7 @@ void cellAssignment(int rowCordinate, int colCordinate ,int num, int fixed){
  *
  *  filePath: string of the file's path
  */
-int loadBoard(char* filePath){
+int loadBoard(char* filePath, int gameMode){
 	/* reads new m and n values from file, if reading fails returns -1 */
 	/*TODO: check if fscanf success*/
 	FILE* fp = openFile(filePath,"r");
@@ -92,7 +93,7 @@ int loadBoard(char* filePath){
 	i = 0, j = 0;
 	while(fscanf(fp, "%d", &currentNum) != EOF){
 		dot = fgetc(fp);
-		if(dot == '.'){
+		if(dot == '.' && gameMode != EDIT_MODE){
 			cellAssignment(i, j , currentNum, 1);
 		}else{
 			cellAssignment(i, j , currentNum, 0);

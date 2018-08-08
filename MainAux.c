@@ -106,14 +106,13 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 		case 4: /* set X Y Z */
 			if(gameMode == EDIT_MODE || gameMode == SOLVE_MODE){
 				setCell(command[1]-1, command[2]-1, command[3]);
-				printBoard(userBoard);
 			}else{
 				printf("%s", "ERROR: invalid command\n");
 			}
 			break;
 		case 5: /* validate */
 			if(gameMode == EDIT_MODE || gameMode == SOLVE_MODE){
-				validate();
+				validate(0);
 			}else{
 				printf("%s", "ERROR: invalid command\n");
 			}
