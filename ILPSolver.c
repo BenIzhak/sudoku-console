@@ -11,12 +11,11 @@
 #include <string.h>
 #include "gurobi_c.h"
 #include "Cell.h"
+#include "MainAux.h"
 
 extern Cell** userBoard;
 extern Cell ** tempBoard;
 
-extern int blockRowSize;
-extern int blockColSize;
 
 void freeMem(double *lowerBounds, double *val, char* vtype, int* ind){
 	$ free alocated memory except "sol" which free in exitILP function @
@@ -26,8 +25,10 @@ void freeMem(double *lowerBounds, double *val, char* vtype, int* ind){
 	free(ind);
 }
 
-void writeSolToBoard(Cell** Board, double *sol, int boardRowAndColSize){
+void writeSolToBoard(Cell** Board, double *sol){
 	int i, j, v;
+	boardData brdData = getBoardData();
+	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
 	for (i = 0; i < boardRowAndColSize; i++) {
 		for (j = 0; j < boardRowAndColSize; j++) {
 			for (v = 0; v < boardRowAndColSize; v++) {
@@ -39,14 +40,14 @@ void writeSolToBoard(Cell** Board, double *sol, int boardRowAndColSize){
 	}
 }
 
-int exitILP(GRBenv **env, GRBmodel **model, int error, int optimStatus,  double *sol, int boardRowAndColSize, int valuesMatrixDim){
+int exitILP(GRBenv **env, GRBmodel **model, int error, int optimStatus,  double *sol, int valuesMatrixDim){
 	int errorGetSol = 0;
 	if(error == 0 && optimStatus == GRB_OPTIMAL){
 		$ the board is solveable @
 		errorGetSol = GRBgetdblattrarray(*model, GRB_DBL_ATTR_X, 0, valuesMatrixDim, sol);
 		if(errorGetSol == 0){
 			$ retrive the solution successfully @
-			writeSolToBoard(tempBoard, sol, boardRowAndColSize);
+			writeSolToBoard(tempBoard, sol);
 			free(sol);
 			GRBfreemodel(*model);
 			GRBfreeenv(*env);
@@ -80,16 +81,18 @@ int optimizemodel(GRBmodel **model){
 	return GRBoptimize(*model);
 }
 
-int oneValuePerBlock(GRBmodel **model, int* ind, double* val, int boardRowAndColSize){
+int oneValuePerBlock(GRBmodel **model, int* ind, double* val){
 	$ add constraint: each value is used exactly once per block @
 	int i,j,v,k,l;
 	int count, error = 0;
+	boardData brdData = getBoardData();
+	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
 	for (v = 0; v < boardRowAndColSize; v++) {
-		for (k = 0; k < blockRowSize; k++) {
-			for (l = 0; l < blockColSize; l++) {
+		for (k = 0; k < brdData.blockRowSize; k++) {
+			for (l = 0; l < brdData.blockColSize; l++) {
 				count = 0;
-				for (i = k * blockRowSize; i < (k + 1) * blockRowSize; i++) {
-					for (j = l * blockColSize; j < (l + 1) * blockColSize; j++) {
+				for (i = k * brdData.blockRowSize; i < (k + 1) * brdData.blockRowSize; i++) {
+					for (j = l * brdData.blockColSize; j < (l + 1) * brdData.blockColSize; j++) {
 						ind[count] = i * boardRowAndColSize * boardRowAndColSize + j * boardRowAndColSize + v;
 						val[count] = 1.0;
 						count++;
@@ -105,9 +108,11 @@ int oneValuePerBlock(GRBmodel **model, int* ind, double* val, int boardRowAndCol
 	return 0;
 }
 
-int oneValuePerCol(GRBmodel **model, int* ind, double* val, int boardRowAndColSize){
+int oneValuePerCol(GRBmodel **model, int* ind, double* val){
 	$ add constraint: each value is used exactly once per column @
 	int i,j,v, error = 0;
+	boardData brdData = getBoardData();
+	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
 	for (v = 0; v < boardRowAndColSize; v++) {
 		for (i = 0; i < boardRowAndColSize; i++) {
 			for (j = 0; j < boardRowAndColSize; j++) {
@@ -123,9 +128,11 @@ int oneValuePerCol(GRBmodel **model, int* ind, double* val, int boardRowAndColSi
 	return 0;
 }
 
-int oneValuePerRow(GRBmodel **model, int* ind, double* val, int boardRowAndColSize){
+int oneValuePerRow(GRBmodel **model, int* ind, double* val){
 	$ add constraint: each value is used exactly once per row @
 	int i,j,v, error = 0;
+	boardData brdData = getBoardData();
+	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
 	for (v = 0; v < boardRowAndColSize; v++) {
 		for (j = 0; j < boardRowAndColSize; j++) {
 			for (i = 0; i < boardRowAndColSize; i++) {
@@ -141,9 +148,11 @@ int oneValuePerRow(GRBmodel **model, int* ind, double* val, int boardRowAndColSi
 	return 0;
 }
 
-int oneValuePerCell(GRBmodel **model, int* ind, double* val, int boardRowAndColSize){
+int oneValuePerCell(GRBmodel **model, int* ind, double* val){
 	$ add constraint: each cell must have exactly one value @
 	int i,j,v, error = 0;
+	boardData brdData = getBoardData();
+	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
 	for (i = 0; i < boardRowAndColSize; i++) {
 		for (j = 0; j < boardRowAndColSize; j++) {
 			for (v = 0; v < boardRowAndColSize; v++) {
@@ -172,8 +181,10 @@ int createEnvironment(GRBenv **env){
 	return GRBloadenv(env, "sudokuILP.log");
 }
 
-void addVariables(double *lowerBounds, char *vtype, int boardRowAndColSize){
+void addVariables(double *lowerBounds, char *vtype){
 	int i, j, v;
+	boardData brdData = getBoardData();
+	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
 	for (i = 0; i < boardRowAndColSize; i++) {
 		for (j = 0; j < boardRowAndColSize; j++) {
 			for (v = 0; v < boardRowAndColSize; v++) {
@@ -195,14 +206,14 @@ int ILPSolver() {
 	 * if error occur return -1; @
 	GRBenv *env = NULL;
 	GRBmodel *model = NULL;
-	int boardRowAndColSize;
 	int valuesMatrixDim; $ the size of the 3D binary matrix @
 	int optimStatus, error = 0;
 	double *lowerBounds, *val, *sol;
 	char* vtype; $variable types@
 	int* ind;
+	boardData brdData = getBoardData();
+	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
 
-	boardRowAndColSize = blockRowSize * blockColSize;
 	valuesMatrixDim = boardRowAndColSize * boardRowAndColSize * boardRowAndColSize;
 
 	lowerBounds = (double*) malloc(valuesMatrixDim * sizeof(double));
@@ -211,66 +222,68 @@ int ILPSolver() {
 	val = (double*) malloc(boardRowAndColSize * sizeof(double));
 	sol = (double*) malloc(valuesMatrixDim * sizeof(double));
 
-	addVariables(lowerBounds, vtype, boardRowAndColSize);
+	addVariables(lowerBounds, vtype);
 
 	error = createEnvironment(&env);
 	if(error){
 		freeMem(lowerBounds, val, vtype, ind);
-		return exitILP(&env, &model, error, optimStatus, sol, boardRowAndColSize, valuesMatrixDim);
+		return exitILP(&env, &model, error, optimStatus, sol, valuesMatrixDim);
 	}
 
 	error = cancelPrints(&env);
 	if(error){
 		freeMem(lowerBounds, val, vtype, ind);
-		return exitILP(&env, &model, error, optimStatus, sol, boardRowAndColSize, valuesMatrixDim);
+		return exitILP(&env, &model, error, optimStatus, sol, valuesMatrixDim);
 	}
 
 	error = createNewModel(&env, &model, lowerBounds, vtype, valuesMatrixDim);
 	if(error){
 		freeMem(lowerBounds, val, vtype, ind);
-		return exitILP(&env, &model, error, optimStatus, sol, boardRowAndColSize, valuesMatrixDim);
+		return exitILP(&env, &model, error, optimStatus, sol, valuesMatrixDim);
 	}
 
-	error = oneValuePerCell(&model, ind, val, boardRowAndColSize);
+	error = oneValuePerCell(&model, ind, val);
 	if(error){
 		freeMem(lowerBounds, val, vtype, ind);
-		return exitILP(&env, &model, error, optimStatus, sol, boardRowAndColSize, valuesMatrixDim);
+		return exitILP(&env, &model, error, optimStatus, sol, valuesMatrixDim);
 	}
 
-	error = oneValuePerRow(&model, ind, val, boardRowAndColSize);
+	error = oneValuePerRow(&model, ind, val);
 	if(error){
 		freeMem(lowerBounds, val, vtype, ind);
-		return exitILP(&env, &model, error, optimStatus, sol, boardRowAndColSize, valuesMatrixDim);
+		return exitILP(&env, &model, error, optimStatus, sol, valuesMatrixDim);
 	}
 
-	error = oneValuePerCol(&model, ind, val, boardRowAndColSize);
+	error = oneValuePerCol(&model, ind, val);
 	if(error){
 		freeMem(lowerBounds, val, vtype, ind);
-		return exitILP(&env, &model, error, optimStatus, sol, boardRowAndColSize, valuesMatrixDim);
+		return exitILP(&env, &model, error, optimStatus, sol, valuesMatrixDim);
 	}
 
-	error = oneValuePerBlock(&model, ind, val, boardRowAndColSize);
+	error = oneValuePerBlock(&model, ind, val);
 	if(error){
 		freeMem(lowerBounds, val, vtype, ind);
-		return exitILP(&env, &model, error, optimStatus, sol, boardRowAndColSize, valuesMatrixDim);
+		return exitILP(&env, &model, error, optimStatus, sol, valuesMatrixDim);
 	}
 
 	error = optimizemodel(&model);
 	if(error){
 		freeMem(lowerBounds, val, vtype, ind);
-		return exitILP(&env, &model, error, optimStatus, sol, boardRowAndColSize, valuesMatrixDim);
+		return exitILP(&env, &model, error, optimStatus, sol, valuesMatrixDim);
 	}
 
 	error = solInfo(&model, &optimStatus);
 	if(error){
 		freeMem(lowerBounds, val, vtype, ind);
-		return exitILP(&env, &model, error, optimStatus, sol, boardRowAndColSize, valuesMatrixDim);
+		return exitILP(&env, &model, error, optimStatus, sol, valuesMatrixDim);
 	}
 
 	freeMem(lowerBounds, val, vtype, ind);
-	return exitILP(&env, &model, error, optimStatus, sol, boardRowAndColSize, valuesMatrixDim);
+	return exitILP(&env, &model, error, optimStatus, sol, valuesMatrixDim);
 }
+
 */
-int sol(){
+
+int ILPSolver(){
 	return 0;
 }

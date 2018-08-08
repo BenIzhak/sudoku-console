@@ -90,6 +90,8 @@ void startNewCommandsList();
 
 void startDefaultBoard();
 
+void saveCommand(char* filePath);
+
 void redo();
 void undo();
 

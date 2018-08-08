@@ -32,8 +32,6 @@ void setBlockColSize(int size){
 	brdData.blockColSize = size;
 }
 
-
-
 Cell** setAllocatedMem(){
 	int i;
 	int boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize;
@@ -140,7 +138,7 @@ void commmandRouter(int command[], int numOfArgs ,char* filePath) {
 			break;
 		case 9: /* save X */
 			if(gameMode == EDIT_MODE || gameMode == SOLVE_MODE){
-				solveCommand(filePath);
+				saveCommand(filePath);
 			}else{
 				printf("%s", "ERROR: invalid command\n");
 			}

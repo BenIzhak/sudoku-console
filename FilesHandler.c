@@ -24,7 +24,6 @@ FILE* openFile(char* filePath, const char* mode){
 }
 
 void cellAssignment(int rowCordinate, int colCordinate ,int num, int fixed){
-
 	/* fixed = 1 if cell is fixed and fixed = 0 otherwise */
 	userBoard[rowCordinate][colCordinate].currentNum = num;
 	if(fixed){
@@ -60,7 +59,6 @@ int loadBoard(char* filePath, int gameMode){
 	int currentNum = 0;
 	char dot;
 	int boardRowAndColSize;
-	boardData brdData = getBoardData();
 
 	if(fp == NULL){
 		return -1;
@@ -78,10 +76,11 @@ int loadBoard(char* filePath, int gameMode){
 	setBlockRowSize(n);
 
 	/* allocate memory for news boards */
-	boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
+	boardRowAndColSize = m * n;
 	userBoard = setAllocatedMem(boardRowAndColSize);
 	tempBoard = setAllocatedMem(boardRowAndColSize);
 	solvedBoard = setAllocatedMem(boardRowAndColSize);
+
 
 	/* init the boards */
 	boardInit(userBoard);
