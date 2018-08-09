@@ -9,7 +9,7 @@
 #define FILESHANDLER_H_
 #include "Cell.h"
 
-int loadBoard(char* filePath);
+int loadBoard(char* filePath, int gameMode);
 void saveBoard(FILE* fp);
 FILE* openFile(char* filePath, const char* mode);
 

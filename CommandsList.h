@@ -12,6 +12,9 @@
 
 typedef struct dllNode{
 	Cell** info;
+	int boardContainError;
+	int infoColSize;
+	int infoRowSize;
 	struct dllNode* next;
     struct dllNode* previous;
 }dllNode;
@@ -22,13 +25,13 @@ typedef struct dll{/* definition of the Doubly Linked List */
     struct dllNode* lastNode;
 }dll;
 
-void addCommand(dll* list, Cell** info);
+void addCommand(dll* list, Cell** info, int errorsFlag);
 
 void deleteFromCurrent(dll* list);
 
 dll* allocateListMem();
 
-void initList(dll* list, Cell** info);
+void initList(dll* list, Cell** info, int errorsFlag);
 
 void deleteListNodes(dll* list);
 

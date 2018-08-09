@@ -21,7 +21,7 @@ typedef struct boardData boardData;
 void gameLoop();
 Cell** setAllocatedMem();
 void printBoard(Cell** table);
-void freeBoardMem(Cell** Board);
+void freeBoardMem(Cell** Board, int blockRowSize, int blockColSize);
 void boardInit(Cell** table);
 void copyBoard(Cell** dstBoard, Cell** srcBoard);
 boardData getBoardData();

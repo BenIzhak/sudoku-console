@@ -192,8 +192,8 @@ void boardInit(Cell** table){
 	}
 }
 
-void freeBoardMem(Cell** Board){
-	int boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize;
+void freeBoardMem(Cell** Board, int blockRowSize, int blockColSize){
+	int boardRowAndColSize = blockRowSize * blockColSize;
 	int i;
 	if(Board == NULL){
 		return;

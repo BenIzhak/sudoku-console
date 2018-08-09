@@ -1,5 +1,5 @@
 /*
- $
+$
  * ILPSolver.c
  *
  *  Created on: 31 αιεμι 2018
@@ -14,7 +14,7 @@
 #include "MainAux.h"
 
 extern Cell** userBoard;
-extern Cell ** tempBoard;
+extern Cell ** solvedBoard;
 
 
 void freeMem(double *lowerBounds, double *val, char* vtype, int* ind){
@@ -25,7 +25,7 @@ void freeMem(double *lowerBounds, double *val, char* vtype, int* ind){
 	free(ind);
 }
 
-void writeSolToBoard(Cell** Board, double *sol){
+void writeSolToBoard(double *sol){
 	int i, j, v;
 	boardData brdData = getBoardData();
 	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
@@ -33,7 +33,7 @@ void writeSolToBoard(Cell** Board, double *sol){
 		for (j = 0; j < boardRowAndColSize; j++) {
 			for (v = 0; v < boardRowAndColSize; v++) {
 				if (sol[i * boardRowAndColSize * boardRowAndColSize + j * boardRowAndColSize + v] == 1) {
-					Board[i][j].currentNum = v + 1;
+					solvedBoard[i][j].currentNum = v + 1;
 				}
 			}
 		}
@@ -47,7 +47,7 @@ int exitILP(GRBenv **env, GRBmodel **model, int error, int optimStatus,  double 
 		errorGetSol = GRBgetdblattrarray(*model, GRB_DBL_ATTR_X, 0, valuesMatrixDim, sol);
 		if(errorGetSol == 0){
 			$ retrive the solution successfully @
-			writeSolToBoard(tempBoard, sol);
+			writeSolToBoard(sol);
 			free(sol);
 			GRBfreemodel(*model);
 			GRBfreeenv(*env);
@@ -281,9 +281,9 @@ int ILPSolver() {
 	freeMem(lowerBounds, val, vtype, ind);
 	return exitILP(&env, &model, error, optimStatus, sol, valuesMatrixDim);
 }
-
 */
 
 int ILPSolver(){
-	return 0;
+	return -1;
 }
+

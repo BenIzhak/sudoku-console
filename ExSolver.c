@@ -79,9 +79,13 @@ void resetCell(Cell** board, int cellRow, int cellCol){
 void resetCells(Cell** board, cellIndex tempIndex, int cellCol, int cellRow){
 	int dstRow = tempIndex.row;
 	int dstCol = tempIndex.col;
+
 	boardData brdData = getBoardData();
 	int boardSize = brdData.blockRowSize * brdData.blockColSize;
-
+	if(dstRow == -1 && dstCol == -1){
+		dstRow = 0;
+		dstCol = 0;
+	}
 	while(dstRow != cellRow || dstCol != cellCol){
 
 		if(board[cellRow][cellCol].fixed == 0 && board[cellRow][cellCol].isInput == 0){

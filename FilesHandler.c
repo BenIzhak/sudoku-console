@@ -26,6 +26,11 @@ FILE* openFile(char* filePath, const char* mode){
 void cellAssignment(int rowCordinate, int colCordinate ,int num, int fixed){
 	/* fixed = 1 if cell is fixed and fixed = 0 otherwise */
 	userBoard[rowCordinate][colCordinate].currentNum = num;
+	if(num == 0){
+		userBoard[rowCordinate][colCordinate].fixed = 0;
+		userBoard[rowCordinate][colCordinate].isInput = 0;
+		return;
+	}
 	if(fixed){
 		userBoard[rowCordinate][colCordinate].fixed = 1;
 		userBoard[rowCordinate][colCordinate].isInput = 0;
@@ -59,6 +64,7 @@ int loadBoard(char* filePath, int gameMode){
 	int currentNum = 0;
 	char dot;
 	int boardRowAndColSize;
+	boardData brdData = getBoardData();
 
 	if(fp == NULL){
 		return -1;
@@ -67,9 +73,9 @@ int loadBoard(char* filePath, int gameMode){
 	fscanf(fp, "%d", &n);
 
 	/* free memory of previous boards */
-	freeBoardMem(userBoard);
-	freeBoardMem(tempBoard);
-	freeBoardMem(solvedBoard);
+	freeBoardMem(userBoard, brdData.blockRowSize, brdData.blockColSize);
+	freeBoardMem(tempBoard, brdData.blockRowSize, brdData.blockColSize);
+	freeBoardMem(solvedBoard, brdData.blockRowSize, brdData.blockColSize);
 
 	/* set new values to blockRowSize and blockColSize */
 	setBlockColSize(m);

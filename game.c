@@ -88,7 +88,7 @@ void newSetCommand(){
 		/* clear the redo part of the list */
 		deleteFromCurrent(commandsList);
 	}
-	addCommand(commandsList, userBoard);
+	addCommand(commandsList, userBoard, errorsFlag);
 }
 void validate(int isDone){
 	int isSolved = 0;
@@ -163,7 +163,7 @@ void hardReset(Cell** info){
 	if((commandsList->head) != NULL){
 		deleteListNodes(commandsList);
 	}
-	initList(commandsList, info);
+	initList(commandsList, info, errorsFlag);
 }
 
 void startNewCommandsList(){
@@ -172,7 +172,7 @@ void startNewCommandsList(){
 	if(commandsList == NULL){
 		/* commandList doesn't exist, so create and initialize one */
 		commandsList = allocateListMem();
-		initList(commandsList, userBoard);
+		initList(commandsList, userBoard, errorsFlag);
 	}else{
 		/* commandList exists, so update the command list */
 		hardReset(userBoard);
@@ -180,17 +180,18 @@ void startNewCommandsList(){
 }
 
 void undo(){
-	dllNode *prevCommnad;
+	dllNode *prevCommand;
 
 	if((commandsList->currentNode) == (commandsList->head)){
 		printf("%s","Error: no moves to undo\n");
 		return;
 	}
 
-	prevCommnad = (commandsList->currentNode)->previous;
-	boardDiff(commandsList, prevCommnad,"Undo");
-	commandsList->currentNode = prevCommnad;
-	copyBoard(userBoard, prevCommnad->info);
+	prevCommand = (commandsList->currentNode)->previous;
+	boardDiff(commandsList, prevCommand,"Undo");
+	commandsList->currentNode = prevCommand;
+	copyBoard(userBoard, prevCommand->info);
+	errorsFlag = prevCommand->boardContainError;
 }
 
 void redo(){
@@ -206,6 +207,7 @@ void redo(){
 	nextCommand = (commandsList->currentNode)->next;
 	commandsList->currentNode = nextCommand;
 	copyBoard(userBoard, nextCommand->info);
+	errorsFlag = nextCommand->boardContainError;
 }
 
 int isEmptyBoard(){
@@ -260,11 +262,9 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){
 	}
 
 	isSolved = ILPSolver();
-	if(isSolved == 1){
-		copyBoard(solvedBoard, tempBoard);
-	}else{
-		return 0;
+	if(isSolved != 1){
 		/* error in ILPSolver, need to try again*/
+		return 0;
 	}
 
 	flag = 0;
@@ -276,7 +276,7 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){
 			randCol = rand() % rowAndColSize;
 			randRow = rand() % rowAndColSize;
 			/* checking that i havn't chose this cell already */
-			if(userBoard[randRow][randCol].fixed == 0){
+			if(solvedBoard[randRow][randCol].fixed == 0){
 				flag = 1;
 				solvedBoard[randRow][randCol].fixed = 1;
 			}
@@ -336,11 +336,11 @@ void generate(int cellsToFill, int cellsToKeep){
 void startDefaultBoard(){
 	/* TODO: add constants */
 	int boardRowAndColSize;
-
+	boardData brdData = getBoardData();
 	/* free memory of previous boards */
-	freeBoardMem(userBoard);
-	freeBoardMem(tempBoard);
-	freeBoardMem(solvedBoard);
+	freeBoardMem(userBoard, brdData.blockRowSize, brdData.blockColSize);
+	freeBoardMem(tempBoard, brdData.blockRowSize, brdData.blockColSize);
+	freeBoardMem(solvedBoard, brdData.blockRowSize, brdData.blockColSize);
 
 	/* set new values to blockRowSize and blockColSize */
 
@@ -378,11 +378,13 @@ void autoFill(){
 
 	for(i = 0; i < (brdData.blockRowSize * brdData.blockColSize); i++ ){
 		for( j = 0; j < (brdData.blockRowSize * brdData.blockColSize); j++){
-			availableNumbers(userBoard, i, j);/* checking available numbers in the original board */
-			if(userBoard[i][j].limit == 1){/* there's only one number available */
-				anyChanges = 1;
-				tempBoard[i][j].currentNum = tempBoard[i][j].validNums[0];
-				printf("Cell <%d,%d> set to %d\n", j, i, tempBoard[i][j].validNums[0]);
+			if(tempBoard[i][j].currentNum == 0){
+				availableNumbers(userBoard, i, j);/* checking available numbers in the original board */
+				if(userBoard[i][j].limit == 1){/* there's only one number available */
+					anyChanges = 1;
+					tempBoard[i][j].currentNum = userBoard[i][j].validNums[0];
+					printf("Cell <%d,%d> set to %d\n", (j + 1), (i + 1), userBoard[i][j].validNums[0]);
+				}
 			}
 		}
 	}
@@ -417,14 +419,10 @@ void setHint(int col, int row){
 		printf("%s", "Error: cell already contains a value\n");
 		return;
 	}
-	/* TODO: uncomment the line below AND the decleration of boardIsSolvable */
 	boardIsSolvable = ILPSolver();
 	if(boardIsSolvable == 2){
 		printf("%s", "Error: board is unsolvable\n");
-		return;
 	}else{
-		userBoard[row][col].currentNum = solvedBoard[row][col].currentNum;
-		userBoard[row][col].isInput = 1;
 		printf("Hint: set cell to %d\n", solvedBoard[row][col].currentNum);
 	}
 
@@ -435,21 +433,26 @@ void setHint(int col, int row){
 void solveCommand(char* filePath){
 	gameMode = SOLVE_MODE;
 	markErrors = 1;
-	if(loadBoard(filePath) == -1){
+	if(loadBoard(filePath, gameMode) == -1){
 		printf("%s", "Error: File cannot be opened\n");
+		return;
 	}
+	printBoard(userBoard);
 }
 
 void editCommand(char* filePath , int numOfArgs){
 	gameMode = EDIT_MODE;
 	markErrors = 1;
 	if(numOfArgs > 0){
-		if(loadBoard(filePath) == -1){
+		if(loadBoard(filePath, gameMode) == -1){
 			printf("%s", "Error: File cannot be opened\n");
+			return;
 		}
 	}else{
 		startDefaultBoard();
 	}
+	printBoard(userBoard);
+
 }
 
 void saveCommand(char* filePath){
@@ -491,11 +494,11 @@ void saveCommand(char* filePath){
 }
 
 void exitGameCommand(){
-
+	boardData brdData = getBoardData();
 	/* free boards memory */
-	freeBoardMem(userBoard);
-	freeBoardMem(tempBoard);
-	freeBoardMem(solvedBoard);
+	freeBoardMem(userBoard, brdData.blockRowSize, brdData.blockColSize);
+	freeBoardMem(tempBoard, brdData.blockRowSize, brdData.blockColSize);
+	freeBoardMem(solvedBoard, brdData.blockRowSize, brdData.blockColSize);
 
 	/* free command list memory */
 	deleteListNodes(commandsList);
