@@ -17,14 +17,31 @@ extern Cell** tempBoard;
 extern Cell** solvedBoard;
 
 
+/*
+ * Function:  openFile
+ * --------------------
+ *  open a new file. returns a pointer to the file.
+ *
+ *  filePath: path to the file
+ *  mode: the mode that the file would be open.
+ */
 FILE* openFile(char* filePath, const char* mode){
 	FILE* fp = NULL;
 	fp = fopen(filePath, mode);
 	return fp;
 }
 
+/*
+ * Function:  cellAssignment
+ * --------------------
+ *  update the cell that located in the given cordinate.
+ *
+ *  rowCordinate: the row cordinate of the desired cell.
+ *  colCordinate: the column cordinate of the desired cell.
+ *  num: the number we want placed in the cell.
+ *  fixed: fixed = 1 if cell is fixed and fixed = 0 otherwise
+ */
 void cellAssignment(int rowCordinate, int colCordinate ,int num, int fixed){
-	/* fixed = 1 if cell is fixed and fixed = 0 otherwise */
 	userBoard[rowCordinate][colCordinate].currentNum = num;
 	if(num == 0){
 		userBoard[rowCordinate][colCordinate].fixed = 0;
@@ -55,10 +72,12 @@ void cellAssignment(int rowCordinate, int colCordinate ,int num, int fixed){
  *  returns 0 on success and -1 if failed
  *
  *  filePath: string of the file's path
+ *  gameMode: the game mode (init, edit or solve)
  */
 int loadBoard(char* filePath, int gameMode){
 	/* reads new m and n values from file, if reading fails returns -1 */
 	/*TODO: check if fscanf success*/
+	/* TODO: change m & n */
 	FILE* fp = openFile(filePath,"r");
 	int m, n, i, j;
 	int currentNum = 0;
@@ -120,6 +139,14 @@ int loadBoard(char* filePath, int gameMode){
 	return 1;
 }
 
+
+/*
+ *  Function:  saveBoard
+ * --------------------
+ *  save the tempBoard into a given file
+ *
+ *  fp: pointer to the file
+ */
 void saveBoard(FILE* fp){
 	int i, j, currentNum, fixed;
 	boardData brdData = getBoardData();

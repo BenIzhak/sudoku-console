@@ -32,6 +32,21 @@ enum COMMAND{
 	error
 };
 
+/*
+ * Function:  parseCommand
+ * --------------------
+ * get array of chars which represent the command from the user*
+ * and change the result array accordingly. the first variable *
+ * in the result array is the command type and the rest are the*
+ * parameters for the command
+ *
+ *  input: string of the input by the user
+ *  command: array holding types of commands
+ *  filePath: the string that will hold the path that given by the user
+ *  numOfArgs: pointer to the variable that holds the number of arguments that supplied by the user
+ *
+ *  returns: -1 if input is empty or 0 if valid
+ */
 int parseCommand(char* input, int* command, char* filePath, int* numOfArgs){
 	int isDigit(char* token);
 	const char delim[7] = " \t\r\n";
@@ -116,6 +131,14 @@ int parseCommand(char* input, int* command, char* filePath, int* numOfArgs){
 	return 0;
 }
 
+
+/*
+ * Function:  validRange
+ * --------------------
+ * check if the input is in the correct range.
+ *
+ * command: array holding types of commands
+ */
 int validRange(int* command){
 	int i;
 	boardData brdData = getBoardData();
@@ -150,6 +173,15 @@ int validRange(int* command){
 	return 0;
 }
 
+
+/*
+ * Function:  validInput
+ * --------------------
+ * check if the input contain the correct amount of arguments
+ *
+ * command: array holding types of commands
+ * numOfArgs: number of arguments that supplied by the user.
+ */
 int validInput(int* command, int numOfArgs){
 	/* check if the necessary parameters are supplied */
 	if(command[0] == error){
@@ -181,7 +213,13 @@ int validInput(int* command, int numOfArgs){
 	return 0;
 }
 
-
+/*
+ * Function: isDigit
+ * --------------------
+ * check if the input represent a digit
+ *
+ * token: the input we want check
+ */
 int isDigit(char* token){
 	/* check if the char array contains only digits */
 	int i = 0;

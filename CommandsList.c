@@ -11,7 +11,15 @@
 #include "MainAux.h"
 #include "Cell.h"
 
-
+/*
+ * Function: addCommand
+ * --------------------
+ * create a new node, update the node accordingly to the game, and add it to the commandsList
+ *
+ * list: the command list
+ * info: the board that we want to save in the node
+ * errorsFlag: the errorFlage value that we want to save in the node.
+ */
 void addCommand(dll* list, Cell** info, int errorsFlag){
 	/* allocate memory to the new node and put info */
 	dllNode* newCommand = NULL;
@@ -40,17 +48,27 @@ void addCommand(dll* list, Cell** info, int errorsFlag){
 	list->lastNode = newCommand;
 }
 
+/*
+ * Function: deleteFromCurrent
+ * --------------------
+ * delete all the nodes from the current node (exclude)
+ *
+ * list: the command list
+ */
 void deleteFromCurrent(dll* list){
-	/* delete all the nodes from the current node (exclude) */
-	dllNode* currentLastNode = list->lastNode;
-	while(currentLastNode != list->currentNode){
-		freeBoardMem(currentLastNode->info, currentLastNode->infoRowSize, currentLastNode->infoColSize);
-		currentLastNode = currentLastNode-> previous;
-		free(currentLastNode->next);
-		currentLastNode->next = NULL;
+	while((list->lastNode) != list->currentNode){
+		freeBoardMem((list->lastNode)->info, (list->lastNode)->infoRowSize, (list->lastNode)->infoColSize);
+		(list->lastNode) = (list->lastNode)-> previous;
+		free((list->lastNode)->next);
+		(list->lastNode)->next = NULL;
 	}
 }
 
+/*
+ * Function: allocateListMem
+ * --------------------
+ * allocate memory to the list
+ */
 dll* allocateListMem(){
 	/* allocate memory for the dll struct */
 	dll *lst = NULL;
@@ -58,8 +76,16 @@ dll* allocateListMem(){
 	return lst;
 }
 
+/*
+ * Function: initList
+ * --------------------
+ * initialize new list with the first node in it.
+ *
+ * list: the command list
+ * info: the board that we want to save in the node
+ * errorsFlag: the errorFlage value that we want to save in the node.
+ */
 void initList(dll* list, Cell** info, int errorsFlag){
-	/* initialize new list */
 	dllNode* firstNode = NULL;
 	Cell** boardCopy = NULL;
 	boardData brdData = getBoardData();
@@ -77,11 +103,17 @@ void initList(dll* list, Cell** info, int errorsFlag){
 	list->lastNode = firstNode;
 }
 
+
+/*
+ * Function: deleteListNodes
+ * --------------------
+ * delete all the nodes are currently in the list.
+ * after that head, lastNode and currentNode are point to NULL
+ * the list it's self is NOT deleted
+ *
+ * list: the command list we want to delete
+ */
 void deleteListNodes(dll* list){
-	/* delete all the nodes are currently in the list.
-	 * then head, lastNode and currentNode are point to NULL
-	 * the list it's self is NOT deleted*/
-	dllNode* currentLastNode = NULL;
 	if(list == NULL){
 		return;
 	}
@@ -91,13 +123,12 @@ void deleteListNodes(dll* list){
 		(list->lastNode) = NULL;
 		return;
 	}
-	currentLastNode = list->lastNode;
-	while(currentLastNode != (list->head)){
+	while((list->lastNode) != (list->head)){
 		/* delete all the nodes except the head */
-		freeBoardMem(currentLastNode->info, currentLastNode->infoRowSize, currentLastNode->infoColSize);
-		currentLastNode = currentLastNode-> previous;
-		free(currentLastNode->next);
-		currentLastNode->next = NULL;
+		freeBoardMem((list->lastNode)->info, (list->lastNode)->infoRowSize, (list->lastNode)->infoColSize);
+		(list->lastNode) = (list->lastNode)-> previous;
+		free((list->lastNode)->next);
+		(list->lastNode)->next = NULL;
 	}
 	/* delete the head */
 	freeBoardMem((list->head)->info, (list->head)->infoRowSize, (list->head)->infoColSize);
@@ -109,6 +140,11 @@ void deleteListNodes(dll* list){
 	(list->lastNode) = NULL;
 }
 
+/*
+ * Function: freeListMem
+ * --------------------
+ * free the memory of the given list
+ */
 void freeListMem(dll* list){
 	/* free ONLY the list memory and NOT it's nodes
 	 * use only AFTER deleteListNodes to avoid memory leaks */
@@ -117,6 +153,16 @@ void freeListMem(dll* list){
 	}
 }
 
+/*
+ * Function: boardDiff
+ * --------------------
+ * print the changed cells between two boards
+ *
+ * list: the commandsList
+ * otheNode: the node that contains one of the boards board
+ * the another one is current board.
+ * command: is string Redo/Undo
+ */
 void boardDiff(dll* list, dllNode* otherNode,char *command){
 	/* command is string: Redo/Undo */
 	int i, j;

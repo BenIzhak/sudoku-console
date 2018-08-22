@@ -334,7 +334,6 @@ void generate(int cellsToFill, int cellsToKeep){
 }
 
 void startDefaultBoard(){
-	/* TODO: add constants */
 	int boardRowAndColSize;
 	boardData brdData = getBoardData();
 	/* free memory of previous boards */
@@ -343,7 +342,6 @@ void startDefaultBoard(){
 	freeBoardMem(solvedBoard, brdData.blockRowSize, brdData.blockColSize);
 
 	/* set new values to blockRowSize and blockColSize */
-
 	setBlockColSize(DEFAULT_BLOCK_COL_SIZE);
 	setBlockRowSize(DEFAULT_BLOCK_ROW_SIZE);
 
@@ -358,6 +356,9 @@ void startDefaultBoard(){
 	boardInit(userBoard);
 	boardInit(tempBoard);
 	boardInit(solvedBoard);
+
+	/* change errorFlag back to 0 */
+	errorsFlag = 0;
 
 	startNewCommandsList();
 }
@@ -437,7 +438,7 @@ void solveCommand(char* filePath){
 		printf("%s", "Error: File cannot be opened\n");
 		return;
 	}
-	printBoard(userBoard);
+	findAndMarkErrors();
 }
 
 void editCommand(char* filePath , int numOfArgs){
@@ -448,10 +449,10 @@ void editCommand(char* filePath , int numOfArgs){
 			printf("%s", "Error: File cannot be opened\n");
 			return;
 		}
+		findAndMarkErrors();
 	}else{
 		startDefaultBoard();
 	}
-	printBoard(userBoard);
 
 }
 
