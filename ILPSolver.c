@@ -199,11 +199,12 @@ void addVariables(double *lowerBounds, char *vtype){
 	}
 }
 
+$
+ * -------------------------------
+ * ILPSolver Documentation is in header file
+ * -------------------------------
+ @
 int ILPSolver() {
-	$ try to solve the userBoard using ILP.
-	 * if the board is solvable it writes the solution to the tempBoard and return 1,
-	 * if the board is unsolvable it doesnt change the tempBoard and return 2,
-	 * if error occur return -1; @
 	GRBenv *env = NULL;
 	GRBmodel *model = NULL;
 	int valuesMatrixDim; $ the size of the 3D binary matrix @

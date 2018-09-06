@@ -49,7 +49,13 @@ int getMarkErrors();
  */
 void findAndMarkErrors();
 
+/*
+ * Function:  getErrorsFlag
+ * --------------------
+ * 	returns errorsFlag value
+ */
 int getErrorsFlag();
+
 /*
  * Function:  setCell
  * --------------------
@@ -77,27 +83,119 @@ int setCell(int X, int Y, int Z);
 
 void generate(int cellsToFill, int cellsToKeep);
 
+/*
+ * Function:  solveCommand
+ * --------------------
+ *	starting a solve mode with file at filepath
+ *
+ *	filePath: path of file of board to be solved
+ */
 void solveCommand(char* filePath);
+
+/*
+ * Function:  editCommand
+ * --------------------
+ *	starting an edit mode with file at filepath
+ *
+ *	filePath: path of file of board to be edited
+ */
 void editCommand(char* filePath , int numOfArgs);
 
+/*
+ * Function:  getGameMode
+ * --------------------
+ *  returns current gameMode code
+ *
+ */
 int getGameMode();
+
+/*
+ * Function:  setGameMode
+ * --------------------
+ *  sets gameMode value
+ *
+ *  modeNum: code of gameMode to set to
+ *
+ */
 void setGameMode(int modeNum);
 
+
+/*
+ * Function:  reset
+ * --------------------
+ *  undo all moves, reverting the board to its original loaded state.
+ */
 void reset();
+
+/*
+ * Function:  hardReset
+ * --------------------
+ * delete the whole command list and initialize a new one
+ */
 void hardReset(Cell** info);
 
+/*
+ * Function:  startNewCommandsList
+ * --------------------
+ * creating a new commands list or initialize an old one
+ */
 void startNewCommandsList();
 
+/*
+ * Function:  startDefaultBoard
+ * --------------------
+ * initialising a 9 by 9 board and starting a new command list
+ *
+ */
 void startDefaultBoard();
 
+/*
+ * Function:  saveCommand
+ * --------------------
+ *	saving the current board to a txt file
+ *
+ *	filePath: path of file of board to be edited
+ *
+ */
 void saveCommand(char* filePath);
 
+/*
+ * Function:  undo
+ * --------------------
+ *  redos a command
+ */
 void redo();
+
+/*
+ * Function:  undo
+ * --------------------
+ *  undos a command
+ */
 void undo();
 
+/*
+ * Function:  setHint
+ * --------------------
+ *  gives a hint for a cell at column of col and row of row
+ *
+ *  col: column of cell to show hint for
+ *  row: rowof cell to show hint for
+ */
 void setHint(int col, int row);
+
+/*
+ * Function:  exitGameCommand
+ * --------------------
+ * exits the program and frees all resources of boards and commands list.
+ *
+ */
 void exitGameCommand();
 
+/*
+ * Function:  autoFill
+ * --------------------
+ *  automatically fills obvious values
+ */
 void autoFill();
 
 #endif /* GAME_H_ */

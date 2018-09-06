@@ -280,18 +280,7 @@ int validAssignment(Cell** board, int numToCheck, int cellRow, int cellCol){
 	return 0;
 }
 
-/*
- * Function:  availableNumbers
- * --------------------
- * 	checks which numbers are available to the cell
- * 	at column of cellCol and row of cellRow and updates
- * 	the validNums array with them and the limit field accordingly
- *
- *	board: 2d array containing sudoku cells
- *	cellRow: cell's row
- *	cellCol: cells's column
- *
- */
+
 void availableNumbers(Cell** board, int cellRow, int cellCol){
 	int prevNumFlag;
 	int counter = 0;/* counts the amount of valid numbers*/
@@ -310,16 +299,8 @@ void availableNumbers(Cell** board, int cellRow, int cellCol){
 	board[cellRow][cellCol].limit = counter;
 }
 
-/*
- * Function:  exBacktrack
- * --------------------
- * 	Exhaustive back tracking algorithm
- *
- *	board: 2d array containing sudoku cells
- *
- *	returns: amount of different solutions
- *
- */
+
+/* TODO: apparently it works slower than it should */
 void exBacktrack(Cell** board){
 	boardData brdData = getBoardData();
 	int limit, flag = 1, cellCol = 0, cellRow = 0, boardSize = (brdData.blockRowSize * brdData.blockColSize), countSols = 0;

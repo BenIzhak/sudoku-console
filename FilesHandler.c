@@ -18,12 +18,9 @@ extern Cell** solvedBoard;
 
 
 /*
- * Function:  openFile
- * --------------------
- *  open a new file. returns a pointer to the file.
- *
- *  filePath: path to the file
- *  mode: the mode that the file would be open.
+ * -------------------------------
+ * openFile Documentation is in header file
+ * -------------------------------
  */
 FILE* openFile(char* filePath, const char* mode){
 	FILE* fp = NULL;
@@ -32,7 +29,7 @@ FILE* openFile(char* filePath, const char* mode){
 }
 
 /*
- * Function:  cellAssignment
+ * Function:  loadCellsValues
  * --------------------
  *  update the cell that located in the given cordinate.
  *
@@ -41,7 +38,7 @@ FILE* openFile(char* filePath, const char* mode){
  *  num: the number we want placed in the cell.
  *  fixed: fixed = 1 if cell is fixed and fixed = 0 otherwise
  */
-void cellAssignment(int rowCordinate, int colCordinate ,int num, int fixed){
+void loadCellsValues(int rowCordinate, int colCordinate ,int num, int fixed){
 	userBoard[rowCordinate][colCordinate].currentNum = num;
 	if(num == 0){
 		userBoard[rowCordinate][colCordinate].fixed = 0;
@@ -66,13 +63,9 @@ void cellAssignment(int rowCordinate, int colCordinate ,int num, int fixed){
 }
 
 /*
- *  Function:  loadBoard
- * --------------------
- *  loads file into boards
- *  returns 0 on success and -1 if failed
- *
- *  filePath: string of the file's path
- *  gameMode: the game mode (init, edit or solve)
+ * -------------------------------
+ * loadBoard Documentation is in header file
+ * -------------------------------
  */
 int loadBoard(char* filePath, int gameMode){
 	/* reads new m and n values from file, if reading fails returns -1 */
@@ -118,9 +111,9 @@ int loadBoard(char* filePath, int gameMode){
 	while(fscanf(fp, "%d", &currentNum) != EOF){
 		dot = fgetc(fp);
 		if(dot == '.' && gameMode != EDIT_MODE){
-			cellAssignment(i, j , currentNum, 1);
+			loadCellsValues(i, j , currentNum, 1);
 		}else{
-			cellAssignment(i, j , currentNum, 0);
+			loadCellsValues(i, j , currentNum, 0);
 		}
 		/* move to the next cell */
 		if(j < boardRowAndColSize-1){
@@ -141,11 +134,9 @@ int loadBoard(char* filePath, int gameMode){
 
 
 /*
- *  Function:  saveBoard
- * --------------------
- *  save the tempBoard into a given file
- *
- *  fp: pointer to the file
+ * -------------------------------
+ * saveBoard Documentation is in header file
+ * -------------------------------
  */
 void saveBoard(FILE* fp){
 	int i, j, currentNum, fixed;

@@ -24,16 +24,30 @@ static int errorsFlag = 0;/* TODO:reset back to 0 when starting a new board; fla
 static dll* commandsList;
 
 
+/*
+ * -------------------------------
+ * getGameMode Documentation is in header file
+ * -------------------------------
+ */
 int getGameMode(){
 	return gameMode;
 }
 
+/*
+ * -------------------------------
+ * setGameMode Documentation is in header file
+ * -------------------------------
+ */
 void setGameMode(int modeNum){
 	gameMode = modeNum;
 }
 
 
-
+/*
+ * -------------------------------
+ * setMarkErrors Documentation is in header file
+ * -------------------------------
+ */
 void setMarkErrors(int setting){
 	if(setting == 0 || setting == 1){
 		markErrors = setting;
@@ -42,21 +56,29 @@ void setMarkErrors(int setting){
 	}
 }
 
+/*
+ * -------------------------------
+ * getMarkErrors Documentation is in header file
+ * -------------------------------
+ */
 int getMarkErrors(){
 	return markErrors;
 }
 
 /*
- * Function:  getErrorsFlag
- * --------------------
- * 	returns errorsFlag value
- *
- *
+ * -------------------------------
+ * getErrorsFlag Documentation is in header file
+ * -------------------------------
  */
 int getErrorsFlag(){
 	return errorsFlag;
 }
 
+/*
+ * -------------------------------
+ * findAndMarkErrors Documentation is in header file
+ * -------------------------------
+ */
 void findAndMarkErrors(){
 	/*TODO:if needed, can speed up by going over just cells in same row/col/block as the cell which was changed*/
 	int i, j;
@@ -77,6 +99,7 @@ void findAndMarkErrors(){
 	}
 	if(flag == 0){ errorsFlag = 0; }
 }
+
 /*
  * 	Function:  newSetCommand
  * --------------------
@@ -90,6 +113,12 @@ void newSetCommand(){
 	}
 	addCommand(commandsList, userBoard, errorsFlag);
 }
+
+/*
+ * -------------------------------
+ * validate Documentation is in header file
+ * -------------------------------
+ */
 void validate(int isDone){
 	int isSolved = 0;
 	if(errorsFlag == 1){
@@ -119,6 +148,15 @@ void validate(int isDone){
 		}
 	}
 }
+
+/*
+ * 	Function:  isFinished
+ * --------------------
+ *	checks if the user has finished filling all the board's cells
+ *	and then uses validate to check his solution
+ *
+ *	board:  2d array containing sudoku cells
+ */
 void isFinished(Cell** board){
 	int flag = 0, i, j;
 	boardData brdData = getBoardData();
@@ -134,6 +172,12 @@ void isFinished(Cell** board){
 		validate(1);
 	}
 }
+
+/*
+ * -------------------------------
+ * setCell Documentation is in header file
+ * -------------------------------
+ */
 void setCell(int col, int row, int val){
 	if(userBoard[row][col].fixed == 1){/* no need to check which game mode because fixed cells are only available while in solve mode */
 		printf("%s", "Error: cell is fixed\n");
@@ -150,22 +194,36 @@ void setCell(int col, int row, int val){
 	isFinished(userBoard);
 }
 
+/*
+ * -------------------------------
+ * reset Documentation is in header file
+ * -------------------------------
+ */
 void reset(){
-	/* undo all moves, reverting the board to its original loaded state. */
+
 	(commandsList->currentNode) = (commandsList->head);
 	deleteFromCurrent(commandsList);
 	copyBoard(userBoard, (commandsList->currentNode)->info);
 	printf("Board reset\n");
 }
 
+/*
+ * -------------------------------
+ * hardReset Documentation is in header file
+ * -------------------------------
+ */
 void hardReset(Cell** info){
-	/* delete the whole command list and initialize a new one */
 	if((commandsList->head) != NULL){
 		deleteListNodes(commandsList);
 	}
 	initList(commandsList, info, errorsFlag);
 }
 
+/*
+ * -------------------------------
+ * startNewCommandsList Documentation is in header file
+ * -------------------------------
+ */
 void startNewCommandsList(){
 	/* if commandsList does not exist -> create new one
 	 * if commandsList exist -> hardReset it*/
@@ -174,11 +232,16 @@ void startNewCommandsList(){
 		commandsList = allocateListMem();
 		initList(commandsList, userBoard, errorsFlag);
 	}else{
-		/* commandList exists, so update the command list */
+		/* commandList exists, so init the command list */
 		hardReset(userBoard);
 	}
 }
 
+/*
+ * -------------------------------
+ * undo Documentation is in header file
+ * -------------------------------
+ */
 void undo(){
 	dllNode *prevCommand;
 
@@ -194,6 +257,11 @@ void undo(){
 	errorsFlag = prevCommand->boardContainError;
 }
 
+/*
+ * -------------------------------
+ * redo Documentation is in header file
+ * -------------------------------
+ */
 void redo(){
 	dllNode *nextCommand;
 
@@ -210,6 +278,14 @@ void redo(){
 	errorsFlag = nextCommand->boardContainError;
 }
 
+/*
+ * Function:  isEmptyBoard
+ * --------------------
+ * goes over all cells and checks if the board is empty
+ *
+ *	return 0  if board is not empty, 1 if the board is empty
+ *
+ */
 int isEmptyBoard(){
 	int i, j, flag = 1;
 	boardData brdData = getBoardData();
@@ -221,6 +297,7 @@ int isEmptyBoard(){
 	}
 	return flag;
 }
+
 /*
  * Function:  fillAndKeep
  * --------------------
@@ -244,9 +321,11 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){
 
 	for(i = 0; i < cellsToFill; i++){
 		while(flag == 0){
+
 			randCol = rand() % rowAndColSize;
 			randRow = rand() % rowAndColSize;
 			/* checking that i havn't chose this cell already */
+			/* if it was chosen before it's currentNum wont be 0 */
 			if(userBoard[randRow][randCol].currentNum == 0){
 				flag = 1;
 			}
@@ -275,6 +354,7 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){
 		while(flag == 0){
 			randCol = rand() % rowAndColSize;
 			randRow = rand() % rowAndColSize;
+
 			/* checking that i havn't chose this cell already */
 			if(solvedBoard[randRow][randCol].fixed == 0){
 				flag = 1;
@@ -283,7 +363,7 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){
 		}
 		flag = 0;
 	}
-
+	printBoard(solvedBoard);
 	/* going over cells with fixed = 0 and removing them from the board */
 	for(i = 0; i < (brdData.blockRowSize * brdData.blockColSize); i++ ){
 		for( j = 0; j < (brdData.blockRowSize * brdData.blockColSize); j++){
@@ -298,12 +378,16 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){
 	return 1;
 }
 
+/*
+ * -------------------------------
+ * generate Documentation is in header file
+ * -------------------------------
+ */
 void generate(int cellsToFill, int cellsToKeep){
 	boardData brdData = getBoardData();
 	int rowAndColSize = brdData.blockRowSize * brdData.blockColSize;
 	int emptyCells = (rowAndColSize)*(rowAndColSize);/* if the board is empty, amount of empty cells is N*N */
 	int i;
-
 
 	if((cellsToFill > emptyCells) || (cellsToKeep > emptyCells)){/* checks that parameters are valid */
 		printf("Error: value not in range 0-%d\n", emptyCells);
@@ -311,7 +395,7 @@ void generate(int cellsToFill, int cellsToKeep){
 	}
 
 	if(isEmptyBoard() == 0){/* checks that board is empty */
-		printf("%s", "Error: board is not empty \n");
+		printf("%s", "Error: board is not empty\n");
 		return;
 	}
 
@@ -323,7 +407,7 @@ void generate(int cellsToFill, int cellsToKeep){
 			exitSolver(userBoard);
 			copyBoard(userBoard, solvedBoard);
 			printBoard(userBoard);
-			return;
+			return;/* Done successfully */
 		}else{
 			boardInit(userBoard);
 			boardInit(solvedBoard);
@@ -333,6 +417,11 @@ void generate(int cellsToFill, int cellsToKeep){
 	printf("%s", "Error: puzzle generator failed\n");
 }
 
+/*
+ * -------------------------------
+ * startDefaultBoard Documentation is in header file
+ * -------------------------------
+ */
 void startDefaultBoard(){
 	int boardRowAndColSize;
 	boardData brdData = getBoardData();
@@ -363,7 +452,11 @@ void startDefaultBoard(){
 	startNewCommandsList();
 }
 
-
+/*
+ * -------------------------------
+ * autoFill Documentation is in header file
+ * -------------------------------
+ */
 void autoFill(){
 	int i,j;
 	boardData brdData = getBoardData();
@@ -402,6 +495,11 @@ void autoFill(){
 	isFinished(userBoard);
 }
 
+/*
+ * -------------------------------
+ * setHint Documentation is in header file
+ * -------------------------------
+ */
 void setHint(int col, int row){
 	/* col and row starting with zero
 	 * boardIsSolvable = 2 <-> board is unsolvable
@@ -430,7 +528,11 @@ void setHint(int col, int row){
 
 }
 
-
+/*
+ * -------------------------------
+ * solveCommand Documentation is in header file
+ * -------------------------------
+ */
 void solveCommand(char* filePath){
 	gameMode = SOLVE_MODE;
 	markErrors = 1;
@@ -441,6 +543,11 @@ void solveCommand(char* filePath){
 	findAndMarkErrors();
 }
 
+/*
+ * -------------------------------
+ * editCommand Documentation is in header file
+ * -------------------------------
+ */
 void editCommand(char* filePath , int numOfArgs){
 	gameMode = EDIT_MODE;
 	markErrors = 1;
@@ -456,6 +563,11 @@ void editCommand(char* filePath , int numOfArgs){
 
 }
 
+/*
+ * -------------------------------
+ * saveCommand Documentation is in header file
+ * -------------------------------
+ */
 void saveCommand(char* filePath){
 	int i, j;
 	FILE* fp;
@@ -494,6 +606,11 @@ void saveCommand(char* filePath){
 	printf("Saved to: %s\n", filePath);
 }
 
+/*
+ * -------------------------------
+ * exitGameCommand Documentation is in header file
+ * -------------------------------
+ */
 void exitGameCommand(){
 	boardData brdData = getBoardData();
 	/* free boards memory */

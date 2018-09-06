@@ -12,13 +12,9 @@
 #include "Cell.h"
 
 /*
- * Function: addCommand
- * --------------------
- * create a new node, update the node accordingly to the game, and add it to the commandsList
- *
- * list: the command list
- * info: the board that we want to save in the node
- * errorsFlag: the errorFlage value that we want to save in the node.
+ * -------------------------------
+ * addCommand Documentation is in header file
+ * -------------------------------
  */
 void addCommand(dll* list, Cell** info, int errorsFlag){
 	/* allocate memory to the new node and put info */
@@ -49,11 +45,9 @@ void addCommand(dll* list, Cell** info, int errorsFlag){
 }
 
 /*
- * Function: deleteFromCurrent
- * --------------------
- * delete all the nodes from the current node (exclude)
- *
- * list: the command list
+ * -------------------------------
+ * deleteFromCurrent Documentation is in header file
+ * -------------------------------
  */
 void deleteFromCurrent(dll* list){
 	while((list->lastNode) != list->currentNode){
@@ -65,9 +59,9 @@ void deleteFromCurrent(dll* list){
 }
 
 /*
- * Function: allocateListMem
- * --------------------
- * allocate memory to the list
+ * -------------------------------
+ * allocateListMem Documentation is in header file
+ * -------------------------------
  */
 dll* allocateListMem(){
 	/* allocate memory for the dll struct */
@@ -77,13 +71,9 @@ dll* allocateListMem(){
 }
 
 /*
- * Function: initList
- * --------------------
- * initialize new list with the first node in it.
- *
- * list: the command list
- * info: the board that we want to save in the node
- * errorsFlag: the errorFlage value that we want to save in the node.
+ * -------------------------------
+ * initList Documentation is in header file
+ * -------------------------------
  */
 void initList(dll* list, Cell** info, int errorsFlag){
 	dllNode* firstNode = NULL;
@@ -105,13 +95,9 @@ void initList(dll* list, Cell** info, int errorsFlag){
 
 
 /*
- * Function: deleteListNodes
- * --------------------
- * delete all the nodes are currently in the list.
- * after that head, lastNode and currentNode are point to NULL
- * the list it's self is NOT deleted
- *
- * list: the command list we want to delete
+ * -------------------------------
+ * deleteListNodes Documentation is in header file
+ * -------------------------------
  */
 void deleteListNodes(dll* list){
 	if(list == NULL){
@@ -140,10 +126,11 @@ void deleteListNodes(dll* list){
 	(list->lastNode) = NULL;
 }
 
+
 /*
- * Function: freeListMem
- * --------------------
- * free the memory of the given list
+ * -------------------------------
+ * freeListMem Documentation is in header file
+ * -------------------------------
  */
 void freeListMem(dll* list){
 	/* free ONLY the list memory and NOT it's nodes
@@ -154,14 +141,9 @@ void freeListMem(dll* list){
 }
 
 /*
- * Function: boardDiff
- * --------------------
- * print the changed cells between two boards
- *
- * list: the commandsList
- * otheNode: the node that contains one of the boards board
- * the another one is current board.
- * command: is string Redo/Undo
+ * -------------------------------
+ * boardDiff Documentation is in header file
+ * -------------------------------
  */
 void boardDiff(dll* list, dllNode* otherNode,char *command){
 	/* command is string: Redo/Undo */

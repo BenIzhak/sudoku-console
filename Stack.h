@@ -22,10 +22,53 @@ struct StackNode{/* definition of the stack's nodes */
 
 typedef struct StackNode node;
 
+/*
+ * Function:  newNode
+ * --------------------
+ *  creates a new node, initializing it's data and connected node
+ *
+ *  col: the current cell column
+ *  row: the current cell row
+ */
 node* newNode(int row, int col);
+
+/*
+ * Function:  isEmpty
+ * --------------------
+ * checks if the stack is empty returns 1 if empty, otherwise returns 0
+ *
+ *  root: the top most node
+ */
 int isEmpty(node* root);
+
+/*
+ * Function:  push
+ * --------------------
+ * creates a new node and sets it's data and next as root
+ * then makes it the new root
+ *
+ *  root: the top most node
+ *  col: the current cell column
+ *  row: the current cell row
+ */
 void push(node** root, int row, int col);
+
+/*
+ * Function:  pop
+ * --------------------
+ *	removes the topmost node and returns it's value
+ *
+ *  root: the top most node
+ */
 cellIndex pop(node** root);
+
+/*
+ * Function:  peek
+ * --------------------
+ *	returns the top most node data
+ *
+ *  root: the top most node
+ */
 cellIndex peek(node* root);
 
 

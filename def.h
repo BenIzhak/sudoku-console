@@ -11,6 +11,7 @@
 #define DEFAULT_BLOCK_COL_SIZE 3 /* default size of column of a block */
 #define DEFAULT_BLOCK_ROW_SIZE 3 /* default size of row of a block */
 
+/* codes representing different modes */
 #define INIT_MODE 0
 #define EDIT_MODE 1
 #define SOLVE_MODE 2

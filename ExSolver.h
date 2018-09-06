@@ -25,6 +25,16 @@ void initBoardSolver(Cell** board);
  *  board-intialized 2d array*/
 void exitSolver(Cell** board);
 
+/*
+ * Function:  exBacktrack
+ * --------------------
+ * 	Exhaustive back tracking algorithm
+ *
+ *	board: 2d array containing sudoku cells
+ *
+ *	returns: amount of different solutions
+ *
+ */
 void exBacktrack(Cell** board);
 
 /*  Function:  validAssignment
@@ -44,6 +54,18 @@ void exBacktrack(Cell** board);
 
 int validAssignment(Cell** board, int numToCheck, int cellRow, int cellCol);
 
+/*
+ * Function:  availableNumbers
+ * --------------------
+ * 	checks which numbers are available to the cell
+ * 	at column of cellCol and row of cellRow and updates
+ * 	the validNums array with them and the limit field accordingly
+ *
+ *	board: 2d array containing sudoku cells
+ *	cellRow: cell's row
+ *	cellCol: cells's column
+ *
+ */
 void availableNumbers(Cell** board, int cellRow, int cellCol);
 
 #endif /* EXSOLVER_H_ */
