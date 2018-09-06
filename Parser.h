@@ -8,6 +8,7 @@
 #ifndef PARSER_H_
 #define PARSER_H_
 
+
 /*
  * Function:  parseCommand
  * --------------------
@@ -19,22 +20,23 @@
  *  input: string of the input by the user
  *  command: array holding types of commands
  *  filePath: the string that will hold the path that given by the user
- *  numOfArgs: pointer to the variable that holds the number of arguments that supplied by the user
+ *  numOfArgs: pointer to the variable that holds the number of arguments
+ *  that supplied by the user
+ *  notDigitFlag: change the value of it to 1 if a numerical value is not a numerical value.
  *
  *  returns: -1 if input is empty or 0 if valid
  */
-int parseCommand(char* input, int* command, char* filePath, int* numOfArgs);
+int parseCommand(char* input, int* command, char* filePath, int* numOfArgs, int* notDigitFlag);
 
 /*
  * Function:  validInput
  * --------------------
- * 	TODO:add description
+ * check if the input contain the correct amount of arguments
  *
- *	returns: 0 if input is OK, otherwise returns -1
- *
- *	command: TODO:add description
+ * command: array holding types of commands
+ * numOfArgs: number of arguments that supplied by the user.
+ * notDigitFlage: if the flag is 1 we don't print another error message.
  */
-int validInput(int* command, int numOfArgs);
-
+int validInput(int* command, int numOfArgs, int notDigitFlage);
 
 #endif /* PARSER_H_ */
