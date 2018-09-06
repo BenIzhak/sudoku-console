@@ -20,8 +20,7 @@ typedef struct boardData boardData;
 /*
  * Function: gameLoop
  * --------------------
- * TODO document
- *
+ * controls game flow, getting input from user and executes the correct command if possible
  *
  */
 void gameLoop();

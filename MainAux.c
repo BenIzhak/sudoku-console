@@ -20,18 +20,38 @@ Cell** solvedBoard;
 Cell** tempBoard;
 static boardData brdData;
 
+/*
+ * -------------------------------
+ * getBoardData Documentation is in header file
+ * -------------------------------
+ */
 boardData getBoardData() {
 	return brdData;
 }
 
+/*
+ * -------------------------------
+ * setBlockRowSize Documentation is in header file
+ * -------------------------------
+ */
 void setBlockRowSize(int size) {
 	brdData.blockRowSize = size;
 }
 
+/*
+ * -------------------------------
+ * setBlockColSize Documentation is in header file
+ * -------------------------------
+ */
 void setBlockColSize(int size) {
 	brdData.blockColSize = size;
 }
 
+/*
+ * -------------------------------
+ * setAllocatedMem Documentation is in header file
+ * -------------------------------
+ */
 Cell** setAllocatedMem() {
 	int i;
 	int boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize;
@@ -198,6 +218,11 @@ void commmandRouter(int command[], int numOfArgs, char* filePath) {
 	}
 }
 
+/*
+ * -------------------------------
+ * boardInit Documentation is in header file
+ * -------------------------------
+ */
 void boardInit(Cell** table) {
 	int i, j;
 	int boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize;
@@ -212,6 +237,11 @@ void boardInit(Cell** table) {
 	}
 }
 
+/*
+ * -------------------------------
+ * freeBoardMem Documentation is in header file
+ * -------------------------------
+ */
 void freeBoardMem(Cell** Board, int blockRowSize, int blockColSize) {
 	int boardRowAndColSize = blockRowSize * blockColSize;
 	int i;
@@ -224,6 +254,11 @@ void freeBoardMem(Cell** Board, int blockRowSize, int blockColSize) {
 	free(Board);
 }
 
+/*
+ * -------------------------------
+ * printBoard Documentation is in header file
+ * -------------------------------
+ */
 void printBoard(Cell** table) {
 	int i, j;
 	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
@@ -268,6 +303,11 @@ void printBoard(Cell** table) {
 	free(separatorRow);
 }
 
+/*
+ * -------------------------------
+ * copyBoard Documentation is in header file
+ * -------------------------------
+ */
 void copyBoard(Cell** dstBoard, Cell** srcBoard) {
 	int i, j;
 	int boardRow = brdData.blockRowSize * brdData.blockColSize;
@@ -282,6 +322,11 @@ void copyBoard(Cell** dstBoard, Cell** srcBoard) {
 	}
 }
 
+/*
+ * -------------------------------
+ * gameLoop Documentation is in header file
+ * -------------------------------
+ */
 void gameLoop() {
 	char input[256];
 	char filePath[256];

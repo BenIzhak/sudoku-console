@@ -173,6 +173,11 @@ int validRange(int* command) {
 	return 0;
 }
 
+/*
+ * -------------------------------
+ * validInput Documentation is in header file
+ * -------------------------------
+ */
 int validInput(int* command, int numOfArgs, int notDigitFlage) {
 	int notDigitErrorPrint(int notDigitFlag);
 	int gameMode = getGameMode();
