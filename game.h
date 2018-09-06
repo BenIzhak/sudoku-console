@@ -27,7 +27,7 @@ void setMarkErrors(int setting);
  *	isDone: used as flag, 0 - validating but the board is not completed, 1 - validating and all cells are filled
  *
  */
-void validate(int isDone);
+void validateCommand(int isDone);
 /*
  * Function:  getMarkErrors
  * --------------------
@@ -75,7 +75,7 @@ int setCell(int X, int Y, int Z);
  *	cellsToKeep: amount of cells to keep after generating random values
  */
 
-void generate(int cellsToFill, int cellsToKeep);
+void generateCommand(int cellsToFill, int cellsToKeep);
 
 void solveCommand(char* filePath);
 void editCommand(char* filePath , int numOfArgs);
@@ -83,7 +83,7 @@ void editCommand(char* filePath , int numOfArgs);
 int getGameMode();
 void setGameMode(int modeNum);
 
-void reset();
+void resetCommand();
 void hardReset(Cell** info);
 
 void startNewCommandsList();
@@ -92,12 +92,12 @@ void startDefaultBoard();
 
 void saveCommand(char* filePath);
 
-void redo();
-void undo();
+void redoCommand();
+void undoCommand();
 
 void setHint(int col, int row);
 void exitGameCommand();
 
-void autoFill();
+void autoFillCommand();
 
 #endif /* GAME_H_ */

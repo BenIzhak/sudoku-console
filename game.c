@@ -90,7 +90,9 @@ void newSetCommand(){
 	}
 	addCommand(commandsList, userBoard, errorsFlag);
 }
-void validate(int isDone){
+
+
+void validateCommand(int isDone){
 	int isSolved = 0;
 	if(errorsFlag == 1){
 		if(isDone == 0){
@@ -131,7 +133,7 @@ void isFinished(Cell** board){
 	}
 
 	if(flag == 0 && gameMode == SOLVE_MODE){
-		validate(1);
+		validateCommand(1);
 	}
 }
 void setCell(int col, int row, int val){
@@ -150,7 +152,7 @@ void setCell(int col, int row, int val){
 	isFinished(userBoard);
 }
 
-void reset(){
+void resetCommand(){
 	/* undo all moves, reverting the board to its original loaded state. */
 	(commandsList->currentNode) = (commandsList->head);
 	deleteFromCurrent(commandsList);
@@ -179,7 +181,7 @@ void startNewCommandsList(){
 	}
 }
 
-void undo(){
+void undoCommand(){
 	dllNode *prevCommand;
 
 	if((commandsList->currentNode) == (commandsList->head)){
@@ -188,23 +190,22 @@ void undo(){
 	}
 
 	prevCommand = (commandsList->currentNode)->previous;
+	printBoard(prevCommand->info);
 	boardDiff(commandsList, prevCommand,"Undo");
 	commandsList->currentNode = prevCommand;
 	copyBoard(userBoard, prevCommand->info);
 	errorsFlag = prevCommand->boardContainError;
 }
 
-void redo(){
+void redoCommand(){
 	dllNode *nextCommand;
-
 	if((commandsList->currentNode) == (commandsList->lastNode)){
 		printf("%s","Error: no moves to redo\n");
 		return;
 	}
-
 	nextCommand = (commandsList->currentNode)->next;
+	printBoard(nextCommand->info);
 	boardDiff(commandsList, nextCommand,"Redo");
-	nextCommand = (commandsList->currentNode)->next;
 	commandsList->currentNode = nextCommand;
 	copyBoard(userBoard, nextCommand->info);
 	errorsFlag = nextCommand->boardContainError;
@@ -298,7 +299,7 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){
 	return 1;
 }
 
-void generate(int cellsToFill, int cellsToKeep){
+void generateCommand(int cellsToFill, int cellsToKeep){
 	boardData brdData = getBoardData();
 	int rowAndColSize = brdData.blockRowSize * brdData.blockColSize;
 	int emptyCells = (rowAndColSize)*(rowAndColSize);/* if the board is empty, amount of empty cells is N*N */
@@ -322,6 +323,7 @@ void generate(int cellsToFill, int cellsToKeep){
 		if(fillAndKeep(cellsToFill, cellsToKeep) == 1){
 			exitSolver(userBoard);
 			copyBoard(userBoard, solvedBoard);
+			newSetCommand();
 			printBoard(userBoard);
 			return;
 		}else{
@@ -364,7 +366,7 @@ void startDefaultBoard(){
 }
 
 
-void autoFill(){
+void autoFillCommand(){
 	int i,j;
 	boardData brdData = getBoardData();
 	int anyChanges = 0;
@@ -435,7 +437,7 @@ void solveCommand(char* filePath){
 	gameMode = SOLVE_MODE;
 	markErrors = 1;
 	if(loadBoard(filePath, gameMode) == -1){
-		printf("%s", "Error: File cannot be opened\n");
+		printf("%s", "Error: File doesn’t exist or cannot be opened\n");
 		return;
 	}
 	findAndMarkErrors();
