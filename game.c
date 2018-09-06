@@ -362,7 +362,6 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){
 		}
 		flag = 0;
 	}
-	printBoard(solvedBoard);
 	/* going over cells with fixed = 0 and removing them from the board */
 	for(i = 0; i < (brdData.blockRowSize * brdData.blockColSize); i++ ){
 		for( j = 0; j < (brdData.blockRowSize * brdData.blockColSize); j++){
