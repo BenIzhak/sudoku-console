@@ -297,6 +297,50 @@ int isEmptyBoard(){
 	return flag;
 }
 
+
+/*
+ * Function:  availableNumbers
+ * --------------------
+ * 	checks which numbers are available to the cell
+ * 	at column of cellCol and row of cellRow and returns
+ * 	a random legal value
+ *
+ *	board: 2d array containing sudoku cells
+ *	cellRow: cell's row
+ *	cellCol: cells's column
+ *
+ */
+int availableNumbers(Cell** board, int cellRow, int cellCol){
+	int counter = 0;/* counts the amount of valid numbers*/
+	int num, i, j, randIndex, randNum = 0;
+	boardData brdData = getBoardData();
+	int maxNum = brdData.blockRowSize * brdData.blockColSize;
+	int boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize;
+	int* validNums;
+
+	for (i = 0; i < boardRowAndColSize; i++){
+		for (j = 0; j < boardRowAndColSize; j++){
+			validNums = (int *) malloc((boardRowAndColSize) * sizeof(int));
+		}
+	}
+
+	for(num = 1; num <= maxNum; num++){
+		if(validAssignment(board, num, cellRow, cellCol) == 0){/* value is 0 if num is a valid assignment*/
+			validNums[counter] = num;
+			counter++;
+		}
+	}
+
+	if(counter != 0){
+		randIndex = rand() % counter;
+		randNum = validNums[randIndex];
+	}else{
+		randNum = 0;
+	}
+	free(validNums);
+	return randNum;
+}
+
 /*
  * Function:  fillAndKeep
  * --------------------
@@ -331,12 +375,12 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){
 		}
 
 		flag = 0;
-		availableNumbers(userBoard, randRow, randCol);
-		if(userBoard[randRow][randCol].limit == 0){
+		randNum = availableNumbers(userBoard, randRow, randCol);
+		if(randNum == 0){
 			return 0;
 		}
-		randNum = rand() % userBoard[randRow][randCol].limit; /* choose a random index from the validNums array */
-		userBoard[randRow][randCol].currentNum = userBoard[randRow][randCol].validNums[randNum];
+
+		userBoard[randRow][randCol].currentNum = randNum;
 	}
 
 	isSolved = ILPSolver();
@@ -397,12 +441,10 @@ void generateCommand(int cellsToFill, int cellsToKeep){
 		return;
 	}
 
-	initBoardSolver(userBoard);/* getting ready to use ExSolver's functions */
 
 	/* tries for 1000 iterations to get a valid board*/
 	for(i = 0; i < 1000; i++){
 		if(fillAndKeep(cellsToFill, cellsToKeep) == 1){
-			exitSolver(userBoard);
 			copyBoard(userBoard, solvedBoard);
 			newSetCommand();
 			printBoard(userBoard);
@@ -412,7 +454,6 @@ void generateCommand(int cellsToFill, int cellsToKeep){
 			boardInit(solvedBoard);
 		}
 	}
-	exitSolver(userBoard);/* no need for ExSolver's fields any more, can free it. */
 	printf("%s", "Error: puzzle generator failed\n");
 }
 
@@ -467,7 +508,6 @@ void autoFillCommand(){
 
 	boardInit(tempBoard);
 	copyBoard(tempBoard, userBoard);/* copy the user board to tempboard, so i can make changes without changing the userboard */
-	initBoardSolver(userBoard);
 
 	for(i = 0; i < (brdData.blockRowSize * brdData.blockColSize); i++ ){
 		for( j = 0; j < (brdData.blockRowSize * brdData.blockColSize); j++){
@@ -475,8 +515,9 @@ void autoFillCommand(){
 				availableNumbers(userBoard, i, j);/* checking available numbers in the original board */
 				if(userBoard[i][j].limit == 1){/* there's only one number available */
 					anyChanges = 1;
-					tempBoard[i][j].currentNum = userBoard[i][j].validNums[0];
-					printf("Cell <%d,%d> set to %d\n", (j + 1), (i + 1), userBoard[i][j].validNums[0]);
+
+					tempBoard[i][j].currentNum = userBoard[i][j].limit;
+					printf("Cell <%d,%d> set to %d\n", (j + 1), (i + 1), userBoard[i][j].limit);
 				}
 			}
 		}
@@ -486,7 +527,6 @@ void autoFillCommand(){
 	copyBoard(userBoard, tempBoard);
 	findAndMarkErrors();
 
-	exitSolver(userBoard);
 	if(anyChanges){
 		newSetCommand();
 	}

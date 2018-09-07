@@ -85,3 +85,9 @@ cellIndex peek(node* root){
     }
     return root->index;
 }
+
+void emptyStack(node* root){
+	while(!isEmpty(root)){
+		pop(&root);
+	}
+}

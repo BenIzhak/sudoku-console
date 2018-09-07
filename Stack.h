@@ -71,5 +71,6 @@ cellIndex pop(node** root);
  */
 cellIndex peek(node* root);
 
+void emptyStack(node* root);
 
 #endif /* STACK_H_ */
