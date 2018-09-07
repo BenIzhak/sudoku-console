@@ -90,8 +90,8 @@ int loadBoard(char* filePath, int gameMode){
 	freeBoardMem(solvedBoard, brdData.blockRowSize, brdData.blockColSize);
 
 	/* set new values to blockRowSize and blockColSize */
-	setBlockColSize(m);
-	setBlockRowSize(n);
+	setBlockRowSize(m);
+	setBlockColSize(n);
 
 	/* allocate memory for news boards */
 	boardRowAndColSize = m * n;

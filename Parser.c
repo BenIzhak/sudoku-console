@@ -185,7 +185,7 @@ int validInput(int* command, int numOfArgs, int notDigitFlage) {
 		return -1;
 	}
 	if(gameMode == INIT_MODE){
-		if(command[0] != edit && command[0] != solve){
+		if(command[0] != edit && command[0] != solve && command[0] != exit1){
 			printf("%s", "ERROR: invalid command\n");
 			return -1;
 		}
