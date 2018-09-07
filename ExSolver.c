@@ -100,20 +100,6 @@ void resetAllCells(Cell** board){
 		}
 	}
 }
-/*
- * Function:  updateCell
- * --------------------
- *  updates cell with a new number with one of it's valid numbers
- *
- *  board: 2d array containing sudoku cells
- *  numIndex: index of valid number from the cell valid numbers array
- *	cellRow: row of cell to reset
- *	cellCol: column of cell to reset
- */
-void updateCell(Cell** board, int num, int cellRow, int cellCol){
-
-	board[cellRow][cellCol].currentNum = num;
-}
 
 /*
  * Function:  rowCheck
@@ -178,16 +164,14 @@ int colCheck(Cell** board, int num, int cellRow, int cellCol){
  *			-1 numToCheck is in the block
  */
 int blockCheck(Cell** board,int numToCheck , int cellRow, int cellCol){
-	int currentNum;
-	int i,j;
-	int currentblockRow, currentblockCol;
-	int minBlockLimitRow, minBlockLimitCol;
+	int currentNum, i, j, currentblockRow, currentblockCol, minBlockLimitRow, minBlockLimitCol;
 	boardData brdData = getBoardData();
 
 	currentblockRow = board[cellRow][cellCol].blockRow + 1;
 	currentblockCol = board[cellRow][cellCol].blockCol + 1;
 	minBlockLimitRow = currentblockRow - brdData.blockRowSize;
 	minBlockLimitCol = currentblockCol - brdData.blockColSize;
+
 	for(i = minBlockLimitRow; i < currentblockRow; i++){
 		for(j = minBlockLimitCol; j < currentblockCol; j++){
 			if(i != cellRow || j != cellCol){
@@ -231,10 +215,10 @@ int validAssignment(Cell** board, int numToCheck, int cellRow, int cellCol){
  *
  */
 void findValidNum(Cell** board, int cellRow, int cellCol){
-	int flag = 0;/* counts the amount of valid numbers*/
-	int num = board[cellRow][cellCol].currentNum + 1;
 	boardData brdData = getBoardData();
-	int maxNum = brdData.blockRowSize * brdData.blockColSize;
+	int flag = 0;
+	int num = board[cellRow][cellCol].currentNum + 1, maxNum = brdData.blockRowSize * brdData.blockColSize;
+
 	board[cellRow][cellCol].limit = 0;
 
 	while(flag == 0 && num <= maxNum){
@@ -247,40 +231,29 @@ void findValidNum(Cell** board, int cellRow, int cellCol){
 	}
 }
 
-
-/* TODO: apparently it works slower than it should */
 void exBacktrack(Cell** board){
-	boardData brdData = getBoardData();
-	int limit, flag = 1, cellCol = 0, cellRow = 0, boardSize = (brdData.blockRowSize * brdData.blockColSize), countSols = 0;
+	boardData brdData = getBoardData(); cellIndex tempIndex;
+	int flag = 1, cellCol = 0, cellRow = 0, boardSize = (brdData.blockRowSize * brdData.blockColSize), countSols = 0;
 	int frstColIndex = -1; /* column of the first empty cell */
 	int frstRowIndex = -1; /* row of the first empty cell */
-	cellIndex tempIndex;
 	node* lastEmpty = NULL; /* pointer to last empty cell */
 
 	if(getErrorsFlag() == 1){
 		printf("%s", "Error: board contains erroneous values\n");
 		return;
 	}
-	/*TODO: maybe add to node the last value that was tried */
 	push(&lastEmpty, -1, -1);
 
 	while(flag){
 		if(board[cellRow][cellCol].fixed == 1 || board[cellRow][cellCol].isInput == 1){ /* checks if cell is fixed or an input */
 			if(cellCol < boardSize - 1){
 				cellCol++;
-			}
-			else if(cellRow < boardSize - 1){
+			}else if(cellRow < boardSize - 1){
 				cellRow++;
 				cellCol = 0;
-			}else{
-				/* increase counter, got to last cell and it's fixed or input
-				 * need to get back to last empty cell */
+			}else{/* increase counter, got to last cell and it's fixed or input need to get back to last empty cell */
 				countSols++;
-
 				tempIndex = peek(lastEmpty);
-
-				/*resetCells(board, tempIndex, cellCol, cellRow);resetting cells values between current cell to the last empty one */
-
 				cellCol = tempIndex.col;
 				cellRow = tempIndex.row;
 			}
@@ -293,49 +266,34 @@ void exBacktrack(Cell** board){
 			if(tempIndex.col != cellCol || tempIndex.row != cellRow){
 				push(&lastEmpty, cellRow, cellCol);
 			}
-
 			findValidNum(board, cellRow, cellCol);
-			limit = board[cellRow][cellCol].limit;
-
-			if(limit == 0){
-				if(cellRow == frstRowIndex && cellCol == frstColIndex){
+			if(board[cellRow][cellCol].limit == 0){
+				if(cellRow == frstRowIndex && cellCol == frstColIndex){/*got back to the first empty cell and there are no more options */
 					flag = 0;
 					pop(&lastEmpty);
-					/*got back to the first empty and there are no more options */
 				}else{
 					/*got stuck need to trackback*/
 					pop(&lastEmpty);
 					tempIndex = peek(lastEmpty);
-
-					/*resetCells(board, tempIndex, cellCol, cellRow);*/
 					board[cellRow][cellCol].currentNum = 0;
-
 					cellCol = tempIndex.col;
 					cellRow = tempIndex.row;
 				}
-			}else{
-				/* there is a number I can put in cell */
-				updateCell(board, board[cellRow][cellCol].limit, cellRow, cellCol);
-
+			}else{/* there is a number I can put in cell */
+				board[cellRow][cellCol].currentNum = board[cellRow][cellCol].limit;
 				if(cellCol < boardSize - 1){
 					cellCol++;
 				}else if(cellRow < boardSize - 1){
 					cellRow++;
 					cellCol = 0;
-				}else{
-					/* got to last cell incremenent amount of solutions, no other cell to move to */
+				}else{/* got to last cell increment amount of solutions, no other cell to move to */
 					countSols++;
 				}
 			}
 		}
 	}
 	printf("Number of solutions: %d\n", countSols);
-	if(countSols == 1){
-		printf("%s", "This is a good board!\n");
-	}
-	if(countSols > 1){
-		printf("%s", "The puzzle has more than 1 solution, try to edit it further\n");
-	}
+	if(countSols == 1){printf("%s", "This is a good board!\n");}
+	if(countSols > 1){printf("%s", "The puzzle has more than 1 solution, try to edit it further\n");}
 	resetAllCells(board);
-	emptyStack(lastEmpty);
 }

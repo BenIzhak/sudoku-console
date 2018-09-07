@@ -281,7 +281,7 @@ void boardInit(Cell** table) {
 			table[i][j].currentNum = 0;
 			table[i][j].fixed = 0;
 			table[i][j].isInput = 0;
-			table[i][j].limit = boardRowAndColSize;
+			table[i][j].limit = 0;
 			table[i][j].isError = 0;
 			table[i][j].blockCol = getCurrentblockCol(j);
 			table[i][j].blockRow = getCurrentblockRow(i);
