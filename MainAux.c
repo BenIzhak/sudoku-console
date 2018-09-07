@@ -83,11 +83,11 @@ Cell** setAllocatedMem() {
  *  numOfArgs: pointer to the variable that holds the number of arguments
  *  that supplied by the user.
  */
+/*
 int getInput(char input[], int command[], char* filePath, int* numOfArgs) {
 	int notDigitFlag;
 	printf("%s", "Enter your command:\n");
 	if (fgets(input, 256, stdin) == NULL) {
-		/* EOF CASE */
 		return -1;
 	}
 
@@ -98,7 +98,6 @@ int getInput(char input[], int command[], char* filePath, int* numOfArgs) {
 	while (validInput(command, *numOfArgs, notDigitFlag) == -1) {
 		printf("%s", "Enter your command:\n");
 		if (fgets(input, 256, stdin) == NULL) {
-			/* EOF CASE */
 			return -1;
 		}
 		parseCommand(input, command, filePath, numOfArgs, &notDigitFlag);
@@ -107,6 +106,34 @@ int getInput(char input[], int command[], char* filePath, int* numOfArgs) {
 		}
 	}
 	return 0;
+}
+*/
+void getInput(char* input, int* command, char* filePath, int* numOfArgs){
+	int notDigitFlag;
+	int tooLongInput;
+	do{
+		printf("%s", "Enter your command:\n");
+		tooLongInput = 0;
+		if (fgets(input, 257, stdin) != NULL) {
+			if(strlen(input) == 256 && input[255] != '\n'){
+				/* clean the buffer */
+				while((fgetc(stdin) != '\n') && feof(stdin) == 0){
+					tooLongInput = 1;
+				}
+			}
+		}else{
+			input = "exit";
+			parseCommand(input, command, filePath, numOfArgs, &notDigitFlag);
+		}
+		if(tooLongInput == 0){
+			parseCommand(input, command, filePath, numOfArgs, &notDigitFlag);
+		}else{
+			tooLongInput = 0;
+			printf("%s", "ERROR: invalid command\n");
+			command[0] = 15; /* error code */
+		}
+
+	}while(validInput(command, *numOfArgs, notDigitFlag) == -1);
 }
 
 /*
@@ -331,13 +358,12 @@ void gameLoop() {
 	char input[256];
 	char filePath[256];
 	int command[4];
-	int exitFlag = 0;
 	int numOfArgs;
 	setGameMode(INIT_MODE);
 	printf("%s", "Sudoku\n------\n");
 
-	while (exitFlag == 0) {
-		exitFlag = getInput(input, command, filePath, &numOfArgs);
+	while (1) {
+		getInput(input, command, filePath, &numOfArgs);
 		commmandRouter(command, numOfArgs, filePath);
 	}
 }
