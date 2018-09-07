@@ -129,6 +129,9 @@ int loadBoard(char* filePath, int gameMode){
 	/* update the command list */
 	startNewCommandsList();
 
+	/* print the board we just loaded */
+	printBoard(userBoard);
+
 	return 1;
 }
 

@@ -449,6 +449,8 @@ void startDefaultBoard(){
 	errorsFlag = 0;
 
 	startNewCommandsList();
+
+	printBoard(userBoard);
 }
 
 /*
@@ -536,7 +538,7 @@ void solveCommand(char* filePath){
 	gameMode = SOLVE_MODE;
 	markErrors = 1;
 	if(loadBoard(filePath, gameMode) == -1){
-		printf("%s", "Error: File doesn’t exist or cannot be opened\n");
+		printf("%s", "Error: File doesn't exist or cannot be opened\n");
 		return;
 	}
 	findAndMarkErrors();
