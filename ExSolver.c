@@ -13,83 +13,16 @@
 #include "MainAux.h"
 #include "game.h"
 
-void initBoardSolver(Cell** board){
-	boardData brdData = getBoardData();
-	int i, j, k, boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize;
-
-	for (i = 0; i < boardRowAndColSize; i++){
-		for (j = 0; j < boardRowAndColSize; j++){
-			board[i][j].prevNums = (int *) malloc((boardRowAndColSize) * sizeof(int));
-			board[i][j].validNums = (int *) malloc((boardRowAndColSize) * sizeof(int));
-			if(board[i][j].prevNums == NULL){
-				printf("%s","Error: initBoardSolver has failed\n");
-			}
-			if(board[i][j].validNums == NULL){
-				printf("%s","Error: initBoardSolver has failed\n");
-			}
-			for(k = 0; k < boardRowAndColSize; k++){/* initializes prevNums as not used nums*/
-				board[i][j].prevNums[k] = 0;
-			}
-		}
-	}
-}
-
-void exitSolver(Cell** board){
-	boardData brdData = getBoardData();
-	int i, j, boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize;
-
-	for(i = 0; i < boardRowAndColSize; i++){
-		for(j = 0; j < boardRowAndColSize; j++){
-			free(board[i][j].prevNums);
-			free(board[i][j].validNums);
-		}
-	}
-}
-/*
- * Function:  resetCell
- * --------------------
- *  resets cell num to 0 and put 0 in array of the previous numbers it tried during backtracking
- *
- *  board: 2d array containing sudoku cells
- *	cellRow: row of cell to reset
- *	cellCol: column of cell to reset
- */
-void resetCell(Cell** board, int cellRow, int cellCol){
-	boardData brdData = getBoardData();
-	int i, amountOfNums = brdData.blockRowSize * brdData.blockColSize;
-
-	board[cellRow][cellCol].currentNum = 0;
-
-	/* initializes prevNums as not used nums*/
-	for (i = 0; i < amountOfNums; i++) {
-		board[cellRow][cellCol].prevNums[i] = 0;
-	}
-
-}
-/*
- * Function:  resetCells
- * --------------------
- *  resets cells between [cellRow][CellCol] to tempIndex, num to 0 and put 0 in array of the previous numbers it tried during backtracking
- *
- *	board: 2d array containing sudoku cells
- *  tempIndex: first index which doesn't need to be reset
- *	cellRow: row of first cell to reset
- *	cellCol: column of first cell to reset
- */
-void resetCells(Cell** board, cellIndex tempIndex, int cellCol, int cellRow){
-	int dstRow = tempIndex.row;
-	int dstCol = tempIndex.col;
+void resetAllCells(Cell** board){
 
 	boardData brdData = getBoardData();
 	int boardSize = brdData.blockRowSize * brdData.blockColSize;
-	if(dstRow == -1 && dstCol == -1){
-		dstRow = 0;
-		dstCol = 0;
-	}
-	while(dstRow != cellRow || dstCol != cellCol){
+	int cellRow = brdData.blockRowSize;
+	int cellCol = brdData.blockColSize;
+	while(0 != cellRow || 0 != cellCol){
 
 		if(board[cellRow][cellCol].fixed == 0 && board[cellRow][cellCol].isInput == 0){
-			resetCell(board, cellRow, cellCol);
+			board[cellRow][cellCol].currentNum = 0;
 		}
 
 		if(cellCol == 0){
@@ -99,23 +32,6 @@ void resetCells(Cell** board, cellIndex tempIndex, int cellCol, int cellRow){
 			cellCol--;
 		}
 	}
-}
-/*
- * Function:  updateCell
- * --------------------
- *  updates cell with a new number with one of it's valid numbers
- *
- *  board: 2d array containing sudoku cells
- *  numIndex: index of valid number from the cell valid numbers array
- *	cellRow: row of cell to reset
- *	cellCol: column of cell to reset
- */
-void updateCell(Cell** board, int numIndex, int cellRow, int cellCol){
-
-	int num;
-	num = board[cellRow][cellCol].validNums[numIndex];
-	board[cellRow][cellCol].currentNum = num;
-	board[cellRow][cellCol].prevNums[num - 1] = 1;
 }
 
 /*
@@ -134,14 +50,10 @@ int rowCheck(Cell** board, int num, int cellRow, int cellCol){
 	boardData brdData = getBoardData();
 	int colSize = (brdData.blockRowSize * brdData.blockColSize);
 	for(i = 0; i < colSize; i++){
-		if(i != cellCol){
 			numCompare = board[cellRow][i].currentNum;
-			if(numCompare != 0){
-				if(numCompare == num){
+			if(numCompare != 0 && numCompare == num && i != cellCol){
 					return -1;
-				}
 			}
-		}
 	}
 	return 0;
 }
@@ -162,66 +74,12 @@ int colCheck(Cell** board, int num, int cellRow, int cellCol){
 	boardData brdData = getBoardData();
 	int rowSize = brdData.blockRowSize * brdData.blockColSize;
 	for(i = 0; i < rowSize; i++){
-		if( i != cellRow){
 			numCompare = board[i][cellCol].currentNum;
-			if(numCompare != 0){
-				if(numCompare == num){
+				if(numCompare == num && i != cellRow && numCompare != 0){
 					return -1;
 				}
-			}
-		}
 	}
 	return 0;
-}
-
-
-/*
- * Function:  getcurrentblockCol
- * --------------------
- *  calculates the ending column of the block of the column cellCol
- *
- *	cellCol: column to check
- *
- *	returns: number of ending column of the block of the column cellCol
- */
-int getcurrentblockCol(int cellCol){
-	boardData brdData = getBoardData();
-	int boardSize = brdData.blockRowSize * brdData.blockColSize;
-	int i = brdData.blockColSize - 1;
-	float calcPos = 0;/* calculates relation between block end and cell position */
-	while(i <= boardSize){
-		calcPos = cellCol / (float) i;
-		if(calcPos <= 1.0){
-			return i;
-		}
-		i += brdData.blockColSize;
-	}
-	return -1;
-}
-
-
-/*
- * Function:  getcurrentblockRow
- * --------------------
- *  calculates the ending row of the block of the column cellRow
- *
- *	cellRow: row to check
- *
- *	returns: number of ending row of the block of the column cellRow
- */
-int getcurrentblockRow(int cellRow){
-	boardData brdData = getBoardData();
-	int boardSize = brdData.blockRowSize * brdData.blockColSize;
-	int i = brdData.blockRowSize - 1;
-	float calcPos = 0;/* calculates relation between block end and cell position */
-	while(i <= boardSize){
-		calcPos = cellRow / (float) i;
-		if(calcPos <= 1.0){
-			return i;
-		}
-		i += brdData.blockRowSize;
-	}
-	return -1;
 }
 
 /*
@@ -239,16 +97,14 @@ int getcurrentblockRow(int cellRow){
  *			-1 numToCheck is in the block
  */
 int blockCheck(Cell** board,int numToCheck , int cellRow, int cellCol){
-	int currentNum;
-	int i,j;
-	int currentblockRow, currentblockCol;
-	int minBlockLimitRow, minBlockLimitCol;
+	int currentNum, i, j, currentblockRow, currentblockCol, minBlockLimitRow, minBlockLimitCol;
 	boardData brdData = getBoardData();
 
-	currentblockRow = getcurrentblockRow(cellRow) + 1;
-	currentblockCol = getcurrentblockCol(cellCol) + 1;
+	currentblockRow = board[cellRow][cellCol].blockRow + 1;
+	currentblockCol = board[cellRow][cellCol].blockCol + 1;
 	minBlockLimitRow = currentblockRow - brdData.blockRowSize;
 	minBlockLimitCol = currentblockCol - brdData.blockColSize;
+
 	for(i = minBlockLimitRow; i < currentblockRow; i++){
 		for(j = minBlockLimitCol; j < currentblockCol; j++){
 			if(i != cellRow || j != cellCol){
@@ -280,112 +136,109 @@ int validAssignment(Cell** board, int numToCheck, int cellRow, int cellCol){
 	return 0;
 }
 
-
-void availableNumbers(Cell** board, int cellRow, int cellCol){
-	int prevNumFlag;
-	int counter = 0;/* counts the amount of valid numbers*/
-	int num;
+/*
+ * Function:  findValidNum
+ * --------------------
+ *  finds the first valid value for the cell and stores it
+ *  in the limit field of the cell
+ *
+ *	board: 2d array containing sudoku cells
+ *	cellRow: cell's row
+ *	cellCol: cells's column
+ *
+ */
+int findValidNum(Cell** board, int cellRow, int cellCol){
 	boardData brdData = getBoardData();
-	int maxNum = brdData.blockRowSize * brdData.blockColSize;
-	for(num = 1; num <= maxNum; num++){
-		prevNumFlag = board[cellRow][cellCol].prevNums[num - 1];
-		if(prevNumFlag == 0){/* checks if num was previously used */
-			if(validAssignment(board, num, cellRow, cellCol) == 0){/* value is 0 if num is a valid assignment*/
-				board[cellRow][cellCol].validNums[counter] = num;
-				counter++;
+	int num = board[cellRow][cellCol].currentNum + 1, maxNum = brdData.blockRowSize * brdData.blockColSize;
+
+	while(num <= maxNum){
+
+		if(rowCheck(board, num, cellRow, cellCol) == 0 && colCheck(board, num, cellRow, cellCol) == 0 && blockCheck(board, num, cellRow, cellCol) == 0){/* value is 0 if num is a valid assignment*/
+			return num;
+		}
+		num++;
+	}
+	return 0;
+}
+
+cellIndex findEmptyCell(Cell** board, int cellRow, int cellCol){
+	int i, j, flag = 0;
+	boardData brdData = getBoardData();
+	int rowSize = brdData.blockRowSize * brdData.blockColSize;
+	int colSize = brdData.blockRowSize * brdData.blockColSize;
+	cellIndex emptyIndex;
+
+	for(i = cellRow ; i < rowSize ; i++){
+		for(j = 0; j < colSize ; j++){
+			if(i == cellRow && flag == 0){
+				flag = 1;
+				j = cellCol;
+			}
+			if(board[i][j].currentNum == 0){
+				emptyIndex.col = j;
+				emptyIndex.row = i;
+				return emptyIndex;
 			}
 		}
 	}
-	board[cellRow][cellCol].limit = counter;
+	emptyIndex.col = -1;
+	emptyIndex.row = -1;
+	return emptyIndex;
 }
 
-
-/* TODO: apparently it works slower than it should */
 void exBacktrack(Cell** board){
-	boardData brdData = getBoardData();
-	int limit, flag = 1, cellCol = 0, cellRow = 0, boardSize = (brdData.blockRowSize * brdData.blockColSize), countSols = 0;
+	cellIndex tempIndex;
+	int flag = 1, cellCol = 0, cellRow = 0,  countSols = 0, foundNum = 0;
 	int frstColIndex = -1; /* column of the first empty cell */
 	int frstRowIndex = -1; /* row of the first empty cell */
-	cellIndex tempIndex;
 	node* lastEmpty = NULL; /* pointer to last empty cell */
 
 	if(getErrorsFlag() == 1){
 		printf("%s", "Error: board contains erroneous values\n");
 		return;
 	}
-	initBoardSolver(board);
 
-	push(&lastEmpty, -1, -1);
+	tempIndex = findEmptyCell(board, cellRow, cellCol);
+	cellRow = tempIndex.row;
+	cellCol = tempIndex.col;
+	frstColIndex = cellCol;
+	frstRowIndex = cellRow;
+	push(&lastEmpty, cellRow, cellCol);
 
 	while(flag){
-		if(board[cellRow][cellCol].fixed == 1 || board[cellRow][cellCol].isInput == 1){ /* checks if cell is fixed or an input */
-			if(cellCol < boardSize - 1){
-				cellCol++;
-			}
-			else if(cellRow < boardSize - 1){
-				cellRow++;
-				cellCol = 0;
-			}else{
-				/* increase counter, got to last cell and it's fixed or input
-				 * need to get back to last empty cell */
-				countSols++;
-
+			if(cellRow != -1 || cellCol != -1){/* find empty from prev iteration found an empty cell, sudoku board isn't full, */
 				tempIndex = peek(lastEmpty);
-
-				resetCells(board, tempIndex, cellCol, cellRow);
-
+				if(tempIndex.col != cellCol || tempIndex.row != cellRow){
+					push(&lastEmpty, cellRow, cellCol);
+				}
+				foundNum = findValidNum(board, cellRow, cellCol);
+				if(foundNum == 0){
+					if(cellRow == frstRowIndex && cellCol == frstColIndex){/*got back to the first empty cell and there are no more options */
+						flag = 0;
+						pop(&lastEmpty);
+					}else{
+						/*got stuck need to trackback*/
+						pop(&lastEmpty);
+						tempIndex = peek(lastEmpty);
+						board[cellRow][cellCol].currentNum = 0;
+						cellCol = tempIndex.col;
+						cellRow = tempIndex.row;
+					}
+				}else{/* there is a number I can put in cell */
+					board[cellRow][cellCol].currentNum = foundNum;
+					tempIndex = findEmptyCell(board, cellRow, cellCol);
+					cellRow = tempIndex.row;
+					cellCol = tempIndex.col;
+				}
+			}else{/* sudoku board is full, go back to prev empty */
+				countSols++;
+				tempIndex = peek(lastEmpty);
 				cellCol = tempIndex.col;
 				cellRow = tempIndex.row;
 			}
-		}else{
-			if(frstColIndex == -1 && frstRowIndex == -1){ /* save first empty cell index */
-				frstColIndex = cellCol;
-				frstRowIndex = cellRow;
-			}
-			tempIndex = peek(lastEmpty);
-			if(tempIndex.col != cellCol || tempIndex.row != cellRow){
-				push(&lastEmpty, cellRow, cellCol);
-			}
-
-			availableNumbers(board, cellRow, cellCol);
-			limit = board[cellRow][cellCol].limit;
-
-			if(limit == 0){
-				if(cellRow == frstRowIndex && cellCol == frstColIndex){
-					flag = 0;
-					pop(&lastEmpty);
-					/*got back to the first empty and there are no more options */
-				}else{
-					/*got stuck need to trackback*/
-					pop(&lastEmpty);
-					tempIndex = peek(lastEmpty);
-
-					resetCells(board, tempIndex, cellCol, cellRow);
-
-					cellCol = tempIndex.col;
-					cellRow = tempIndex.row;
-				}
-			}else{
-				/* there is a number I can put in cell */
-				updateCell(board, 0, cellRow, cellCol);
-				if(cellCol < boardSize - 1){
-					cellCol++;
-				}else if(cellRow < boardSize - 1){
-					cellRow++;
-					cellCol = 0;
-				}else{
-					/* got to last cell incremenent amount of solutions, no other cell to move to */
-					countSols++;
-				}
-			}
-		}
 	}
-	exitSolver(board);
 	printf("Number of solutions: %d\n", countSols);
-	if(countSols == 1){
-		printf("%s", "This is a good board!\n");
-	}
-	if(countSols > 1){
-		printf("%s", "The puzzle has more than 1 solution, try to edit it further\n");
-	}
+	if(countSols == 1){printf("%s", "This is a good board!\n");}
+	if(countSols > 1){printf("%s", "The puzzle has more than 1 solution, try to edit it further\n");}
+	resetAllCells(board);
 }

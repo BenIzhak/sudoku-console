@@ -246,6 +246,56 @@ void commmandRouter(int command[], int numOfArgs, char* filePath) {
 }
 
 /*
+ * Function:  getcurrentblockCol
+ * --------------------
+ *  calculates the ending column of the block of the column cellCol
+ *
+ *	cellCol: column to check
+ *
+ *	returns: number of ending column of the block of the column cellCol
+ */
+int getCurrentblockCol(int cellCol){
+	boardData brdData = getBoardData();
+	int boardSize = brdData.blockRowSize * brdData.blockColSize;
+	int i = brdData.blockColSize - 1;
+	float calcPos = 0;/* calculates relation between block end and cell position */
+	while(i <= boardSize){
+		calcPos = cellCol / (float) i;
+		if(calcPos <= 1.0){
+			return i;
+		}
+		i += brdData.blockColSize;
+	}
+	return -1;
+}
+
+
+/*
+ * Function:  getcurrentblockRow
+ * --------------------
+ *  calculates the ending row of the block of the column cellRow
+ *
+ *	cellRow: row to check
+ *
+ *	returns: number of ending row of the block of the column cellRow
+ */
+int getCurrentblockRow(int cellRow){
+	boardData brdData = getBoardData();
+	int boardSize = brdData.blockRowSize * brdData.blockColSize;
+	int i = brdData.blockRowSize - 1;
+	float calcPos = 0;/* calculates relation between block end and cell position */
+	while(i <= boardSize){
+		calcPos = cellRow / (float) i;
+		if(calcPos <= 1.0){
+			return i;
+		}
+		i += brdData.blockRowSize;
+	}
+	return -1;
+}
+
+
+/*
  * -------------------------------
  * boardInit Documentation is in header file
  * -------------------------------
@@ -258,8 +308,10 @@ void boardInit(Cell** table) {
 			table[i][j].currentNum = 0;
 			table[i][j].fixed = 0;
 			table[i][j].isInput = 0;
-			table[i][j].limit = boardRowAndColSize;
+			table[i][j].limit = 0;
 			table[i][j].isError = 0;
+			table[i][j].blockCol = getCurrentblockCol(j);
+			table[i][j].blockRow = getCurrentblockRow(i);
 		}
 	}
 }
