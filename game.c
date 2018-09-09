@@ -80,7 +80,6 @@ int getErrorsFlag(){
  * -------------------------------
  */
 void findAndMarkErrors(){
-	/*TODO:if needed, can speed up by going over just cells in same row/col/block as the cell which was changed*/
 	int i, j;
 	int flag = 0;
 	boardData brdData = getBoardData();
@@ -97,7 +96,9 @@ void findAndMarkErrors(){
 			}
 		}
 	}
-	if(flag == 0){ errorsFlag = 0; }
+	if(flag == 0){
+		errorsFlag = 0;
+	}
 }
 
 /*
@@ -184,8 +185,13 @@ void setCell(int col, int row, int val){
 		return;
 	}
 
-	userBoard[row][col].isInput = 1;
-	userBoard[row][col].currentNum = val;
+	if(val == 0){
+		userBoard[row][col].isInput = 0;
+		userBoard[row][col].currentNum = val;
+	}else{
+		userBoard[row][col].isInput = 1;
+		userBoard[row][col].currentNum = val;
+	}
 
 	findAndMarkErrors();
 
@@ -436,9 +442,9 @@ void startDefaultBoard(){
 
 	/* allocate memory for news boards */
 	boardRowAndColSize = DEFAULT_BLOCK_COL_SIZE * DEFAULT_BLOCK_ROW_SIZE;
-	userBoard = setAllocatedMem(boardRowAndColSize);
-	tempBoard = setAllocatedMem(boardRowAndColSize);
-	solvedBoard = setAllocatedMem(boardRowAndColSize);
+	userBoard = boardAllocatedMem(boardRowAndColSize);
+	tempBoard = boardAllocatedMem(boardRowAndColSize);
+	solvedBoard = boardAllocatedMem(boardRowAndColSize);
 
 	/* init the boards */
 	boardInit(userBoard);
@@ -536,12 +542,13 @@ void setHint(int col, int row){
  */
 void solveCommand(char* filePath){
 	gameMode = SOLVE_MODE;
-	markErrors = 1;
 	if(loadBoard(filePath, gameMode) == -1){
 		printf("%s", "Error: File doesn't exist or cannot be opened\n");
 		return;
 	}
 	findAndMarkErrors();
+	/* print the board we just loaded */
+	printBoard(userBoard);
 }
 
 /*
@@ -551,13 +558,14 @@ void solveCommand(char* filePath){
  */
 void editCommand(char* filePath , int numOfArgs){
 	gameMode = EDIT_MODE;
-	markErrors = 1;
 	if(numOfArgs > 0){
 		if(loadBoard(filePath, gameMode) == -1){
 			printf("%s", "Error: File cannot be opened\n");
 			return;
 		}
 		findAndMarkErrors();
+		/* print the board we just loaded */
+		printBoard(userBoard);
 	}else{
 		startDefaultBoard();
 	}

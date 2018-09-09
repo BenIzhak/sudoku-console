@@ -17,12 +17,18 @@
  * -------------------------------
  */
 void addCommand(dll* list, Cell** info, int errorsFlag){
-	/* allocate memory to the new node and put info */
 	dllNode* newCommand = NULL;
 	Cell** boardCopy = NULL;
 	boardData brdData = getBoardData();
 	newCommand = (dllNode*) malloc(sizeof(dllNode));
-	boardCopy = setAllocatedMem();
+
+	if(newCommand == NULL){
+		/* check if allocation succeeded */
+		printf("%s", "Error: addCommand has failed\n");
+		return;
+	}
+
+	boardCopy = boardAllocatedMem();
 	copyBoard(boardCopy, info);
 	newCommand->info = boardCopy;
 	newCommand->boardContainError = errorsFlag;
@@ -67,6 +73,10 @@ dll* allocateListMem(){
 	/* allocate memory for the dll struct */
 	dll *lst = NULL;
 	lst = (dll *) malloc(sizeof(dll));
+	if(lst == NULL){
+		printf("%s", "Error: allocateListMem has failed\n");
+		return NULL;
+	}
 	return lst;
 }
 
@@ -80,7 +90,14 @@ void initList(dll* list, Cell** info, int errorsFlag){
 	Cell** boardCopy = NULL;
 	boardData brdData = getBoardData();
 	firstNode = (dllNode*) malloc(sizeof(dllNode));
-	boardCopy = setAllocatedMem();
+
+	if(firstNode == NULL){
+		/* check if allocation succeeded */
+		printf("%s", "Error: initList has failed\n");
+		return;
+	}
+
+	boardCopy = boardAllocatedMem();
 	copyBoard(boardCopy, info);
 	firstNode->info = boardCopy;
 	firstNode->boardContainError = errorsFlag;

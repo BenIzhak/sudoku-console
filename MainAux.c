@@ -49,10 +49,10 @@ void setBlockColSize(int size) {
 
 /*
  * -------------------------------
- * setAllocatedMem Documentation is in header file
+ * boardAllocatedMem Documentation is in header file
  * -------------------------------
  */
-Cell** setAllocatedMem() {
+Cell** boardAllocatedMem() {
 	int i;
 	int boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize;
 
@@ -295,6 +295,11 @@ void printBoard(Cell** table) {
 	int markErrors = getMarkErrors();
 	int gameMode = getGameMode();
 	separatorRow = (char*) calloc(separatorRowNum, sizeof(char));
+	if(separatorRow == NULL){
+		/* check if allocation succeeded */
+		printf("%s", "Error: printBoard has failed\n");
+		return;
+	}
 	for (i = 0; i < separatorRowNum; i++) {
 		separatorRow[i] = '-';
 	}
@@ -360,6 +365,7 @@ void gameLoop() {
 	int command[4];
 	int numOfArgs;
 	setGameMode(INIT_MODE);
+	setMarkErrors(1);
 	printf("%s", "Sudoku\n------\n");
 
 	while (1) {

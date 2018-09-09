@@ -95,9 +95,9 @@ int loadBoard(char* filePath, int gameMode){
 
 	/* allocate memory for news boards */
 	boardRowAndColSize = m * n;
-	userBoard = setAllocatedMem(boardRowAndColSize);
-	tempBoard = setAllocatedMem(boardRowAndColSize);
-	solvedBoard = setAllocatedMem(boardRowAndColSize);
+	userBoard = boardAllocatedMem(boardRowAndColSize);
+	tempBoard = boardAllocatedMem(boardRowAndColSize);
+	solvedBoard = boardAllocatedMem(boardRowAndColSize);
 
 
 	/* init the boards */
@@ -128,9 +128,6 @@ int loadBoard(char* filePath, int gameMode){
 
 	/* update the command list */
 	startNewCommandsList();
-
-	/* print the board we just loaded */
-	printBoard(userBoard);
 
 	return 1;
 }

@@ -26,12 +26,12 @@ typedef struct boardData boardData;
 void gameLoop();
 
 /*
- * Function: setAllocatedMem
+ * Function: boardAllocatedMem
  * --------------------
  * allocate memory for new board and return a pointer to the memory.
  * if memory has failed prints an error massage and returns NULL.
  */
-Cell** setAllocatedMem();
+Cell** boardAllocatedMem();
 
 /*
  * Function: printBoard
