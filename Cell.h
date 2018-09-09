@@ -15,6 +15,9 @@ struct _Cell
 	int limit;/* current last index of validnums  */
 	int isInput;/* flag if the value in this cell is an input by the user */
 	int isError; /* flag if the value in this cell is erroneous */
+	int* validNums; /* array holding current valid numbers */
+	int countBackTracks;
+	int maxOptions;
 	int blockRow; /* row of the block of the cell */
 	int blockCol; /* column of the block of the cell */
 };

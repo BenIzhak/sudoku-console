@@ -13,6 +13,32 @@
 #include "MainAux.h"
 #include "game.h"
 
+
+void initBoardSolver(Cell** board){
+	boardData brdData = getBoardData();
+	int i, j, boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize;
+ 	for (i = 0; i < boardRowAndColSize; i++){
+		for (j = 0; j < boardRowAndColSize; j++){
+			board[i][j].countBackTracks = 0;
+			board[i][j].maxOptions = 0;
+			board[i][j].validNums = (int *) calloc((boardRowAndColSize), sizeof(int));
+			if(board[i][j].validNums == NULL){
+				printf("%s","Error: initBoardSolver has failed\n");
+			}
+		}
+	}
+}
+
+void exitSolver(Cell** board){
+	boardData brdData = getBoardData();
+	int i, j, boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize;
+ 	for(i = 0; i < boardRowAndColSize; i++){
+		for(j = 0; j < boardRowAndColSize; j++){
+			free(board[i][j].validNums);
+		}
+	}
+}
+
 void resetAllCells(Cell** board){
 
 	boardData brdData = getBoardData();
@@ -149,16 +175,20 @@ int validAssignment(Cell** board, int numToCheck, int cellRow, int cellCol){
  */
 int findValidNum(Cell** board, int cellRow, int cellCol){
 	boardData brdData = getBoardData();
-	int num = board[cellRow][cellCol].currentNum + 1, maxNum = brdData.blockRowSize * brdData.blockColSize;
+	int num , maxNum = brdData.blockRowSize * brdData.blockColSize, counter = 0;
 
-	while(num <= maxNum){
-
-		if(rowCheck(board, num, cellRow, cellCol) == 0 && colCheck(board, num, cellRow, cellCol) == 0 && blockCheck(board, num, cellRow, cellCol) == 0){/* value is 0 if num is a valid assignment*/
-			return num;
+		for(num = 1; num <= maxNum; num++){
+			if(validAssignment(board, num, cellRow, cellCol) == 0){/* value is 0 if num is a valid assignment*/
+				board[cellRow][cellCol].validNums[counter] = num;
+				counter++;
+			}else{
+				board[cellRow][cellCol].validNums[num - 1] = 0;
+			}
 		}
-		num++;
-	}
-	return 0;
+		board[cellRow][cellCol].countBackTracks = 1;
+		board[cellRow][cellCol].maxOptions = counter;
+		return board[cellRow][cellCol].validNums[0];
+
 }
 
 cellIndex findEmptyCell(Cell** board, int cellRow, int cellCol){
@@ -193,6 +223,8 @@ void exBacktrack(Cell** board){
 	int frstRowIndex = -1; /* row of the first empty cell */
 	node* lastEmpty = NULL; /* pointer to last empty cell */
 
+	initBoardSolver(board);
+
 	if(getErrorsFlag() == 1){
 		printf("%s", "Error: board contains erroneous values\n");
 		return;
@@ -211,21 +243,35 @@ void exBacktrack(Cell** board){
 				if(tempIndex.col != cellCol || tempIndex.row != cellRow){
 					push(&lastEmpty, cellRow, cellCol);
 				}
-				foundNum = findValidNum(board, cellRow, cellCol);
+
+				if(board[cellRow][cellCol].countBackTracks == 0){
+					foundNum = findValidNum(board, cellRow, cellCol);
+				}else{
+					if(board[cellRow][cellCol].maxOptions >= board[cellRow][cellCol].countBackTracks){
+						foundNum =  board[cellRow][cellCol].validNums[board[cellRow][cellCol].countBackTracks];
+						board[cellRow][cellCol].countBackTracks++;
+					}else{
+						foundNum = 0;
+					}
+				}
+
 				if(foundNum == 0){
 					if(cellRow == frstRowIndex && cellCol == frstColIndex){/*got back to the first empty cell and there are no more options */
 						flag = 0;
 						pop(&lastEmpty);
+						board[cellRow][cellCol].countBackTracks = 0;
 					}else{
 						/*got stuck need to trackback*/
 						pop(&lastEmpty);
 						tempIndex = peek(lastEmpty);
 						board[cellRow][cellCol].currentNum = 0;
+						board[cellRow][cellCol].countBackTracks = 0;
 						cellCol = tempIndex.col;
 						cellRow = tempIndex.row;
 					}
 				}else{/* there is a number I can put in cell */
 					board[cellRow][cellCol].currentNum = foundNum;
+					/*printBoard(board);*/
 					tempIndex = findEmptyCell(board, cellRow, cellCol);
 					cellRow = tempIndex.row;
 					cellCol = tempIndex.col;
@@ -241,4 +287,5 @@ void exBacktrack(Cell** board){
 	if(countSols == 1){printf("%s", "This is a good board!\n");}
 	if(countSols > 1){printf("%s", "The puzzle has more than 1 solution, try to edit it further\n");}
 	resetAllCells(board);
+	exitSolver(board);
 }
