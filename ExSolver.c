@@ -153,7 +153,7 @@ int findValidNum(Cell** board, int cellRow, int cellCol){
 
 	while(num <= maxNum){
 
-		if(rowCheck(board, num, cellRow, cellCol) == 0 && colCheck(board, num, cellRow, cellCol) == 0 && blockCheck(board, num, cellRow, cellCol) == 0){/* value is 0 if num is a valid assignment*/
+		if(validAssignment(board, num, cellRow, cellCol) == 0){/* value is 0 if num is a valid assignment*/
 			return num;
 		}
 		num++;
@@ -161,6 +161,17 @@ int findValidNum(Cell** board, int cellRow, int cellCol){
 	return 0;
 }
 
+/*
+ * Function:  findEmptyCell
+ * --------------------
+ *  finds the first empty cell in the board which appears after
+ *  the cell which is at row of cellRow and column of cellCol
+ *
+ *	board: 2d array containing sudoku cells
+ *	cellRow: cell's row
+ *	cellCol: cells's column
+ *
+ */
 cellIndex findEmptyCell(Cell** board, int cellRow, int cellCol){
 	int i, j, flag = 0;
 	boardData brdData = getBoardData();
@@ -198,21 +209,21 @@ void exBacktrack(Cell** board){
 		return;
 	}
 
-	tempIndex = findEmptyCell(board, cellRow, cellCol);
+	tempIndex = findEmptyCell(board, cellRow, cellCol);/* find the first empty cell  */
 	cellRow = tempIndex.row;
 	cellCol = tempIndex.col;
-	frstColIndex = cellCol;
+	frstColIndex = cellCol;/* saving the first empty cell index */
 	frstRowIndex = cellRow;
-	push(&lastEmpty, cellRow, cellCol);
+	push(&lastEmpty, cellRow, cellCol);/* pushing the first empty cell index to the stack */
 
 	while(flag){
-			if(cellRow != -1 || cellCol != -1){/* find empty from prev iteration found an empty cell, sudoku board isn't full, */
+			if(cellRow != -1 || cellCol != -1){/* findEmptyCell function from prev iteration found an empty cell, so sudoku board isn't full, */
 				tempIndex = peek(lastEmpty);
-				if(tempIndex.col != cellCol || tempIndex.row != cellRow){
+				if(tempIndex.col != cellCol || tempIndex.row != cellRow){/* if current empty cell is not in stack - push it */
 					push(&lastEmpty, cellRow, cellCol);
 				}
 				foundNum = findValidNum(board, cellRow, cellCol);
-				if(foundNum == 0){
+				if(foundNum == 0){/* if there's no valid num */
 					if(cellRow == frstRowIndex && cellCol == frstColIndex){/*got back to the first empty cell and there are no more options */
 						flag = 0;
 						pop(&lastEmpty);
