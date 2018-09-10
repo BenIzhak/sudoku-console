@@ -12,8 +12,8 @@
 #include "FilesHandler.h"
 #include "MainAux.h"
 #include "ExSolver.h"
-#include "game.h"
 #include "def.h"
+#include "Game.h"
 
 Cell** userBoard;
 Cell** solvedBoard;

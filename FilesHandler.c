@@ -8,9 +8,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "MainAux.h"
-#include "game.h"
 #include "CommandsList.h"
 #include "def.h"
+#include "Game.h"
 
 extern Cell** userBoard;
 extern Cell** tempBoard;

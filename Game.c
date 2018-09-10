@@ -364,56 +364,42 @@ int availableNumbers(Cell** board, int cellRow, int cellCol){
 int fillAndKeep(int cellsToFill, int cellsToKeep){
 	boardData brdData = getBoardData();
 	int rowAndColSize = brdData.blockRowSize * brdData.blockColSize;
-	int i, j, randCol, randRow, randNum, flag = 0;
-	int isSolved = 0;
-
+	int i, j, randCol, randRow, randNum, flag = 0, isSolved = 0;
 
 	for(i = 0; i < cellsToFill; i++){
 		while(flag == 0){
-
 			randCol = rand() % rowAndColSize;
 			randRow = rand() % rowAndColSize;
-			/* checking that i havn't chose this cell already */
-			/* if it was chosen before it's currentNum wont be 0 */
-			if(userBoard[randRow][randCol].currentNum == 0){
+			if(userBoard[randRow][randCol].currentNum == 0){/* checking that i havn't chose this cell already if it was chosen before it's currentNum wont be 0 */
 				flag = 1;
 			}
 		}
-
 		flag = 0;
 		randNum = availableNumbers(userBoard, randRow, randCol);
 		if(randNum == 0){
 			return 0;
 		}
-
 		userBoard[randRow][randCol].currentNum = randNum;
 	}
-
 	isSolved = ILPSolver();
 	if(isSolved != 1){
-		/* error in ILPSolver, need to try again*/
-		return 0;
+		return 0;/* error in ILPSolver, need to try again*/
 	}
-
 	flag = 0;
-	/* now need to keep only cellsToKeep cells*/
-	for(i = 0; i < cellsToKeep; i++){
-		/*generate is only available in edit mode, so fixed field is not used.
-		 * i'm using it for marking cells to keep */
+	for(i = 0; i < cellsToKeep; i++){/* now need to keep only cellsToKeep cells*/
 		while(flag == 0){
 			randCol = rand() % rowAndColSize;
 			randRow = rand() % rowAndColSize;
 
 			/* checking that i havn't chose this cell already */
-			if(solvedBoard[randRow][randCol].fixed == 0){
+			if(solvedBoard[randRow][randCol].fixed == 0){/*generate is only available in edit mode, so fixed field is not used. i'm using it for marking cells to keep */
 				flag = 1;
 				solvedBoard[randRow][randCol].fixed = 1;
 			}
 		}
 		flag = 0;
 	}
-	/* going over cells with fixed = 0 and removing them from the board */
-	for(i = 0; i < (brdData.blockRowSize * brdData.blockColSize); i++ ){
+	for(i = 0; i < (brdData.blockRowSize * brdData.blockColSize); i++ ){/* going over cells with fixed = 0 and removing them from the board */
 		for( j = 0; j < (brdData.blockRowSize * brdData.blockColSize); j++){
 			if(solvedBoard[i][j].fixed == 0){
 				solvedBoard[i][j].currentNum = 0;

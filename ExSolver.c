@@ -10,21 +10,29 @@
 #include <string.h>
 #include "Stack.h"
 #include "Cell.h"
+#include "Game.h"
 #include "MainAux.h"
-#include "game.h"
 
+
+/*
+ * Function:  resetAllCells
+ * --------------------
+ *  Initialising all empty cells' values back to 0
+ *
+ *  board: 2d array containing sudoku cells
+ *
+ *	returns: -1 if number already appears in row, else it returns 0
+ */
 void resetAllCells(Cell** board){
-
 	boardData brdData = getBoardData();
 	int boardSize = brdData.blockRowSize * brdData.blockColSize;
 	int cellRow = brdData.blockRowSize;
 	int cellCol = brdData.blockColSize;
-	while(0 != cellRow || 0 != cellCol){
 
+	while(0 != cellRow || 0 != cellCol){
 		if(board[cellRow][cellCol].fixed == 0 && board[cellRow][cellCol].isInput == 0){
 			board[cellRow][cellCol].currentNum = 0;
 		}
-
 		if(cellCol == 0){
 			cellCol = boardSize - 1;
 			cellRow--;
@@ -117,7 +125,11 @@ int blockCheck(Cell** board,int numToCheck , int cellRow, int cellCol){
 	}
 	return 0;
 }
-
+/*
+ * -------------------------------
+ * validAssignment Documentation is in header file
+ * -------------------------------
+ */
 int validAssignment(Cell** board, int numToCheck, int cellRow, int cellCol){
 	int temp = 0;
 
@@ -197,14 +209,20 @@ cellIndex findEmptyCell(Cell** board, int cellRow, int cellCol){
 	return emptyIndex;
 }
 
+/*
+ * -------------------------------
+ * exBacktrack Documentation is in header file
+ * -------------------------------
+ */
 void exBacktrack(Cell** board){
 	cellIndex tempIndex;
 	int flag = 1, cellCol = 0, cellRow = 0,  countSols = 0, foundNum = 0;
 	int frstColIndex = -1; /* column of the first empty cell */
 	int frstRowIndex = -1; /* row of the first empty cell */
 	node* lastEmpty = NULL; /* pointer to last empty cell */
+	/* the stack holds the indexes of the empty cells in the board */
 
-	if(getErrorsFlag() == 1){
+	if(getErrorsFlag() == 1){/* checks if the board contains an error */
 		printf("%s", "Error: board contains erroneous values\n");
 		return;
 	}
@@ -213,16 +231,16 @@ void exBacktrack(Cell** board){
 	cellRow = tempIndex.row;
 	cellCol = tempIndex.col;
 	frstColIndex = cellCol;/* saving the first empty cell index */
-	frstRowIndex = cellRow;
+	frstRowIndex = cellRow;/* saving the first empty cell index */
 	push(&lastEmpty, cellRow, cellCol);/* pushing the first empty cell index to the stack */
 
-	while(flag){
-			if(cellRow != -1 || cellCol != -1){/* findEmptyCell function from prev iteration found an empty cell, so sudoku board isn't full, */
+	while(flag){/* as long as havn't tried to backtrack from the first empty cell*/
+			if(cellRow != -1 || cellCol != -1){/* findEmptyCell function from prev iteration found an empty cell, so sudoku board isn't full. it returns -1 for both row and col if it didn't found an empty cell */
 				tempIndex = peek(lastEmpty);
 				if(tempIndex.col != cellCol || tempIndex.row != cellRow){/* if current empty cell is not in stack - push it */
 					push(&lastEmpty, cellRow, cellCol);
 				}
-				foundNum = findValidNum(board, cellRow, cellCol);
+				foundNum = findValidNum(board, cellRow, cellCol);/* finding a valid num for the current cell */
 				if(foundNum == 0){/* if there's no valid num */
 					if(cellRow == frstRowIndex && cellCol == frstColIndex){/*got back to the first empty cell and there are no more options */
 						flag = 0;
@@ -241,7 +259,7 @@ void exBacktrack(Cell** board){
 					cellRow = tempIndex.row;
 					cellCol = tempIndex.col;
 				}
-			}else{/* sudoku board is full, go back to prev empty */
+			}else{/* sudoku board is full, go back to the prev empty cell*/
 				countSols++;
 				tempIndex = peek(lastEmpty);
 				cellCol = tempIndex.col;
