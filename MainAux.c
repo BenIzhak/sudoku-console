@@ -122,8 +122,8 @@ void getInput(char* input, int* command, char* filePath, int* numOfArgs){
 				}
 			}
 		}else{
-			input = "exit";
-			parseCommand(input, command, filePath, numOfArgs, &notDigitFlag);
+			/* EOF case */
+			exitGameCommand();
 		}
 		if(tooLongInput == 0){
 			parseCommand(input, command, filePath, numOfArgs, &notDigitFlag);
