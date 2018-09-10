@@ -133,7 +133,7 @@ void validateCommand(int isDone){
 		isSolved = ILPSolver();
 		if(isSolved == 1){
 			if(isDone == 0){
-				printf("%s", "Validation passed: board is solvable\n");
+				printf("%s", "Validation passed: board is solvable\n");/* TODO: is the space after the ':' necessary? */
 			}else{
 				/*game is done and solution is correct*/
 				printf("%s", "Puzzle solved successfully\n");
@@ -141,7 +141,7 @@ void validateCommand(int isDone){
 			}
 		}else{
 			if(isDone == 0){
-				printf("%s", "Validation failed: board is unsolvable\n");
+				printf("%s", "Validation failed: board is unsolvable\n");/* TODO: is the space after the ':' necessary? */
 			}else{
 				printf("%s", "Puzzle solution erroneous\n");
 			}
