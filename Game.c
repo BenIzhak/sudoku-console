@@ -19,8 +19,8 @@ static int gameMode;
 extern Cell** userBoard;
 extern Cell** tempBoard;
 extern Cell** solvedBoard;
-static int markErrors;/* TODO:each time we begin a puzzle we need to set it back to 1 */
-static int errorsFlag = 0;/* TODO:reset back to 0 when starting a new board; flag which is 0 if there are no errors in board, 1 if there are errors */
+static int markErrors;
+static int errorsFlag = 0;/* flag which is 0 if there are no errors in board, 1 if there are errors */
 static dll* commandsList;
 
 
@@ -129,11 +129,10 @@ void validateCommand(int isDone){
 			printf("%s", "Puzzle solution erroneous\n");
 		}
 	}else{
-		/*TODO:add call to ILPSolver and print message if board is solvable or not */
 		isSolved = ILPSolver();
 		if(isSolved == 1){
 			if(isDone == 0){
-				printf("%s", "Validation passed: board is solvable\n");/* TODO: is the space after the ':' necessary? */
+				printf("%s", "Validation passed: board is solvable\n");
 			}else{
 				/*game is done and solution is correct*/
 				printf("%s", "Puzzle solved successfully\n");
@@ -141,7 +140,7 @@ void validateCommand(int isDone){
 			}
 		}else{
 			if(isDone == 0){
-				printf("%s", "Validation failed: board is unsolvable\n");/* TODO: is the space after the ':' necessary? */
+				printf("%s", "Validation failed: board is unsolvable\n");
 			}else{
 				printf("%s", "Puzzle solution erroneous\n");
 			}

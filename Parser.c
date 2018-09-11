@@ -12,9 +12,6 @@
 #include "def.h"
 #include "Game.h"
 
-/* TODO:
- * 1. check if the line "Enter your command:" is printed even after blank line */
-
 enum COMMAND {
 	solve,
 	edit,

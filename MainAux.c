@@ -83,31 +83,6 @@ Cell** boardAllocatedMem() {
  *  numOfArgs: pointer to the variable that holds the number of arguments
  *  that supplied by the user.
  */
-/*
-int getInput(char input[], int command[], char* filePath, int* numOfArgs) {
-	int notDigitFlag;
-	printf("%s", "Enter your command:\n");
-	if (fgets(input, 256, stdin) == NULL) {
-		return -1;
-	}
-
-	parseCommand(input, command, filePath, numOfArgs, &notDigitFlag);
-	if (strcmp(input, "exit") == 0) {
-		return 1;
-	}
-	while (validInput(command, *numOfArgs, notDigitFlag) == -1) {
-		printf("%s", "Enter your command:\n");
-		if (fgets(input, 256, stdin) == NULL) {
-			return -1;
-		}
-		parseCommand(input, command, filePath, numOfArgs, &notDigitFlag);
-		if (strcmp(input, "exit") == 0) {
-			return 1;
-		}
-	}
-	return 0;
-}
-*/
 void getInput(char* input, int* command, char* filePath, int* numOfArgs){
 	int notDigitFlag;
 	int tooLongInput;

@@ -68,9 +68,6 @@ void loadCellsValues(int rowCordinate, int colCordinate ,int num, int fixed){
  * -------------------------------
  */
 int loadBoard(char* filePath, int gameMode){
-	/* reads new m and n values from file, if reading fails returns -1 */
-	/*TODO: check if fscanf success*/
-	/* TODO: change m & n */
 	FILE* fp = openFile(filePath,"r");
 	int m, n, i, j;
 	int currentNum = 0;

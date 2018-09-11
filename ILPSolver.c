@@ -169,21 +169,17 @@ int oneValuePerBlock(GRBmodel **model, int* ind, double* val) {
 	boardData brdData = getBoardData();
 	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
 	for (v = 0; v < boardRowAndColSize; v++) {
-		for (k = 0; k < brdData.blockRowSize; k++) {
-			for (l = 0; l < brdData.blockColSize; l++) {
+		for (k = 0; k < brdData.blockColSize; k++) {
+			for (l = 0; l < brdData.blockRowSize; l++) {
 				count = 0;
-				for (i = k * brdData.blockRowSize;
-						i < (k + 1) * brdData.blockRowSize; i++) {
-					for (j = l * brdData.blockColSize;
-							j < (l + 1) * brdData.blockColSize; j++) {
-						ind[count] = i * boardRowAndColSize * boardRowAndColSize
-								+ j * boardRowAndColSize + v;
+				for (i = k * brdData.blockRowSize; i < (k + 1) * brdData.blockRowSize; i++) {
+					for (j = l * brdData.blockColSize; j < (l + 1) * brdData.blockColSize; j++) {
+						ind[count] = i * boardRowAndColSize * boardRowAndColSize + j * boardRowAndColSize + v;
 						val[count] = 1.0;
 						count++;
 					}
 				}
-				error = GRBaddconstr(*model, boardRowAndColSize, ind, val,
-						GRB_EQUAL, 1.0, NULL);
+				error = GRBaddconstr(*model, boardRowAndColSize, ind, val, GRB_EQUAL, 1.0, NULL);
 				if (error) {
 					return 1;
 				}
@@ -210,12 +206,10 @@ int oneValuePerCol(GRBmodel **model, int* ind, double* val) {
 	for (v = 0; v < boardRowAndColSize; v++) {
 		for (i = 0; i < boardRowAndColSize; i++) {
 			for (j = 0; j < boardRowAndColSize; j++) {
-				ind[j] = i * boardRowAndColSize * boardRowAndColSize
-						+ j * boardRowAndColSize + v;
+				ind[j] = i * boardRowAndColSize * boardRowAndColSize + j * boardRowAndColSize + v;
 				val[j] = 1.0;
 			}
-			error = GRBaddconstr(*model, boardRowAndColSize, ind, val,
-					GRB_EQUAL, 1.0, NULL);
+			error = GRBaddconstr(*model, boardRowAndColSize, ind, val, GRB_EQUAL, 1.0, NULL);
 			if (error) {
 				return 1;
 			}
@@ -241,12 +235,10 @@ int oneValuePerRow(GRBmodel **model, int* ind, double* val) {
 	for (v = 0; v < boardRowAndColSize; v++) {
 		for (j = 0; j < boardRowAndColSize; j++) {
 			for (i = 0; i < boardRowAndColSize; i++) {
-				ind[i] = i * boardRowAndColSize * boardRowAndColSize
-						+ j * boardRowAndColSize + v;
+				ind[i] = i * boardRowAndColSize * boardRowAndColSize + j * boardRowAndColSize + v;
 				val[i] = 1.0;
 			}
-			error = GRBaddconstr(*model, boardRowAndColSize, ind, val,
-					GRB_EQUAL, 1.0, NULL);
+			error = GRBaddconstr(*model, boardRowAndColSize, ind, val, GRB_EQUAL, 1.0, NULL);
 			if (error) {
 				return 1;
 			}
@@ -272,12 +264,10 @@ int oneValuePerCell(GRBmodel **model, int* ind, double* val) {
 	for (i = 0; i < boardRowAndColSize; i++) {
 		for (j = 0; j < boardRowAndColSize; j++) {
 			for (v = 0; v < boardRowAndColSize; v++) {
-				ind[v] = i * boardRowAndColSize * boardRowAndColSize
-						+ j * boardRowAndColSize + v;
+				ind[v] = i * boardRowAndColSize * boardRowAndColSize + j * boardRowAndColSize + v;
 				val[v] = 1.0;
 			}
-			error = GRBaddconstr(*model, boardRowAndColSize, ind, val,
-					GRB_EQUAL, 1.0, NULL);
+			error = GRBaddconstr(*model, boardRowAndColSize, ind, val, GRB_EQUAL, 1.0, NULL);
 			if (error) {
 				return 1;
 			}
@@ -384,6 +374,7 @@ int ILPSolver() {
 
 	error = createEnvironment(&env);
 	if (error) {
+		printf("createEnvironment");
 		freeMem(lowerBounds, val, vtype, ind);
 		return exitILP(&env, &model, error, optimStatus, sol, valuesMatrixDim);
 	}
@@ -396,42 +387,49 @@ int ILPSolver() {
 
 	error = createNewModel(&env, &model, lowerBounds, vtype, valuesMatrixDim);
 	if (error) {
+		printf("createNewModel");
 		freeMem(lowerBounds, val, vtype, ind);
 		return exitILP(&env, &model, error, optimStatus, sol, valuesMatrixDim);
 	}
 
 	error = oneValuePerCell(&model, ind, val);
 	if (error) {
+		printf("oneValuePerCell");
 		freeMem(lowerBounds, val, vtype, ind);
 		return exitILP(&env, &model, error, optimStatus, sol, valuesMatrixDim);
 	}
 
 	error = oneValuePerRow(&model, ind, val);
 	if (error) {
+		printf("oneValuePerRow");
 		freeMem(lowerBounds, val, vtype, ind);
 		return exitILP(&env, &model, error, optimStatus, sol, valuesMatrixDim);
 	}
 
 	error = oneValuePerCol(&model, ind, val);
 	if (error) {
+		printf("oneValuePerCol");
 		freeMem(lowerBounds, val, vtype, ind);
 		return exitILP(&env, &model, error, optimStatus, sol, valuesMatrixDim);
 	}
 
 	error = oneValuePerBlock(&model, ind, val);
 	if (error) {
+		printf("oneValuePerBlock");
 		freeMem(lowerBounds, val, vtype, ind);
 		return exitILP(&env, &model, error, optimStatus, sol, valuesMatrixDim);
 	}
 
 	error = optimizemodel(&model);
 	if (error) {
+		printf("optimizemodel");
 		freeMem(lowerBounds, val, vtype, ind);
 		return exitILP(&env, &model, error, optimStatus, sol, valuesMatrixDim);
 	}
 
 	error = solInfo(&model, &optimStatus);
 	if (error) {
+		printf("solInfo");
 		freeMem(lowerBounds, val, vtype, ind);
 		return exitILP(&env, &model, error, optimStatus, sol, valuesMatrixDim);
 	}
@@ -441,8 +439,7 @@ int ILPSolver() {
 }
 */
 
-int ILPSolver(){
+int ILPSolver() {
 	return -1;
 }
-
 
