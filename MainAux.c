@@ -195,7 +195,9 @@ void commmandRouter(int command[], int numOfArgs, char* filePath) {
 		break;
 	case 11: /* num_solutions */
 		if (gameMode == EDIT_MODE || gameMode == SOLVE_MODE) {
-			exBacktrack(userBoard);
+			boardInit(tempBoard);
+			copyBoard(tempBoard, userBoard);
+			exBacktrack(tempBoard);
 		} else {
 			printf("%s", "ERROR: invalid command\n");
 		}

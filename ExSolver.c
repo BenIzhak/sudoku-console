@@ -13,35 +13,6 @@
 #include "Game.h"
 #include "MainAux.h"
 
-
-/*
- * Function:  resetAllCells
- * --------------------
- *  Initialising all empty cells' values back to 0
- *
- *  board: 2d array containing sudoku cells
- *
- *	returns: -1 if number already appears in row, else it returns 0
- */
-void resetAllCells(Cell** board){
-	boardData brdData = getBoardData();
-	int boardSize = brdData.blockRowSize * brdData.blockColSize;
-	int cellRow = brdData.blockRowSize;
-	int cellCol = brdData.blockColSize;
-
-	while(0 != cellRow || 0 != cellCol){
-		if(board[cellRow][cellCol].fixed == 0 && board[cellRow][cellCol].isInput == 0){
-			board[cellRow][cellCol].currentNum = 0;
-		}
-		if(cellCol == 0){
-			cellCol = boardSize - 1;
-			cellRow--;
-		}else{
-			cellCol--;
-		}
-	}
-}
-
 /*
  * Function:  rowCheck
  * --------------------
@@ -222,6 +193,8 @@ void exBacktrack(Cell** board){
 	node* lastEmpty = NULL; /* pointer to last empty cell */
 	/* the stack holds the indexes of the empty cells in the board */
 
+
+
 	if(getErrorsFlag() == 1){/* checks if the board contains an error */
 		printf("%s", "Error: board contains erroneous values\n");
 		return;
@@ -269,5 +242,4 @@ void exBacktrack(Cell** board){
 	printf("Number of solutions: %d\n", countSols);
 	if(countSols == 1){printf("%s", "This is a good board!\n");}
 	if(countSols > 1){printf("%s", "The puzzle has more than 1 solution, try to edit it further\n");}
-	resetAllCells(board);
 }
