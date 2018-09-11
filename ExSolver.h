@@ -11,7 +11,8 @@
 /*
  * Function:  exBacktrack
  * --------------------
- * 	Exhaustive back tracking algorithm
+ * 	Exhaustive back tracking algorithm,
+ * 	should use tempBoard when using this function
  *
  *	board: 2d array containing sudoku cells
  *

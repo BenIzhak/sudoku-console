@@ -302,6 +302,17 @@ int isEmptyBoard(){
 	return flag;
 }
 
+/*
+ * Function:  validNumsAlloc
+ * --------------------
+ *
+ *  allocating memory for validnums array field
+ *
+ *	board: 2d array containing sudoku cells
+ *	cellRow: cell's row
+ *	cellCol: cells's column
+ *
+ */
 void validNumsAlloc(Cell** board, int cellRow, int cellCol){
 	boardData brdData = getBoardData();
 	int boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize, i, j;

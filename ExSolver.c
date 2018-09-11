@@ -193,8 +193,6 @@ void exBacktrack(Cell** board){
 	node* lastEmpty = NULL; /* pointer to last empty cell */
 	/* the stack holds the indexes of the empty cells in the board */
 
-
-
 	if(getErrorsFlag() == 1){/* checks if the board contains an error */
 		printf("%s", "Error: board contains erroneous values\n");
 		return;
