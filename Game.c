@@ -302,6 +302,15 @@ int isEmptyBoard(){
 	return flag;
 }
 
+void validNumsAlloc(Cell** board, int cellRow, int cellCol){
+	boardData brdData = getBoardData();
+	int boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize, i, j;
+	for (i = 0; i < boardRowAndColSize; i++){
+		for (j = 0; j < boardRowAndColSize; j++){
+			board[cellRow][cellCol].validNums = (int *) malloc((boardRowAndColSize) * sizeof(int));
+		}
+	}
+}
 
 /*
  * Function:  availableNumbers
@@ -317,32 +326,26 @@ int isEmptyBoard(){
  */
 int availableNumbers(Cell** board, int cellRow, int cellCol){
 	int counter = 0;/* counts the amount of valid numbers*/
-	int num, i, j, randIndex, randNum = 0;
+	int num, randIndex, randNum = 0;
 	boardData brdData = getBoardData();
 	int maxNum = brdData.blockRowSize * brdData.blockColSize;
-	int boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize;
-	int* validNums;
 
-	for (i = 0; i < boardRowAndColSize; i++){
-		for (j = 0; j < boardRowAndColSize; j++){
-			validNums = (int *) malloc((boardRowAndColSize) * sizeof(int));
-		}
-	}
 
 	for(num = 1; num <= maxNum; num++){
 		if(validAssignment(board, num, cellRow, cellCol) == 0){/* value is 0 if num is a valid assignment*/
-			validNums[counter] = num;
+			board[cellRow][cellCol].validNums[counter] = num;
 			counter++;
 		}
 	}
 
+	board[cellRow][cellCol].limit = counter;
+
 	if(counter != 0){
 		randIndex = rand() % counter;
-		randNum = validNums[randIndex];
+		randNum = board[cellRow][cellCol].validNums[randIndex];
 	}else{
 		randNum = 0;
 	}
-	free(validNums);
 	return randNum;
 }
 
@@ -374,7 +377,9 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){
 			}
 		}
 		flag = 0;
+		validNumsAlloc(userBoard, randRow, randCol);
 		randNum = availableNumbers(userBoard, randRow, randCol);
+		free(userBoard[randRow][randCol].validNums);
 		if(randNum == 0){
 			return 0;
 		}
@@ -491,9 +496,9 @@ void startDefaultBoard(){
  * -------------------------------
  */
 void autoFillCommand(){
-	int i,j;
+	int i,j, anyChanges = 0;
 	boardData brdData = getBoardData();
-	int anyChanges = 0;
+
 	if(errorsFlag){
 		printf("%s", "Error: board contains erroneous values\n");
 		return;
@@ -505,17 +510,18 @@ void autoFillCommand(){
 	for(i = 0; i < (brdData.blockRowSize * brdData.blockColSize); i++ ){
 		for( j = 0; j < (brdData.blockRowSize * brdData.blockColSize); j++){
 			if(tempBoard[i][j].currentNum == 0){
+				validNumsAlloc(userBoard, i, j);
 				availableNumbers(userBoard, i, j);/* checking available numbers in the original board */
 				if(userBoard[i][j].limit == 1){/* there's only one number available */
 					anyChanges = 1;
 
-					tempBoard[i][j].currentNum = userBoard[i][j].limit;
-					printf("Cell <%d,%d> set to %d\n", (j + 1), (i + 1), userBoard[i][j].limit);
+					tempBoard[i][j].currentNum = userBoard[i][j].validNums[0];;
+					printf("Cell <%d,%d> set to %d\n", (j + 1), (i + 1), userBoard[i][j].validNums[0]);
 				}
+				free(userBoard[i][j].validNums);
 			}
 		}
 	}
-
 
 	copyBoard(userBoard, tempBoard);
 	findAndMarkErrors();

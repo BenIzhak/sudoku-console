@@ -17,6 +17,7 @@ struct _Cell
 	int isError; /* flag if the value in this cell is erroneous */
 	int blockRow; /* row of the block of the cell */
 	int blockCol; /* column of the block of the cell */
+	int* validNums;
 };
 
 typedef struct _Cell Cell;
