@@ -436,7 +436,7 @@ void generateCommand(int cellsToFill, int cellsToKeep){
 	boardData brdData = getBoardData();
 	int rowAndColSize = brdData.blockRowSize * brdData.blockColSize;
 	int emptyCells = (rowAndColSize)*(rowAndColSize);/* if the board is empty, amount of empty cells is N*N */
-	int i;
+	int i, anyChanges = 0;
 
 	if((cellsToFill > emptyCells) || (cellsToKeep > emptyCells)){/* checks that parameters are valid */
 		printf("Error: value not in range 0-%d\n", emptyCells);
@@ -453,7 +453,11 @@ void generateCommand(int cellsToFill, int cellsToKeep){
 	for(i = 0; i < 1000; i++){
 		if(fillAndKeep(cellsToFill, cellsToKeep) == 1){
 			copyBoard(userBoard, solvedBoard);
-			newSetCommand();
+			anyChanges = 1;
+			if(anyChanges == 1 && cellsToKeep > 0){
+				/* the board didn't change */
+				newSetCommand();
+			}
 			printBoard(userBoard);
 			return;/* Done successfully */
 		}else{
