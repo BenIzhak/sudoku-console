@@ -96,7 +96,6 @@ int loadBoard(char* filePath, int gameMode){
 	tempBoard = boardAllocatedMem(boardRowAndColSize);
 	solvedBoard = boardAllocatedMem(boardRowAndColSize);
 
-
 	/* init the boards */
 	boardInit(userBoard);
 	boardInit(tempBoard);

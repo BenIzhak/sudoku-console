@@ -80,13 +80,14 @@ int getErrorsFlag(){
  * -------------------------------
  */
 void findAndMarkErrors(){
-	int i, j;
+	int i, j, validAssignmentFlag;
 	int flag = 0;
 	boardData brdData = getBoardData();
 	for(i = 0; i < (brdData.blockRowSize * brdData.blockColSize); i++ ){
 		for( j = 0; j < (brdData.blockRowSize * brdData.blockColSize); j++){
 			if(userBoard[i][j].fixed == 0){
-				if( (validAssignment(userBoard, userBoard[i][j].currentNum, i , j) == -1) ){
+				validAssignmentFlag = validAssignment(userBoard, userBoard[i][j].currentNum, i , j);
+				if(validAssignmentFlag == -1){
 					userBoard[i][j].isError = 1;
 					flag = 1;
 					errorsFlag = flag;
@@ -587,13 +588,14 @@ void setHint(int col, int row){
  * -------------------------------
  */
 void solveCommand(char* filePath){
-	gameMode = SOLVE_MODE;
-	if(loadBoard(filePath, gameMode) == -1){
+	if(loadBoard(filePath, SOLVE_MODE) == -1){
 		printf("%s", "Error: File doesn't exist or cannot be opened\n");
 		return;
 	}
+	gameMode = SOLVE_MODE;
 	findAndMarkErrors();
 	/* print the board we just loaded */
+	printf("solveC\n");
 	printBoard(userBoard);
 }
 
@@ -603,16 +605,17 @@ void solveCommand(char* filePath){
  * -------------------------------
  */
 void editCommand(char* filePath , int numOfArgs){
-	gameMode = EDIT_MODE;
 	if(numOfArgs > 0){
-		if(loadBoard(filePath, gameMode) == -1){
+		if(loadBoard(filePath, EDIT_MODE) == -1){
 			printf("%s", "Error: File cannot be opened\n");
 			return;
 		}
+		gameMode = EDIT_MODE;
 		findAndMarkErrors();
 		/* print the board we just loaded */
 		printBoard(userBoard);
 	}else{
+		gameMode = EDIT_MODE;
 		startDefaultBoard();
 	}
 
