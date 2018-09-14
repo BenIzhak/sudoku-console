@@ -32,11 +32,22 @@ enum COMMAND {
 };
 
 /*
- * -------------------------------
- * parseCommand Documentation is in header file
- * -------------------------------
+ * Function:  parseCommand
+ * --------------------
+ *  get array of chars which represent the command from the user
+ *  and change the result array accordingly. the first variable
+ *  in the result array is the command type and the rest are the
+ *  parameters for the command
+ *
+ *  input: string of the input by the user
+ *  command: array holding types of commands
+ *  filePath: the string that will hold the path that given by the user
+ *  numOfArgs: pointer to the variable that holds the number of arguments
+ *  that supplied by the user
+ *  notDigitFlag: change the value of it to 1 if a numerical value is not a numerical value.
+ *
+ *  returns: -1 if input is empty or 0 if valid
  */
-
 int parseCommand(char* input, int* command, char* filePath, int* numOfArgs, int* notDigitFlag) {
 	int isDigit(char* token);
 	void notDigitError(int* command, int* notDigitFlag);
@@ -93,6 +104,7 @@ int parseCommand(char* input, int* command, char* filePath, int* numOfArgs, int*
 		printf("%s", "ERROR: invalid command\n");
 		command[0] = error;
 	}
+	/* read the first argument if exist */
 	token = strtok(NULL, delim);
 	if (token != NULL
 			&& (command[0] == solve || command[0] == edit || command[0] == save)) {
@@ -108,6 +120,7 @@ int parseCommand(char* input, int* command, char* filePath, int* numOfArgs, int*
 			(*numOfArgs)++;
 		}
 	}
+	/* read the second argument if exist */
 	token = strtok(NULL, delim);
 	if (token != NULL) {
 		if (isDigit(token) != -1) {
@@ -117,6 +130,7 @@ int parseCommand(char* input, int* command, char* filePath, int* numOfArgs, int*
 		}
 		(*numOfArgs)++;
 	}
+	/* read the third argument if exist */
 	token = strtok(NULL, delim);
 	if (token != NULL) {
 		if (isDigit(token) != -1) {
@@ -171,9 +185,13 @@ int validRange(int* command) {
 }
 
 /*
- * -------------------------------
- * validInput Documentation is in header file
- * -------------------------------
+ * Function:  validInput
+ * --------------------
+ * check if the input contain the correct amount of arguments
+ *
+ * command: array holding types of commands
+ * numOfArgs: number of arguments that supplied by the user.
+ * notDigitFlage: if the flag is 1 we don't print another error message.
  */
 int validInput(int* command, int numOfArgs, int notDigitFlage) {
 	int notDigitErrorPrint(int notDigitFlag);

@@ -21,36 +21,37 @@ Cell** tempBoard;
 static boardData brdData;
 
 /*
- * -------------------------------
- * getBoardData Documentation is in header file
- * -------------------------------
+ * Function:  getBoardData
+ * --------------------
+ * return the boardData static object
  */
 boardData getBoardData() {
 	return brdData;
 }
 
 /*
- * -------------------------------
- * setBlockRowSize Documentation is in header file
- * -------------------------------
+ * Function:  setBlockRowSize
+ * --------------------
+ * set the block row size of boardData static object.
  */
 void setBlockRowSize(int size) {
 	brdData.blockRowSize = size;
 }
 
 /*
- * -------------------------------
- * setBlockColSize Documentation is in header file
- * -------------------------------
+ * Function:  setBlockColSize
+ * --------------------
+ * set the block column size of boardData static object.
  */
 void setBlockColSize(int size) {
 	brdData.blockColSize = size;
 }
 
 /*
- * -------------------------------
- * boardAllocatedMem Documentation is in header file
- * -------------------------------
+ * Function: boardAllocatedMem
+ * --------------------
+ * allocate memory for new board and return a pointer to the memory.
+ * if memory has failed prints an error massage and returns NULL.
  */
 Cell** boardAllocatedMem() {
 	int i;
@@ -283,9 +284,11 @@ int getCurrentblockRow(int cellRow){
 
 
 /*
- * -------------------------------
- * boardInit Documentation is in header file
- * -------------------------------
+ * Function: boardInit
+ * --------------------
+ *  initialize the board fields.
+ *
+ *  table: the board we want to initialize.
  */
 void boardInit(Cell** table) {
 	int i, j;
@@ -304,9 +307,13 @@ void boardInit(Cell** table) {
 }
 
 /*
- * -------------------------------
- * freeBoardMem Documentation is in header file
- * -------------------------------
+ * Function: freeBoardMem
+ * --------------------
+ * we free the memory of a given board.
+ *
+ * Board: the given board we want to free it's memory.
+ * blockRowSize: the block row size of the given board.
+ * blockColSize: the block column size of the given board.
  */
 void freeBoardMem(Cell** Board, int blockRowSize, int blockColSize) {
 	int boardRowAndColSize = blockRowSize * blockColSize;
@@ -321,9 +328,11 @@ void freeBoardMem(Cell** Board, int blockRowSize, int blockColSize) {
 }
 
 /*
- * -------------------------------
- * printBoard Documentation is in header file
- * -------------------------------
+ * Function: printBoard
+ * --------------------
+ * we print the given board according to the format.
+ *
+ * table: the given board we want to print.
  */
 void printBoard(Cell** table) {
 	int i, j;
@@ -375,9 +384,13 @@ void printBoard(Cell** table) {
 }
 
 /*
- * -------------------------------
- * copyBoard Documentation is in header file
- * -------------------------------
+ * Function:  copyBoard
+ * --------------------
+ * copies srcBoard board to dstBoard.
+ *
+ *  dstBoard: 2d array holding a sudoku board, copy destination.
+ *  srcBoard: 2d array holding a sudoku board, copy source.
+ *
  */
 void copyBoard(Cell** dstBoard, Cell** srcBoard) {
 	int i, j;
@@ -394,9 +407,11 @@ void copyBoard(Cell** dstBoard, Cell** srcBoard) {
 }
 
 /*
- * -------------------------------
- * gameLoop Documentation is in header file
- * -------------------------------
+ * Function: gameLoop
+ * --------------------
+ * controls game flow, getting input from user and executes the correct command if possible.
+ * the start game mode is init mode and the start mark errors value is 1.
+ *
  */
 void gameLoop() {
 	char input[256];

@@ -18,9 +18,12 @@ extern Cell** solvedBoard;
 
 
 /*
- * -------------------------------
- * openFile Documentation is in header file
- * -------------------------------
+ * Function:  openFile
+ * --------------------
+ *  open a new file. returns a pointer to the file.
+ *
+ *  filePath: path to the file
+ *  mode: the mode that the file would be open.
  */
 FILE* openFile(char* filePath, const char* mode){
 	FILE* fp = NULL;
@@ -63,9 +66,13 @@ void loadCellsValues(int rowCordinate, int colCordinate ,int num, int fixed){
 }
 
 /*
- * -------------------------------
- * loadBoard Documentation is in header file
- * -------------------------------
+ *  Function:  loadBoard
+ * --------------------
+ *  loads file into boards.
+ *  returns 0 on success and -1 if failed.
+ *
+ *  filePath: string of the file's path
+ *  gameMode: the game mode (init, edit or solve)
  */
 int loadBoard(char* filePath, int gameMode){
 	FILE* fp = openFile(filePath,"r");
@@ -130,9 +137,12 @@ int loadBoard(char* filePath, int gameMode){
 
 
 /*
- * -------------------------------
- * saveBoard Documentation is in header file
- * -------------------------------
+ *  Function:  saveBoard
+ * --------------------
+ *  save the tempBoard into a given file according to the format,
+ *  after that we close the file.
+ *
+ *  fp: pointer to the file
  */
 void saveBoard(FILE* fp){
 	int i, j, currentNum, fixed;
@@ -144,12 +154,14 @@ void saveBoard(FILE* fp){
 			currentNum = tempBoard[i][j].currentNum;
 			fixed = tempBoard[i][j].fixed;
 			if(j == 0){
+				/* first cell of each line */
 				if(fixed){
 					fprintf(fp, "%d.", currentNum);
 				}else{
 					fprintf(fp, "%d", currentNum);
 				}
 			}else if(j == boardRowAndColSize - 1){
+				/* last cell of each line */
 				if(fixed){
 					fprintf(fp, " %d.\n", currentNum);
 				}else{

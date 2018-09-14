@@ -1,4 +1,4 @@
-/*
+
 $
  * ILPSolver.c
  *
@@ -47,6 +47,7 @@ int ILPAllocateMem(double** lowerBounds, char** varType, int** ind, double** val
 	(*sol) = (double*) malloc(valuesMatrixDim * sizeof(double));
 	if ((*lowerBounds) == NULL || (*varType) == NULL || (*ind) == NULL || (*values) == NULL
 			|| (*sol) == NULL) {
+		$ check if allocations succeeded @
 		return -1;
 	}
 	return 0;
@@ -67,8 +68,8 @@ void writeSolToBoard(double *sol) {
 	for (i = 0; i < boardRowAndColSize; i++) {
 		for (j = 0; j < boardRowAndColSize; j++) {
 			for (v = 0; v < boardRowAndColSize; v++) {
-				if (sol[i * boardRowAndColSize * boardRowAndColSize
-						+ j * boardRowAndColSize + v] == 1) {
+				$ for specific i,j only one v will result 1 in the if statement below @
+				if (sol[i * boardRowAndColSize * boardRowAndColSize + j * boardRowAndColSize + v] == 1) {
 					solvedBoard[i][j].currentNum = v + 1;
 				}
 			}
@@ -347,11 +348,14 @@ void addVariables(double *lowerBounds, char *varType) {
 		}
 	}
 }
-
+/*
 $
- * -------------------------------
- * ILPSolver Documentation is in header file
- * -------------------------------
+ * Function:  ILPSolver
+ * --------------------
+ * try to solve the userBoard using ILP.
+ * if the board is solvable it writes the solution to the tempBoard and returns 1,
+ * if the board is unsolvable it doesn't change the tempBoard and returns 2,
+ * if error occur return -1.
  @
 int ILPSolver() {
 	GRBenv *env = NULL;

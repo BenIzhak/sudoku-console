@@ -162,14 +162,14 @@ void saveCommand(char* filePath);
 /*
  * Function:  redoCommand
  * --------------------
- *  redos a command
+ *  redo a command
  */
 void redoCommand();
 
 /*
  * Function:  undoCommand
  * --------------------
- *  undos a command
+ *  undo a command
  */
 void undoCommand();
 

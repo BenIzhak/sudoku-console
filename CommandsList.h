@@ -75,18 +75,6 @@ void initList(dll* list, Cell** info, int errorsFlag);
 void deleteListNodes(dll* list);
 
 /*
- * Function: boardDiff
- * --------------------
- * print the changed cells between two boards
- *
- * list: the commandsList
- * otheNode: the node that contains one of the boards board
- * the another one is current board.
- * command: is string Redo/Undo
- */
-void boardDiff(dll* list, dllNode* otherNode,char *command);
-
-/*
  * Function: freeListMem
  * --------------------
  * free the memory of the given list

@@ -12,9 +12,13 @@
 #include "Cell.h"
 
 /*
- * -------------------------------
- * addCommand Documentation is in header file
- * -------------------------------
+ * Function: addCommand
+ * --------------------
+ * create a new node, update the node accordingly to the game, and add it to the commandsList
+ *
+ * list: the command list
+ * info: the board that we want to save in the node
+ * errorsFlag: the errorFlage value that we want to save in the node.
  */
 void addCommand(dll* list, Cell** info, int errorsFlag){
 	dllNode* newCommand = NULL;
@@ -27,7 +31,7 @@ void addCommand(dll* list, Cell** info, int errorsFlag){
 		printf("%s", "Error: addCommand has failed\n");
 		return;
 	}
-
+	/* insert data to the new node */
 	boardCopy = boardAllocatedMem();
 	copyBoard(boardCopy, info);
 	newCommand->info = boardCopy;
@@ -51,9 +55,11 @@ void addCommand(dll* list, Cell** info, int errorsFlag){
 }
 
 /*
- * -------------------------------
- * deleteFromCurrent Documentation is in header file
- * -------------------------------
+ * Function: deleteFromCurrent
+ * --------------------
+ * delete all the nodes from the current node (exclude) and free their memory.
+ *
+ * list: the command list
  */
 void deleteFromCurrent(dll* list){
 	while((list->lastNode) != list->currentNode){
@@ -65,9 +71,10 @@ void deleteFromCurrent(dll* list){
 }
 
 /*
- * -------------------------------
- * allocateListMem Documentation is in header file
- * -------------------------------
+ * Function: allocateListMem
+ * --------------------
+ * allocate memory to the list,
+ * return a pointer to the allocated memory.
  */
 dll* allocateListMem(){
 	/* allocate memory for the dll struct */
@@ -81,9 +88,13 @@ dll* allocateListMem(){
 }
 
 /*
- * -------------------------------
- * initList Documentation is in header file
- * -------------------------------
+ * Function: initList
+ * --------------------
+ * initialize new list with the first node in it.
+ *
+ * list: the command list
+ * info: the board that we want to save in the node
+ * errorsFlag: the errorFlage value that we want to save in the node.
  */
 void initList(dll* list, Cell** info, int errorsFlag){
 	dllNode* firstNode = NULL;
@@ -96,7 +107,7 @@ void initList(dll* list, Cell** info, int errorsFlag){
 		printf("%s", "Error: initList has failed\n");
 		return;
 	}
-
+	/* insert data to the new node */
 	boardCopy = boardAllocatedMem();
 	copyBoard(boardCopy, info);
 	firstNode->info = boardCopy;
@@ -112,9 +123,13 @@ void initList(dll* list, Cell** info, int errorsFlag){
 
 
 /*
- * -------------------------------
- * deleteListNodes Documentation is in header file
- * -------------------------------
+ * Function: deleteListNodes
+ * --------------------
+ * delete all the nodes are currently in the list.
+ * after that head, lastNode and currentNode are point to NULL
+ * the list it's self is NOT deleted
+ *
+ * list: the command list we want to delete
  */
 void deleteListNodes(dll* list){
 	if(list == NULL){
@@ -145,9 +160,9 @@ void deleteListNodes(dll* list){
 
 
 /*
- * -------------------------------
- * freeListMem Documentation is in header file
- * -------------------------------
+ * Function: freeListMem
+ * --------------------
+ * check if the given list is not null and free the memory of it.
  */
 void freeListMem(dll* list){
 	/* free ONLY the list memory and NOT it's nodes
@@ -157,32 +172,3 @@ void freeListMem(dll* list){
 	}
 }
 
-/*
- * -------------------------------
- * boardDiff Documentation is in header file
- * -------------------------------
- */
-void boardDiff(dll* list, dllNode* otherNode,char *command){
-	/* command is string: Redo/Undo */
-	int i, j;
-	Cell **currentBoard, **otherBoard;
-	boardData brdData = getBoardData();
-	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
-	currentBoard = (list->currentNode)->info;
-	otherBoard = otherNode->info;
-	for(i = 0; i < boardRowAndColSize; i++){
-		for(j = 0; j < boardRowAndColSize; j++){
-			if(currentBoard[i][j].currentNum != otherBoard[i][j].currentNum){
-				if(currentBoard[i][j].currentNum != 0 && otherBoard[i][j].currentNum != 0){
-					printf("%s %d,%d: from %d to %d\n", command, (j+1), (i+1), currentBoard[i][j].currentNum, otherBoard[i][j].currentNum);
-				}else{
-					if(currentBoard[i][j].currentNum == 0){
-						printf("%s %d,%d: from %c to %d\n", command, (j+1), (i+1), '_', otherBoard[i][j].currentNum);
-					}else{
-						printf("%s %d,%d: from %d to %c\n", command, (j+1), (i+1), currentBoard[i][j].currentNum, '_');
-					}
-				}
-			}
-		}
-	}
-}

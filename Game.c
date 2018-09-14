@@ -82,6 +82,42 @@ int getErrorsFlag(){
 }
 
 /*
+ * Function: boardDiff
+ * --------------------
+ * print the changed cells between two boards.
+ * we check each cell in the two boards and compare them,
+ * then we print the result according to the format (if needed).
+ *
+ * list: the commandsList
+ * otheNode: the node that contains one of the boards board
+ * the another one is current board.
+ * command: is string Redo/Undo, we  need this for the prints format.
+ */
+void boardDiff(dll* list, dllNode* otherNode, char *command){
+	int i, j;
+	Cell **currentBoard, **otherBoard;
+	boardData brdData = getBoardData();
+	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
+	currentBoard = (list->currentNode)->info;
+	otherBoard = otherNode->info;
+	for(i = 0; i < boardRowAndColSize; i++){
+		for(j = 0; j < boardRowAndColSize; j++){
+			if(currentBoard[i][j].currentNum != otherBoard[i][j].currentNum){
+				if(currentBoard[i][j].currentNum != 0 && otherBoard[i][j].currentNum != 0){
+					printf("%s %d,%d: from %d to %d\n", command, (j+1), (i+1), currentBoard[i][j].currentNum, otherBoard[i][j].currentNum);
+				}else{
+					if(currentBoard[i][j].currentNum == 0){
+						printf("%s %d,%d: from %c to %d\n", command, (j+1), (i+1), '_', otherBoard[i][j].currentNum);
+					}else{
+						printf("%s %d,%d: from %d to %c\n", command, (j+1), (i+1), currentBoard[i][j].currentNum, '_');
+					}
+				}
+			}
+		}
+	}
+}
+
+/*
  * Function:  findAndMarkErrors
  * --------------------
  * 	goes over all cells in board and checks whether their assignment is valid.
@@ -117,7 +153,9 @@ void findAndMarkErrors(){
 /*
  * 	Function:  newSetCommand
  * --------------------
- *	this function adds a new set or an autofill to the commands list,
+ *	this function adds a new set or an autofill commands to the commands list.
+ *	if we are not point to the last node of the commands list we delete the nodes
+ *	from the node we point to and on. the new command will be the last command.
  *
  */
 void newSetCommand(){
@@ -129,7 +167,7 @@ void newSetCommand(){
 }
 
 /*
- * Function:  validate
+ * Function:  validateCommand
  * --------------------
  *	checks if board is valid or not, first by checking for simple errors(same number more than once in a row/column/block
  *	then using ILP to check if board is solvable
@@ -224,12 +262,13 @@ void setCell(int col, int row, int val){
 }
 
 /*
- * -------------------------------
- * resetCommand Documentation is in header file
- * -------------------------------
+ * Function:  resetCommand
+ * --------------------
+ *  we point to the first node which is the original board we loaded,
+ *  then we delete all of the nodes from the first one.
+ *  finally we update the userBoard.
  */
 void resetCommand(){
-	/* undo all moves, reverting the board to its original loaded state. */
 	(commandsList->currentNode) = (commandsList->head);
 	deleteFromCurrent(commandsList);
 	copyBoard(userBoard, (commandsList->currentNode)->info);
@@ -237,9 +276,10 @@ void resetCommand(){
 }
 
 /*
- * -------------------------------
- * hardReset Documentation is in header file
- * -------------------------------
+ * Function:  hardReset
+ * --------------------
+ * we check if the command list is empty, if it's not empty we delete all of it's
+ * nodes and initialize it. if the command list is not empty we just initialize it.
  */
 void hardReset(Cell** info){
 	if((commandsList->head) != NULL){
@@ -249,13 +289,12 @@ void hardReset(Cell** info){
 }
 
 /*
- * -------------------------------
- * startNewCommandsList Documentation is in header file
- * -------------------------------
+ * Function:  startNewCommandsList
+ * --------------------
+ * if commandsList does not exist -> create new one
+ * if commandsList exists -> hardReset it
  */
 void startNewCommandsList(){
-	/* if commandsList does not exist -> create new one
-	 * if commandsList exist -> hardReset it*/
 	if(commandsList == NULL){
 		/* commandList doesn't exist, so create and initialize one */
 		commandsList = allocateListMem();
@@ -267,9 +306,11 @@ void startNewCommandsList(){
 }
 
 /*
- * -------------------------------
- * undoCommand Documentation is in header file
- * -------------------------------
+ * Function:  undoCommand
+ * --------------------
+ * check if we point to the head, if we do so we don't have commands to undo.
+ * else we print the previous board, use boardDiff to prints what changed,
+ * update the commandsList and errorFlag.
  */
 void undoCommand(){
 	dllNode *prevCommand;
@@ -288,9 +329,11 @@ void undoCommand(){
 }
 
 /*
- * -------------------------------
- * redoCommand Documentation is in header file
- * -------------------------------
+ * Function:  redoCommand
+ * --------------------
+ * check if we point to the last node, if we do so we don't have commands to redo.
+ * else we print the next board, use boardDiff to prints what changed,
+ * update the commandsList and errorFlag.
  */
 void redoCommand(){
 	dllNode *nextCommand;
@@ -496,9 +539,12 @@ void generateCommand(int cellsToFill, int cellsToKeep){
 }
 
 /*
- * -------------------------------
- * startDefaultBoard Documentation is in header file
- * -------------------------------
+ * Function:  startDefaultBoard
+ * --------------------
+ * first we free memory of previous boards (if there is not previous boards we do nothing.
+ * then we set new values to blockRowSize and blockColSize and allocate memory for news boards.
+ * we initialize the boards, change the error flag to 0 (because now the board is empty),
+ * start new command list, and finally print the board.
  */
 void startDefaultBoard(){
 	int boardRowAndColSize;
@@ -628,9 +674,11 @@ void solveCommand(char* filePath){
 }
 
 /*
- * -------------------------------
- * editCommand Documentation is in header file
- * -------------------------------
+ * Function:  editCommand
+ * --------------------
+ *	we check if file path provided.
+ *	if we have file path we load the file and begin the game in edit mode,
+ *	else we start default 9*9 board.
  */
 void editCommand(char* filePath , int numOfArgs){
 	if(numOfArgs > 0){
@@ -650,9 +698,14 @@ void editCommand(char* filePath , int numOfArgs){
 }
 
 /*
- * -------------------------------
- * saveCommand Documentation is in header file
- * -------------------------------
+ * Function:  saveCommand
+ * --------------------
+ *	saving the current board to a txt file.
+ *	the save format is depends in the game mode.
+ *	before saving we check if the board is solvable or contain errors if needed.
+ *
+ *	filePath: path of file of board to be edited
+ *
  */
 void saveCommand(char* filePath){
 	int i, j;
@@ -693,9 +746,10 @@ void saveCommand(char* filePath){
 }
 
 /*
- * -------------------------------
- * exitGameCommand Documentation is in header file
- * -------------------------------
+ * Function:  exitGameCommand
+ * --------------------
+ * exits the program and frees all resources of boards and commands list.
+ *
  */
 void exitGameCommand(){
 	boardData brdData = getBoardData();
