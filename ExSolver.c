@@ -76,7 +76,6 @@ int colCheck(Cell** board, int num, int cellRow, int cellCol){
  *			-1 numToCheck is in the block
  */
 int blockCheck(Cell** board,int numToCheck , int cellRow, int cellCol){
-	/* TODO: delete prints */
 	int currentNum, i, j, currentblockRow, currentblockCol, minBlockLimitRow, minBlockLimitCol;
 	boardData brdData = getBoardData();
 
@@ -84,15 +83,9 @@ int blockCheck(Cell** board,int numToCheck , int cellRow, int cellCol){
 	currentblockCol = board[cellRow][cellCol].blockCol + 1;
 	minBlockLimitRow = currentblockRow - brdData.blockRowSize;
 	minBlockLimitCol = currentblockCol - brdData.blockColSize;
-	printf("currentblockRow: %d\n", currentblockRow);
-	printf("currentblockCol: %d\n", currentblockCol);
-	printf("minBlockLimitRow: %d\n", minBlockLimitRow);
-	printf("minBlockLimitCol: %d\n", minBlockLimitCol);
 
 	for(i = minBlockLimitRow; i < currentblockRow; i++){
 		for(j = minBlockLimitCol; j < currentblockCol; j++){
-			printf("i = %d\n", i);
-			printf("j = %d\n", j);
 			if(i != cellRow || j != cellCol){
 				currentNum = board[i][j].currentNum;
 				if((numToCheck == currentNum) && (currentNum != 0)){
@@ -103,6 +96,7 @@ int blockCheck(Cell** board,int numToCheck , int cellRow, int cellCol){
 	}
 	return 0;
 }
+
 /*
  * -------------------------------
  * validAssignment Documentation is in header file

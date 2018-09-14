@@ -595,7 +595,6 @@ void solveCommand(char* filePath){
 	gameMode = SOLVE_MODE;
 	findAndMarkErrors();
 	/* print the board we just loaded */
-	printf("solveC\n");
 	printBoard(userBoard);
 }
 

@@ -236,6 +236,11 @@ int getCurrentblockCol(int cellCol){
 	int boardSize = brdData.blockRowSize * brdData.blockColSize;
 	int i = brdData.blockColSize - 1;
 	float calcPos = 0;/* calculates relation between block end and cell position */
+
+	if(brdData.blockColSize == 1){
+		return cellCol;
+	}
+
 	while(i <= boardSize){
 		calcPos = cellCol / (float) i;
 		if(calcPos <= 1.0){
@@ -261,6 +266,11 @@ int getCurrentblockRow(int cellRow){
 	int boardSize = brdData.blockRowSize * brdData.blockColSize;
 	int i = brdData.blockRowSize - 1;
 	float calcPos = 0;/* calculates relation between block end and cell position */
+
+	if(brdData.blockRowSize == 1){
+		return cellRow;
+	}
+
 	while(i <= boardSize){
 		calcPos = cellRow / (float) i;
 		if(calcPos <= 1.0){
