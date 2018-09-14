@@ -1,4 +1,4 @@
-
+/*
 $
  * ILPSolver.c
  *
@@ -348,7 +348,7 @@ void addVariables(double *lowerBounds, char *varType) {
 		}
 	}
 }
-/*
+
 $
  * Function:  ILPSolver
  * --------------------
