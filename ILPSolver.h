@@ -1,6 +1,10 @@
 /*
  * ILPSolver.h
  *
+ *	ILPSolver --- this is the module that is responsible for the ILP solver algorithm, the use of the gurobi API is here,
+ *	and all the functions that are required to use it.
+ *
+ *
  *  Created on: 5 баев„ 2018
  *      Author: beniz
  */

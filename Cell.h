@@ -1,7 +1,7 @@
 /*
  * Cell.h
  *
- *	this is the cell's struct, it has the fields needed for each cell
+ * this is the cell's struct, it has the fields needed for each cell
  *
  *  Created on: 29 Jul 2018
  *      Author: Raz

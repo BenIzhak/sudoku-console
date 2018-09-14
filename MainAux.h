@@ -1,6 +1,9 @@
 /*
  * MainAux.h
  *
+ *	MainAux Module --- this module is responsible for different program operations which are
+ *	being used by different modules.
+ *
  *  Created on: 29 αιεμι 2018
  *      Author: beniz
  */

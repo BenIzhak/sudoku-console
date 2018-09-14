@@ -1,6 +1,9 @@
 /*
  * Parser.h
  *
+ *	Parser Module --- this module is responsible for parsing user input,
+ *	and making different operations on the user input
+ *
  *  Created on: 29 αιεμι 2018
  *      Author: beniz
  */

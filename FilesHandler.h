@@ -1,6 +1,10 @@
 /*
  * FilesHandler.h
  *
+ *	FilesHandler Module --- this module is responsible for files operations, all functions that are needed for different file
+ *	operations are defined here.
+ *
+ *
  *  Created on: 30 αιεμι 2018
  *      Author: beniz
  */

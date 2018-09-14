@@ -1,6 +1,9 @@
 /*
  * CommandsList.h
  *
+ *	CommandsList Module --- this module is resposible for the commands list operations,
+ *	it has the doubly linked list definition and the functions required to manage it.
+ *
  *  Created on: 2 баев„ 2018
  *      Author: beniz
  */

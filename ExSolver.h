@@ -1,7 +1,7 @@
 /*
  * ExSolver.h
  *
- *`This module is responsible for the Exhaustive backtracking algorithm,
+ *`ExSolver Module --- This module is responsible for the Exhaustive backtracking algorithm,
  * It has the algorithm itself and helper functions for the algorithm use
  *`
  *  Created on: 30 Jul 2018

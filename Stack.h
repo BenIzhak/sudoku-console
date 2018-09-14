@@ -1,8 +1,9 @@
 /*
  * Stack.h
  *
- *	this is a stack structure that is responsible for holding nodes with cellIndex struct
- *	this stack is being used in the exhaustive backtracking algorithm
+ *	Stack Module --- this is a stack module. the stack is responsible for holding nodes with cellIndex struct
+ *	this stack is being used in the exhaustive backtracking algorithm.
+ *	this module has all the stack functions
  *
  *  Created on: 30 Jul 2018
  *      Author: Raz
