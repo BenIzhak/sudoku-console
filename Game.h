@@ -1,6 +1,7 @@
 /*
  * game.h
  *
+ *
  *  Created on: 1 Aug 2018
  *      Author: Raz
  */
@@ -72,7 +73,7 @@ int setCell(int X, int Y, int Z);
 
 
 /*
- * Function:  generate
+ * Function:  generateCommand
  * --------------------
  *	Generates a puzzle by using fillAndKeep function
  *

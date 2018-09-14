@@ -27,10 +27,10 @@
 int rowCheck(Cell** board, int num, int cellRow, int cellCol){
 	int i, numCompare;
 	boardData brdData = getBoardData();
-	int colSize = (brdData.blockRowSize * brdData.blockColSize);
+	int colSize = (brdData.blockRowSize * brdData.blockColSize);/* board's column size */
 	for(i = 0; i < colSize; i++){
 			numCompare = board[cellRow][i].currentNum;
-			if(numCompare != 0 && numCompare == num && i != cellCol){
+			if(numCompare != 0 && numCompare == num && i != cellCol){/* checks if current cell's value appears here */
 					return -1;
 			}
 	}
@@ -51,7 +51,7 @@ int rowCheck(Cell** board, int num, int cellRow, int cellCol){
 int colCheck(Cell** board, int num, int cellRow, int cellCol){
 	int i, numCompare;
 	boardData brdData = getBoardData();
-	int rowSize = brdData.blockRowSize * brdData.blockColSize;
+	int rowSize = brdData.blockRowSize * brdData.blockColSize;/* board's row size */
 	for(i = 0; i < rowSize; i++){
 			numCompare = board[i][cellCol].currentNum;
 				if(numCompare == num && i != cellRow && numCompare != 0){
@@ -79,14 +79,14 @@ int blockCheck(Cell** board,int numToCheck , int cellRow, int cellCol){
 	int currentNum, i, j, currentblockRow, currentblockCol, minBlockLimitRow, minBlockLimitCol;
 	boardData brdData = getBoardData();
 
-	currentblockRow = board[cellRow][cellCol].blockRow + 1;
-	currentblockCol = board[cellRow][cellCol].blockCol + 1;
-	minBlockLimitRow = currentblockRow - brdData.blockRowSize;
-	minBlockLimitCol = currentblockCol - brdData.blockColSize;
+	currentblockRow = board[cellRow][cellCol].blockRow + 1;/* incrementing by 1 for the for loop */
+	currentblockCol = board[cellRow][cellCol].blockCol + 1;/* incrementing by 1 for the for loop */
+	minBlockLimitRow = currentblockRow - brdData.blockRowSize;/* starting row of block */
+	minBlockLimitCol = currentblockCol - brdData.blockColSize;/* starting column of block */
 
 	for(i = minBlockLimitRow; i < currentblockRow; i++){
 		for(j = minBlockLimitCol; j < currentblockCol; j++){
-			if(i != cellRow || j != cellCol){
+			if(i != cellRow || j != cellCol){/* check cell only if it's not the cell we were given */
 				currentNum = board[i][j].currentNum;
 				if((numToCheck == currentNum) && (currentNum != 0)){
 					return -1;
@@ -97,22 +97,31 @@ int blockCheck(Cell** board,int numToCheck , int cellRow, int cellCol){
 	return 0;
 }
 
-/*
- * -------------------------------
- * validAssignment Documentation is in header file
- * -------------------------------
- */
+/*  Function:  validAssignment
+ *	--------------------
+ *	checking if numToCheck is a  valid assignment to the cell,
+ *	by checking row then column and then block
+ *
+ *  input:
+ *  board-intialized 2d array
+ *  numToCheck - number to assign
+ *  cellRow - row of cell to be assigned to
+ *  cellCol - column of cell to be assigned to
+ *
+ *  output:
+ *  0 - valid assignment
+ *  -1 - invalid assignment*/
 int validAssignment(Cell** board, int numToCheck, int cellRow, int cellCol){
 	int temp = 0;
-	temp = rowCheck(board, numToCheck, cellRow, cellCol);
+	temp = rowCheck(board, numToCheck, cellRow, cellCol);/* check if numToCheck already in row  */
 	if(temp < 0){
 		return -1;
 	}
-	temp = colCheck(board, numToCheck, cellRow, cellCol);
+	temp = colCheck(board, numToCheck, cellRow, cellCol);/* check if numToCheck already in column  */
 	if(temp < 0){
 		return -1;
 	}
-	temp = blockCheck(board, numToCheck, cellRow, cellCol);
+	temp = blockCheck(board, numToCheck, cellRow, cellCol);/* check if numToCheck already in block  */
 	if(temp < 0){
 		return -1;
 	}
@@ -134,8 +143,7 @@ int findValidNum(Cell** board, int cellRow, int cellCol){
 	boardData brdData = getBoardData();
 	int num = board[cellRow][cellCol].currentNum + 1, maxNum = brdData.blockRowSize * brdData.blockColSize;
 
-	while(num <= maxNum){
-
+	while(num <= maxNum){/* goes over possible numbers until it finds one  */
 		if(validAssignment(board, num, cellRow, cellCol) == 0){/* value is 0 if num is a valid assignment*/
 			return num;
 		}
@@ -158,17 +166,19 @@ int findValidNum(Cell** board, int cellRow, int cellCol){
 cellIndex findEmptyCell(Cell** board, int cellRow, int cellCol){
 	int i, j, flag = 0;
 	boardData brdData = getBoardData();
-	int rowSize = brdData.blockRowSize * brdData.blockColSize;
-	int colSize = brdData.blockRowSize * brdData.blockColSize;
+	int rowSize = brdData.blockRowSize * brdData.blockColSize;/* calculates board's row size */
+	int colSize = brdData.blockRowSize * brdData.blockColSize;/* calculates board's column size */
 	cellIndex emptyIndex;
 
 	for(i = cellRow ; i < rowSize ; i++){
 		for(j = 0; j < colSize ; j++){
 			if(i == cellRow && flag == 0){
+			/* need to find the next empty cell so when in row of cellRow
+			 * move to the column of cellCol */
 				flag = 1;
 				j = cellCol;
 			}
-			if(board[i][j].currentNum == 0){
+			if(board[i][j].currentNum == 0){/* found an empty cell */
 				emptyIndex.col = j;
 				emptyIndex.row = i;
 				return emptyIndex;
@@ -181,9 +191,14 @@ cellIndex findEmptyCell(Cell** board, int cellRow, int cellCol){
 }
 
 /*
- * -------------------------------
- * exBacktrack Documentation is in header file
- * -------------------------------
+ * Function:  exBacktrack
+ * --------------------
+ * 	Exhaustive back tracking algorithm,
+ * 	should use tempBoard when using this function
+ *
+ *	board: 2d array containing sudoku cells
+ *
+ *	returns: amount of different solutions
  */
 void exBacktrack(Cell** board){
 	cellIndex tempIndex;

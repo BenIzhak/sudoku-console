@@ -1,6 +1,8 @@
 /*
  * def.h
  *
+ *	different defines for use in the sudoku
+ *
  *  Created on: 7 баев„ 2018
  *      Author: beniz
  */

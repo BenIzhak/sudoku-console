@@ -138,7 +138,7 @@ void saveBoard(FILE* fp){
 	int i, j, currentNum, fixed;
 	boardData brdData = getBoardData();
 	int boardRowAndColSize = brdData.blockColSize * brdData.blockRowSize;
-	fprintf(fp, "%d %d \n", brdData.blockColSize, brdData.blockRowSize);
+	fprintf(fp, "%d %d \n", brdData.blockRowSize, brdData.blockColSize);
 	for(i = 0; i < boardRowAndColSize; i++){
 		for(j = 0; j < boardRowAndColSize; j++){
 			currentNum = tempBoard[i][j].currentNum;

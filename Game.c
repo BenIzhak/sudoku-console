@@ -25,18 +25,22 @@ static dll* commandsList;
 
 
 /*
- * -------------------------------
- * getGameMode Documentation is in header file
- * -------------------------------
+ * Function:  getGameMode
+ * --------------------
+ *  returns current gameMode code
+ *
  */
 int getGameMode(){
 	return gameMode;
 }
 
 /*
- * -------------------------------
- * setGameMode Documentation is in header file
- * -------------------------------
+ * Function:  setGameMode
+ * --------------------
+ *  sets gameMode value
+ *
+ *  modeNum: code of gameMode to set to
+ *
  */
 void setGameMode(int modeNum){
 	gameMode = modeNum;
@@ -44,12 +48,14 @@ void setGameMode(int modeNum){
 
 
 /*
- * -------------------------------
- * setMarkErrors Documentation is in header file
- * -------------------------------
+ * Function:  setMarkErrors
+ * --------------------
+ * 	sets markErrors value to setting value
+ *
+ *	setting:0 or 1 for mark_errors
  */
 void setMarkErrors(int setting){
-	if(setting == 0 || setting == 1){
+	if(setting == 0 || setting == 1){/* checking that the setting is valid */
 		markErrors = setting;
 	}else{
 		printf("%s","Error: the value should be 0 or 1\n");
@@ -57,27 +63,33 @@ void setMarkErrors(int setting){
 }
 
 /*
- * -------------------------------
- * getMarkErrors Documentation is in header file
- * -------------------------------
+ * Function:  getMarkErrors
+ * --------------------
+ * 	returns mark_errors value
+
  */
 int getMarkErrors(){
 	return markErrors;
 }
 
 /*
- * -------------------------------
- * getErrorsFlag Documentation is in header file
- * -------------------------------
+ * Function:  getErrorsFlag
+ * --------------------
+ * 	returns errorsFlag value
  */
 int getErrorsFlag(){
 	return errorsFlag;
 }
 
 /*
- * -------------------------------
- * findAndMarkErrors Documentation is in header file
- * -------------------------------
+ * Function:  findAndMarkErrors
+ * --------------------
+ * 	goes over all cells in board and checks whether their assignment is valid.
+ * 	if it isn't valid mark their cell as an error and change errorsFlag to -1 if there are no
+ * 	errors change errorsFlag to 0
+ *
+ *	returns: -1 if an error was found, 0 if no error was found
+ *
  */
 void findAndMarkErrors(){
 	int i, j, validAssignmentFlag;
@@ -85,12 +97,12 @@ void findAndMarkErrors(){
 	boardData brdData = getBoardData();
 	for(i = 0; i < (brdData.blockRowSize * brdData.blockColSize); i++ ){
 		for( j = 0; j < (brdData.blockRowSize * brdData.blockColSize); j++){
-			if(userBoard[i][j].fixed == 0){
+			if(userBoard[i][j].fixed == 0){/* the cell needs to be non-fixed cell */
 				validAssignmentFlag = validAssignment(userBoard, userBoard[i][j].currentNum, i , j);
 				if(validAssignmentFlag == -1){
-					userBoard[i][j].isError = 1;
+					userBoard[i][j].isError = 1;/* marking cell as an error */
 					flag = 1;
-					errorsFlag = flag;
+					errorsFlag = flag;/* marking the board as an errorneus */
 				}else{
 					userBoard[i][j].isError = 0;
 				}
@@ -117,22 +129,26 @@ void newSetCommand(){
 }
 
 /*
- * -------------------------------
- * validate Documentation is in header file
- * -------------------------------
+ * Function:  validate
+ * --------------------
+ *	checks if board is valid or not, first by checking for simple errors(same number more than once in a row/column/block
+ *	then using ILP to check if board is solvable
+ *
+ *	isDone: used as flag, 0 - validating but the board is not completed, 1 - validating and all cells are filled
+ *
  */
 void validateCommand(int isDone){
 	int isSolved = 0;
-	if(errorsFlag == 1){
+	if(errorsFlag == 1){/* checking the errors flag for cells with an error */
 		if(isDone == 0){
 			printf("%s", "Error: board contains erroneous values\n");
 		}else{
 			printf("%s", "Puzzle solution erroneous\n");
 		}
 	}else{
-		isSolved = ILPSolver();
+		isSolved = ILPSolver();/* solving the board */
 		if(isSolved == 1){
-			if(isDone == 0){
+			if(isDone == 0){/* there's a solution to the board */
 				printf("%s", "Validation passed: board is solvable\n");
 			}else{
 				/*game is done and solution is correct*/
@@ -145,7 +161,6 @@ void validateCommand(int isDone){
 			}else{
 				printf("%s", "Puzzle solution erroneous\n");
 			}
-			 /*error in ILPSolver, need to try again*/
 		}
 	}
 }
@@ -161,6 +176,7 @@ void validateCommand(int isDone){
 void isFinished(Cell** board){
 	int flag = 0, i, j;
 	boardData brdData = getBoardData();
+	/* first checks that board has no empty cells */
 	for(i = 0; i < (brdData.blockRowSize * brdData.blockColSize); i++){
 		for(j = 0; j < (brdData.blockRowSize * brdData.blockColSize); j++){
 			if(board[i][j].currentNum == 0){
@@ -169,15 +185,22 @@ void isFinished(Cell** board){
 		}
 	}
 
-	if(flag == 0 && gameMode == SOLVE_MODE){
-		validateCommand(1);
+	if(flag == 0 && gameMode == SOLVE_MODE){/* if board is not empty */
+		validateCommand(1); /* validate the board, using 1 input show that board is complete*/
 	}
 }
 
 /*
- * -------------------------------
- * setCell Documentation is in header file
- * -------------------------------
+ * Function:  setCell
+ * --------------------
+ * 	sets cell in column of X and row of Y to value of Z
+ * 	if in solve mode set isInput to 1, if in edit mode set fixed to 1
+ *
+ *	returns: -1 if in solve mode and cell is fixed, if set is successful returns 0
+ *
+ *	X: column of cell
+ *  Y: row of cell
+ *	Z: new value to set cell to
  */
 void setCell(int col, int row, int val){
 	if(userBoard[row][col].fixed == 1){/* no need to check which game mode because fixed cells are only available while in solve mode */
@@ -185,19 +208,19 @@ void setCell(int col, int row, int val){
 		return;
 	}
 
-	if(val == 0){
-		userBoard[row][col].isInput = 0;
+	if(val == 0){/* value to change cell to is 0 */
+		userBoard[row][col].isInput = 0; /* mark as not an input */
 		userBoard[row][col].currentNum = val;
 	}else{
 		userBoard[row][col].isInput = 1;
 		userBoard[row][col].currentNum = val;
 	}
 
-	findAndMarkErrors();
+	findAndMarkErrors();/* checking for errors in board */
 
-	newSetCommand();
+	newSetCommand();/* adding to the commands list */
 	printBoard(userBoard);
-	isFinished(userBoard);
+	isFinished(userBoard);/* checking if user is finished */
 }
 
 /*
@@ -316,12 +339,9 @@ int isEmptyBoard(){
  */
 void validNumsAlloc(Cell** board, int cellRow, int cellCol){
 	boardData brdData = getBoardData();
-	int boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize, i, j;
-	for (i = 0; i < boardRowAndColSize; i++){
-		for (j = 0; j < boardRowAndColSize; j++){
-			board[cellRow][cellCol].validNums = (int *) malloc((boardRowAndColSize) * sizeof(int));
-		}
-	}
+	int boardRowAndColSize = brdData.blockRowSize * brdData.blockColSize;
+
+	board[cellRow][cellCol].validNums = (int *) malloc((boardRowAndColSize) * sizeof(int));
 }
 
 /*
@@ -330,6 +350,8 @@ void validNumsAlloc(Cell** board, int cellRow, int cellCol){
  * 	checks which numbers are available to the cell
  * 	at column of cellCol and row of cellRow and returns
  * 	a random legal value
+ *
+ * 	validNums memory need to be allocated prior to the call of this function
  *
  *	board: 2d array containing sudoku cells
  *	cellRow: cell's row
@@ -345,16 +367,16 @@ int availableNumbers(Cell** board, int cellRow, int cellCol){
 
 	for(num = 1; num <= maxNum; num++){
 		if(validAssignment(board, num, cellRow, cellCol) == 0){/* value is 0 if num is a valid assignment*/
-			board[cellRow][cellCol].validNums[counter] = num;
+			board[cellRow][cellCol].validNums[counter] = num;/* putting the valid num in the validNums array */
 			counter++;
 		}
 	}
 
-	board[cellRow][cellCol].limit = counter;
+	board[cellRow][cellCol].limit = counter;/* changing the limit field to show how many numbers are valid */
 
 	if(counter != 0){
 		randIndex = rand() % counter;
-		randNum = board[cellRow][cellCol].validNums[randIndex];
+		randNum = board[cellRow][cellCol].validNums[randIndex];/* get a random value from the array */
 	}else{
 		randNum = 0;
 	}
@@ -380,8 +402,8 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){
 	int rowAndColSize = brdData.blockRowSize * brdData.blockColSize;
 	int i, j, randCol, randRow, randNum, flag = 0, isSolved = 0;
 
-	for(i = 0; i < cellsToFill; i++){
-		while(flag == 0){
+	for(i = 0; i < cellsToFill; i++){/* getting the right amount of cell to fill */
+		while(flag == 0){/* while a cell to fill hasn't been found*/
 			randCol = rand() % rowAndColSize;
 			randRow = rand() % rowAndColSize;
 			if(userBoard[randRow][randCol].currentNum == 0){/* checking that i havn't chose this cell already if it was chosen before it's currentNum wont be 0 */
@@ -389,10 +411,10 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){
 			}
 		}
 		flag = 0;
-		validNumsAlloc(userBoard, randRow, randCol);
+		validNumsAlloc(userBoard, randRow, randCol);/* allocating memory for the available num function */
 		randNum = availableNumbers(userBoard, randRow, randCol);
 		free(userBoard[randRow][randCol].validNums);
-		if(randNum == 0){
+		if(randNum == 0){/* if availableNumbers didn't find a valid number for the cell */
 			return 0;
 		}
 		userBoard[randRow][randCol].currentNum = randNum;
@@ -429,15 +451,20 @@ int fillAndKeep(int cellsToFill, int cellsToKeep){
 }
 
 /*
- * -------------------------------
- * generateCommand Documentation is in header file
- * -------------------------------
+ * Function:  generateCommand
+ * --------------------
+ *	Generates a puzzle by using fillAndKeep function
+ *
+ *
+ *	cellsToFill: amount of cells to fill with random values
+ *	cellsToKeep: amount of cells to keep after generating random values
  */
+
 void generateCommand(int cellsToFill, int cellsToKeep){
 	boardData brdData = getBoardData();
 	int rowAndColSize = brdData.blockRowSize * brdData.blockColSize;
 	int emptyCells = (rowAndColSize)*(rowAndColSize);/* if the board is empty, amount of empty cells is N*N */
-	int i, anyChanges = 0;
+	int i, anyChanges = 0;/* anychanges is a flag for a change in the board */
 
 	if((cellsToFill > emptyCells) || (cellsToKeep > emptyCells)){/* checks that parameters are valid */
 		printf("Error: value not in range 0-%d\n", emptyCells);
@@ -449,14 +476,13 @@ void generateCommand(int cellsToFill, int cellsToKeep){
 		return;
 	}
 
-
 	/* tries for 1000 iterations to get a valid board*/
 	for(i = 0; i < 1000; i++){
-		if(fillAndKeep(cellsToFill, cellsToKeep) == 1){
+		if(fillAndKeep(cellsToFill, cellsToKeep) == 1){/* was successful */
 			copyBoard(userBoard, solvedBoard);
 			anyChanges = 1;
 			if(anyChanges == 1 && cellsToKeep > 0){
-				/* the board didn't change */
+				/* the board was changed */
 				newSetCommand();
 			}
 			printBoard(userBoard);
@@ -507,9 +533,9 @@ void startDefaultBoard(){
 }
 
 /*
- * -------------------------------
- * autoFillCommand Documentation is in header file
- * -------------------------------
+ * Function:  autoFillCommand
+ * --------------------
+ *  automatically fills obvious values in the board
  */
 void autoFillCommand(){
 	int i,j, anyChanges = 0;
@@ -540,7 +566,7 @@ void autoFillCommand(){
 	}
 
 	copyBoard(userBoard, tempBoard);
-	findAndMarkErrors();
+	findAndMarkErrors();/* checking again for errors */
 
 	if(anyChanges){
 		newSetCommand();
@@ -550,9 +576,12 @@ void autoFillCommand(){
 }
 
 /*
- * -------------------------------
- * setHint Documentation is in header file
- * -------------------------------
+ * Function:  setHint
+ * --------------------
+ *  gives a hint for a cell at column of col and row of row
+ *
+ *  col: column of cell to show hint for
+ *  row: rowof cell to show hint for
  */
 void setHint(int col, int row){
 	/* col and row starting with zero
@@ -560,7 +589,7 @@ void setHint(int col, int row){
 	 * boardISSolvable = 1 <-> board is solvable */
 	int boardIsSolvable;
 
-	if(getErrorsFlag()){
+	if(getErrorsFlag()){/* checking for errors */
 		printf("%s", "Error: board contains erroneous values\n");
 		return;
 	}
@@ -572,11 +601,11 @@ void setHint(int col, int row){
 		printf("%s", "Error: cell already contains a value\n");
 		return;
 	}
-	boardIsSolvable = ILPSolver();
+	boardIsSolvable = ILPSolver();/* solving the board */
 	if(boardIsSolvable == 2){
 		printf("%s", "Error: board is unsolvable\n");
-	}else{
-		printf("Hint: set cell to %d\n", solvedBoard[row][col].currentNum);
+	}else{/* board is solvable */
+		printf("Hint: set cell to %d\n", solvedBoard[row][col].currentNum); /* print the hint */
 	}
 
 

@@ -12,10 +12,10 @@
 /*
  * Function:  parseCommand
  * --------------------
- * get array of chars which represent the command from the user*
- * and change the result array accordingly. the first variable *
- * in the result array is the command type and the rest are the*
- * parameters for the command
+ *  get array of chars which represent the command from the user*
+ *  and change the result array accordingly. the first variable *
+ *  in the result array is the command type and the rest are the*
+ *  parameters for the command
  *
  *  input: string of the input by the user
  *  command: array holding types of commands

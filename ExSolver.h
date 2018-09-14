@@ -1,10 +1,12 @@
 /*
  * ExSolver.h
  *
+ *`This module is responsible for the Exhaustive backtracking algorithm,
+ * It has the algorithm itself and helper functions for the algorithm use
+ *`
  *  Created on: 30 Jul 2018
  *      Author: Raz
  */
-
 #ifndef EXSOLVER_H_
 #define EXSOLVER_H_
 
@@ -12,12 +14,11 @@
  * Function:  exBacktrack
  * --------------------
  * 	Exhaustive back tracking algorithm,
- * 	should use tempBoard when using this function
+ * 	expecting to get  tempBoard when using this function
  *
- *	board: 2d array containing sudoku cells
+ *	board: tempboard, 2d array containing sudoku cells
  *
  *	returns: amount of different solutions
- *
  */
 void exBacktrack(Cell** board);
 

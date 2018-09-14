@@ -1,6 +1,9 @@
 /*
  * Stack.h
  *
+ *	this is a stack structure that is responsible for holding nodes with cellIndex struct
+ *	this stack is being used in the exhaustive backtracking algorithm
+ *
  *  Created on: 30 Jul 2018
  *      Author: Raz
  */
@@ -35,7 +38,9 @@ node* newNode(int row, int col);
 /*
  * Function:  isEmpty
  * --------------------
- * checks if the stack is empty returns 1 if empty, otherwise returns 0
+ * checks if the stack is empty
+ *
+ * returns 1 if empty, otherwise returns 0
  *
  *  root: the top most node
  */
