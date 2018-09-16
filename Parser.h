@@ -2,7 +2,7 @@
  * Parser.h
  *
  *	Parser Module --- this module is responsible for parsing user input,
- *	and making different operations on the user input
+ *	the header has functions used by other modules
  *
  *  Created on: 29 αιεμι 2018
  *      Author: beniz

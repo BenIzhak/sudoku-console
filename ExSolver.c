@@ -1,6 +1,9 @@
 /*
  * exSolver.c
  *
+ *  ExSolver Module --- This module is responsible for the Exhaustive backtracking algorithm,
+ *  the source file has all functions used by the exhaustive backtracking itself
+ *`
  *  Created on: 30 Jul 2018
  *      Author: Raz
  */

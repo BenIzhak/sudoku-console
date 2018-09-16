@@ -1,6 +1,8 @@
 /*
  * game.c
  *
+ *  Game Module --- this module is responsoble for different game functions, functions which are required for game operations
+ *
  *  Created on: 1 Aug 2018
  *      Author: Raz
  */

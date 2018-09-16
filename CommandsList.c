@@ -1,6 +1,9 @@
 /*
  * CommandsList.c
  *
+ * CommandsList Module --- this module is resposible for the commands list operations,
+ * the source has all the functions required to manage it.
+ *
  *  Created on: 2 баев„ 2018
  *      Author: beniz
  */

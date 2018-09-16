@@ -1,8 +1,8 @@
 /*
  * MainAux.h
  *
- *	MainAux Module --- this module is responsible for different program operations which are
- *	being used by different modules.
+ *	MainAux Module --- this module is responsible for different program operations, the header has just the functions which
+ *	are used directly by the user or are used by other modules.
  *
  *  Created on: 29 αιεμι 2018
  *      Author: beniz

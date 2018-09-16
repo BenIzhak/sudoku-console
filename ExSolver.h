@@ -2,7 +2,8 @@
  * ExSolver.h
  *
  *`ExSolver Module --- This module is responsible for the Exhaustive backtracking algorithm,
- * It has the algorithm itself and helper functions for the algorithm use
+ * the header has the exhaustive backtracking itself for use of the num_solutions command and the
+ * valid assignment function which is used by other functions
  *`
  *  Created on: 30 Jul 2018
  *      Author: Raz

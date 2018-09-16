@@ -1,8 +1,8 @@
 /*
  * FilesHandler.h
  *
- *	FilesHandler Module --- this module is responsible for files operations, all functions that are needed for different file
- *	operations are defined here.
+ *	FilesHandler Module --- this module is responsible for files operations,
+ *	the header has functions used directly by user commands like edit,solve,save.
  *
  *
  *  Created on: 30 αιεμι 2018

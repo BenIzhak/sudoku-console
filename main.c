@@ -1,6 +1,8 @@
 /*
  * main.c
  *
+ *	this is the main file, it is just for starting the game
+ *
  *  Created on: 29 ����� 2018
  *      Author: beniz
  */

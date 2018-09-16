@@ -1,8 +1,9 @@
 /*
  * CommandsList.h
  *
- *	CommandsList Module --- this module is resposible for the commands list operations,
- *	it has the doubly linked list definition and the functions required to manage it.
+ *	CommandsList Module --- this module is resposible for the commands list operations, the header
+ *	has functions used when there's a change in the game board like changing a cell value or starting a new
+ *	game, ending a game actions and more, also the doubly linked struct is defined here.
  *
  *  Created on: 2 баев„ 2018
  *      Author: beniz

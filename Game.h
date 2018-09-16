@@ -1,7 +1,8 @@
 /*
  * Game.h
  *
- *	Game Module --- this module is responsoble for different game functions, functions which are required for game operations
+ *	Game Module --- this module is responsoble for different game functions,
+ *	the header has all functions which are used directly by the user commands or by other modules
  *
  *  Created on: 1 Aug 2018
  *      Author: Raz

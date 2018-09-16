@@ -1,6 +1,9 @@
 /*
  * FilesHandler.c
  *
+ *	FilesHandler Module --- this module is responsible for files operations, the source has all functions that are needed for different file
+ *	operations are defined here.
+ *
  *  Created on: 29 αιεμι 2018
  *      Author: beniz
  */
